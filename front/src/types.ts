@@ -1,4 +1,5 @@
-export type WindowType = 'mycomputer' | 'notepad' | 'recyclebin' | 'about';
+export type WindowType =
+  | 'mycomputer' | 'notepad' | 'recyclebin' | 'about';
 
 export interface WindowBounds {
   x: number;

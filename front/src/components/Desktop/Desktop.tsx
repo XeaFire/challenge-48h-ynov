@@ -25,31 +25,23 @@ interface DesktopIconConfig {
 
 const DESKTOP_ICONS: DesktopIconConfig[] = [
   {
-    id: 'mycomputer',
-    x: 10, y: 10,
-    icon: <ComputerIcon />,
-    label: 'Poste de travail',
+    id: 'mycomputer', x: 10, y: 10,
+    icon: <ComputerIcon />, label: 'Poste de travail',
     action: { type: 'openWindow', windowType: 'mycomputer' },
   },
   {
-    id: 'notepad',
-    x: 10, y: 100,
-    icon: <NotepadIcon />,
-    label: 'Bloc-notes',
+    id: 'notepad', x: 10, y: 100,
+    icon: <NotepadIcon />, label: 'Bloc-notes',
     action: { type: 'openWindow', windowType: 'notepad' },
   },
   {
-    id: 'recyclebin',
-    x: 10, y: 190,
-    icon: <RecycleBinIcon />,
-    label: 'Corbeille',
+    id: 'recyclebin', x: 10, y: 190,
+    icon: <RecycleBinIcon />, label: 'Corbeille',
     action: { type: 'openWindow', windowType: 'recyclebin' },
   },
   {
-    id: 'ie',
-    x: 10, y: 280,
-    icon: <InternetExplorerIcon />,
-    label: 'Internet Explorer',
+    id: 'ie', x: 10, y: 280,
+    icon: <InternetExplorerIcon />, label: 'Internet Explorer',
     action: { type: 'triggerBSOD' },
   },
 ];

@@ -7,10 +7,6 @@ interface StartMenuProps {
   onShutDown: () => void;
 }
 
-/**
- * Menu Demarrer avec la barre laterale "Pindows 98"
- * et les raccourcis vers les applications.
- */
 export function StartMenu({ visible, onOpenWindow, onShutDown }: StartMenuProps) {
   if (!visible) return null;
 

@@ -1,0 +1,72 @@
+import type { GameState, StoryTrigger, TriggerCondition, TriggerAction, GameEvent } from './types';
+
+export interface EvaluationResult {
+  newState: GameState;
+  actions: TriggerAction[];
+  newlyFiredIds: string[];
+}
+
+function checkCondition(state: GameState, condition: TriggerCondition): boolean {
+  switch (condition.type) {
+    case 'flag':
+      return (state.flags[condition.flag] ?? false) === condition.value;
+    case 'flagNotSet':
+      return !(condition.flag in state.flags);
+  }
+}
+
+function applyStateAction(state: GameState, action: TriggerAction): GameState {
+  switch (action.type) {
+    case 'setFlag':
+      return { ...state, flags: { ...state.flags, [action.flag]: action.value } };
+    case 'setCharacterStatus':
+      return {
+        ...state,
+        characters: {
+          ...state.characters,
+          [action.character]: { ...state.characters[action.character], status: action.status },
+        },
+      };
+    default:
+      return state;
+  }
+}
+
+function applyEventFlags(state: GameState, event: GameEvent): GameState {
+  switch (event.type) {
+    case 'boot_complete':
+      return { ...state, flags: { ...state.flags, boot_complete: true } };
+    case 'window_opened':
+      return { ...state, flags: { ...state.flags, [`opened_${event.windowType}`]: true } };
+    case 'character_clicked':
+      return { ...state, flags: { ...state.flags, [`clicked_${event.characterId}`]: true } };
+    case 'item_clicked':
+      return { ...state, flags: { ...state.flags, [`item_${event.itemId}`]: true } };
+    default:
+      return state;
+  }
+}
+
+export function evaluateTriggers(
+  state: GameState,
+  triggers: StoryTrigger[],
+  event: GameEvent,
+  alreadyFired: Set<string>,
+): EvaluationResult {
+  let current = applyEventFlags(state, event);
+  const actions: TriggerAction[] = [];
+  const newlyFiredIds: string[] = [];
+
+  for (const trigger of triggers) {
+    if (trigger.once && alreadyFired.has(trigger.id)) continue;
+    if (!trigger.conditions.every(c => checkCondition(current, c))) continue;
+
+    newlyFiredIds.push(trigger.id);
+    for (const action of trigger.actions) {
+      current = applyStateAction(current, action);
+      actions.push(action);
+    }
+  }
+
+  return { newState: current, actions, newlyFiredIds };
+}
