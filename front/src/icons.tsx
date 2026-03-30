@@ -108,6 +108,77 @@ export function FloppyDiskIcon() {
   );
 }
 
+export function ExplorerIcon({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={PIXEL_STYLE}>
+      <rect x="3" y="6" width="26" height="20" rx="1" fill="#c0c0c0" stroke="#000" strokeWidth="0.5" />
+      <rect x="3" y="4" width="14" height="4" rx="1" fill="#ffcc00" stroke="#000" strokeWidth="0.5" />
+      <rect x="3" y="6" width="26" height="20" rx="1" fill="#ffcc00" stroke="#000" strokeWidth="0.5" />
+      <rect x="5" y="9" width="22" height="15" fill="#fff" stroke="#808080" strokeWidth="0.5" />
+      <rect x="7" y="11" width="6" height="5" fill="#ffcc00" stroke="#808080" strokeWidth="0.3" />
+      <rect x="15" y="11" width="6" height="5" fill="#ffcc00" stroke="#808080" strokeWidth="0.3" />
+      <line x1="7" y1="19" x2="25" y2="19" stroke="#808080" strokeWidth="0.5" />
+      <line x1="7" y1="21" x2="25" y2="21" stroke="#808080" strokeWidth="0.5" />
+    </svg>
+  );
+}
+
+export function FileIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" style={PIXEL_STYLE}>
+      <rect x="2" y="1" width="9" height="14" fill="#fff" stroke="#000" strokeWidth="0.5" />
+      <polygon points="11,1 14,4 11,4" fill="#c0c0c0" stroke="#000" strokeWidth="0.3" />
+      <rect x="11" y="4" width="3" height="11" fill="#fff" stroke="#000" strokeWidth="0.5" />
+      <line x1="4" y1="6" x2="12" y2="6" stroke="#000080" strokeWidth="0.3" />
+      <line x1="4" y1="8" x2="12" y2="8" stroke="#000080" strokeWidth="0.3" />
+      <line x1="4" y1="10" x2="10" y2="10" stroke="#000080" strokeWidth="0.3" />
+    </svg>
+  );
+}
+
+export function SmallFolderIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" style={PIXEL_STYLE}>
+      <rect x="1" y="4" width="14" height="10" rx="0.5" fill="#ffcc00" stroke="#000" strokeWidth="0.5" />
+      <rect x="1" y="2" width="7" height="3" rx="0.5" fill="#ffcc00" stroke="#000" strokeWidth="0.5" />
+    </svg>
+  );
+}
+
+export function PaintIcon({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={PIXEL_STYLE}>
+      <rect x="4" y="4" width="24" height="24" fill="#fff" stroke="#000" strokeWidth="1" />
+      <rect x="6" y="6" width="20" height="20" fill="#fff" />
+      <rect x="8" y="10" width="6" height="4" fill="#ff0000" />
+      <rect x="12" y="8" width="5" height="6" fill="#00ff00" />
+      <rect x="16" y="12" width="7" height="5" fill="#0000ff" />
+      <rect x="10" y="14" width="5" height="5" fill="#ffff00" />
+      <line x1="22" y1="4" x2="28" y2="2" stroke="#808080" strokeWidth="1.5" />
+      <line x1="24" y1="8" x2="28" y2="2" stroke="#ffcc00" strokeWidth="2" />
+      <circle cx="28" cy="2" r="1.5" fill="#ffcc00" />
+    </svg>
+  );
+}
+
+export function CalculatorIcon({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={PIXEL_STYLE}>
+      <rect x="5" y="2" width="22" height="28" rx="1" fill="#c0c0c0" stroke="#000" strokeWidth="1" />
+      <rect x="7" y="4" width="18" height="6" fill="#8fbc8f" stroke="#808080" strokeWidth="0.5" />
+      <rect x="7" y="12" width="4" height="4" fill="#fff" stroke="#808080" strokeWidth="0.3" />
+      <rect x="13" y="12" width="4" height="4" fill="#fff" stroke="#808080" strokeWidth="0.3" />
+      <rect x="19" y="12" width="4" height="4" fill="#ff8c00" stroke="#808080" strokeWidth="0.3" />
+      <rect x="7" y="18" width="4" height="4" fill="#fff" stroke="#808080" strokeWidth="0.3" />
+      <rect x="13" y="18" width="4" height="4" fill="#fff" stroke="#808080" strokeWidth="0.3" />
+      <rect x="19" y="18" width="4" height="4" fill="#ff8c00" stroke="#808080" strokeWidth="0.3" />
+      <rect x="7" y="24" width="4" height="4" fill="#fff" stroke="#808080" strokeWidth="0.3" />
+      <rect x="13" y="24" width="4" height="4" fill="#fff" stroke="#808080" strokeWidth="0.3" />
+      <rect x="19" y="24" width="4" height="4" fill="#4169e1" stroke="#808080" strokeWidth="0.3" />
+    </svg>
+  );
+}
+
 export function PindowsLogo() {
   return (
     <svg width="64" height="64" viewBox="0 0 64 64">
