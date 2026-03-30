@@ -1,5 +1,8 @@
 import { useState, useCallback } from 'react';
 import { useWindowManager } from './hooks/useWindowManager';
+import { useAgentManager } from './hooks/useAgentManager';
+import { useGameEngine } from './hooks/useGameEngine';
+import { GameContext } from './game/GameContext';
 import { BootScreen } from './components/BootScreen';
 import { BSOD } from './components/BSOD';
 import { Desktop } from './components/Desktop/Desktop';
@@ -32,34 +35,30 @@ function App() {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [shutdownScreen, setShutdownScreen] = useState(false);
 
+  const agents = useAgentManager();
   const {
-    windows,
-    focusOrder,
-    activeWindowId,
-    openWindow,
-    closeWindow,
-    focusWindow,
-    minimizeWindow,
-    maximizeWindow,
-    updateWindowPosition,
+    windows, focusOrder, activeWindowId,
+    openWindow, closeWindow, focusWindow,
+    minimizeWindow, maximizeWindow, updateWindowPosition,
   } = useWindowManager();
 
+  const { gameState, dispatch } = useGameEngine({
+    agentManager: agents,
+    onOpenWindow: openWindow,
+  });
+
+  const handleBootComplete = useCallback(() => {
+    setBooted(true);
+    dispatch({ type: 'boot_complete' });
+  }, [dispatch]);
+
   const handleTaskbarItemClick = useCallback((id: string) => {
-    const window = windows.find(w => w.id === id);
-    if (!window) return;
-
-    if (window.minimized) {
-      focusWindow(id);
-    } else if (id === activeWindowId) {
-      minimizeWindow(id);
-    } else {
-      focusWindow(id);
-    }
+    const win = windows.find(w => w.id === id);
+    if (!win) return;
+    if (win.minimized) focusWindow(id);
+    else if (id === activeWindowId) minimizeWindow(id);
+    else focusWindow(id);
   }, [windows, activeWindowId, focusWindow, minimizeWindow]);
-
-  const closeStartMenu = useCallback(() => {
-    if (startMenuOpen) setStartMenuOpen(false);
-  }, [startMenuOpen]);
 
   if (shutdownScreen) {
     return (
@@ -67,8 +66,7 @@ function App() {
         position: 'fixed', inset: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         color: '#ffcc00', fontSize: 20,
-        fontFamily: '"MS Sans Serif", sans-serif',
-        background: '#000',
+        fontFamily: '"MS Sans Serif", sans-serif', background: '#000',
       }}>
         <div style={{ textAlign: 'center' }}>
           Vous pouvez maintenant eteindre<br />votre ordinateur en toute securite.
@@ -91,14 +89,14 @@ function App() {
   }
 
   return (
-    <>
-      {!booted && <BootScreen onComplete={() => setBooted(true)} />}
+    <GameContext.Provider value={{ gameState, dispatch, agents }}>
+      {!booted && <BootScreen onComplete={handleBootComplete} />}
       <BSOD visible={bsodVisible} onDismiss={() => setBsodVisible(false)} />
 
       <Desktop
         onOpenWindow={openWindow}
         onTriggerBSOD={() => setBsodVisible(true)}
-        onCloseStartMenu={closeStartMenu}
+        onCloseStartMenu={() => startMenuOpen && setStartMenuOpen(false)}
       >
         {windows.map(window => {
           const config = WINDOW_CONFIG[window.type];
@@ -128,12 +126,12 @@ function App() {
         focusOrder={focusOrder}
         activeWindowId={activeWindowId}
         startMenuOpen={startMenuOpen}
-        onToggleStartMenu={() => setStartMenuOpen(previous => !previous)}
+        onToggleStartMenu={() => setStartMenuOpen(prev => !prev)}
         onOpenWindow={openWindow}
         onShutDown={() => setShutdownScreen(true)}
         onTaskbarItemClick={handleTaskbarItemClick}
       />
-    </>
+    </GameContext.Provider>
   );
 }
 

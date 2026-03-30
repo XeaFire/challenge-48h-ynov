@@ -25,38 +25,28 @@ interface DesktopIconConfig {
 
 const DESKTOP_ICONS: DesktopIconConfig[] = [
   {
-    id: 'mycomputer',
-    x: 10, y: 10,
-    icon: <ComputerIcon />,
-    label: 'Poste de travail',
+    id: 'mycomputer', x: 10, y: 10,
+    icon: <ComputerIcon />, label: 'Poste de travail',
     action: { type: 'openWindow', windowType: 'mycomputer' },
   },
   {
-    id: 'notepad',
-    x: 10, y: 100,
-    icon: <NotepadIcon />,
-    label: 'Bloc-notes',
+    id: 'notepad', x: 10, y: 100,
+    icon: <NotepadIcon />, label: 'Bloc-notes',
     action: { type: 'openWindow', windowType: 'notepad' },
   },
   {
-    id: 'recyclebin',
-    x: 10, y: 190,
-    icon: <RecycleBinIcon />,
-    label: 'Corbeille',
+    id: 'recyclebin', x: 10, y: 190,
+    icon: <RecycleBinIcon />, label: 'Corbeille',
     action: { type: 'openWindow', windowType: 'recyclebin' },
   },
   {
-    id: 'calculator',
-    x: 10, y: 280,
-    icon: <CalculatorIcon />,
-    label: 'Calculatrice',
+    id: 'calculator', x: 10, y: 280,
+    icon: <CalculatorIcon />, label: 'Calculatrice',
     action: { type: 'openWindow', windowType: 'calculator' },
   },
   {
-    id: 'explorer',
-    x: 10, y: 370,
-    icon: <ExplorerIcon />,
-    label: 'Explorateur',
+    id: 'explorer', x: 10, y: 370,
+    icon: <ExplorerIcon />, label: 'Explorateur',
     action: { type: 'openWindow', windowType: 'explorer' },
   },
   {

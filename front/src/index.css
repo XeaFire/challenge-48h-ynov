@@ -1269,3 +1269,8 @@ body {
   background: #000080;
   transition: width 0.3s;
 }
+
+/* ===== ANIMATIONS ===== */
+@keyframes blink {
+  50% { opacity: 0; }
+}
