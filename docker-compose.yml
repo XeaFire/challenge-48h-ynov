@@ -1,14 +1,14 @@
 services:
-  backend:
+  backend_chal48:
     image: ghcr.io/xeafire/challenge-48h-ynov/backend:latest
     ports:
       - "3001:3000"
     restart: unless-stopped
 
-  frontend:
+  frontend_chal48:
     image: ghcr.io/xeafire/challenge-48h-ynov/frontend:latest
     ports:
-      - "8082:80"
+      - "8082:8086"
     depends_on:
-      - backend
+      - backend_chal48
     restart: unless-stopped
