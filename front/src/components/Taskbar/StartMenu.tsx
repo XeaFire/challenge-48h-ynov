@@ -1,5 +1,5 @@
 import type { WindowType } from '../../types';
-import { ComputerIcon, NotepadIcon, HelpIcon, ShutdownIcon } from '../../icons';
+import { ComputerIcon, NotepadIcon, CalculatorIcon, HelpIcon, ShutdownIcon } from '../../icons';
 
 interface StartMenuProps {
   visible: boolean;
@@ -27,6 +27,10 @@ export function StartMenu({ visible, onOpenWindow, onShutDown }: StartMenuProps)
         <div className="start-menu-item" onClick={() => onOpenWindow('notepad')}>
           <NotepadIcon size={16} />
           Bloc-notes
+        </div>
+        <div className="start-menu-item" onClick={() => onOpenWindow('calculator')}>
+          <CalculatorIcon size={16} />
+          Calculatrice
         </div>
         <div className="start-menu-separator" />
         <div className="start-menu-item" onClick={() => onOpenWindow('about')}>

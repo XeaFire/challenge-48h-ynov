@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { WindowType } from '../../types';
 import { DesktopIcon } from './DesktopIcon';
-import { ComputerIcon, NotepadIcon, RecycleBinIcon, InternetExplorerIcon } from '../../icons';
+import { ComputerIcon, NotepadIcon, RecycleBinIcon, InternetExplorerIcon, CalculatorIcon } from '../../icons';
 
 interface DesktopProps {
   onOpenWindow: (type: WindowType) => void;
@@ -46,8 +46,15 @@ const DESKTOP_ICONS: DesktopIconConfig[] = [
     action: { type: 'openWindow', windowType: 'recyclebin' },
   },
   {
-    id: 'ie',
+    id: 'calculator',
     x: 10, y: 280,
+    icon: <CalculatorIcon />,
+    label: 'Calculatrice',
+    action: { type: 'openWindow', windowType: 'calculator' },
+  },
+  {
+    id: 'ie',
+    x: 10, y: 370,
     icon: <InternetExplorerIcon />,
     label: 'Internet Explorer',
     action: { type: 'triggerBSOD' },
