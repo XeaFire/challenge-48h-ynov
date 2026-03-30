@@ -13,7 +13,7 @@ interface Options {
 
 export function useGameEngine({ agentManager, onOpenWindow }: Options) {
   const stateRef = useRef<GameState>(createInitialState());
-  const [gameState, setGameState] = useState<GameState>(() => stateRef.current);
+  const [gameState, setGameState] = useState<GameState>(stateRef.current);
   const firedTriggers = useRef(new Set<string>());
   const processingRef = useRef(false);
   const queue = useRef<TriggerAction[][]>([]);
