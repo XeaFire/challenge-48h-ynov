@@ -1,0 +1,14 @@
+services:
+  backend:
+    image: ghcr.io/xeafire/challenge-48h-ynov/backend:latest
+    ports:
+      - "3001:3000"
+    restart: unless-stopped
+
+  frontend:
+    image: ghcr.io/xeafire/challenge-48h-ynov/frontend:latest
+    ports:
+      - "8082:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
