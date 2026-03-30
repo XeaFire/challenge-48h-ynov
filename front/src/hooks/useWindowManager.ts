@@ -7,6 +7,7 @@ const WINDOW_DEFAULTS: Record<WindowType, { title: string; width: number; height
   recyclebin: { title: 'Corbeille', width: 450, height: 300 },
   about: { title: 'A propos de Pindows 98', width: 380, height: 260 },
   calculator: { title: 'Calculatrice', width: 260, height: 305 },
+  paint: { title: 'Sans titre - Paint', width: 640, height: 480 },
 };
 
 const CASCADE_OFFSET = 20;
