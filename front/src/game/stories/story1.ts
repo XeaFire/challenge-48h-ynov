@@ -1,13 +1,7 @@
 import type { StoryTrigger } from '../types';
 
-// ---------------------------------------------------------------------------
-// Story 1 — Bienvenue sur Pindows 98
-//
-// Merlin spawns → speech → Links spawns → speech → form → unlock Paint
-// ---------------------------------------------------------------------------
-
 export const story1Triggers: StoryTrigger[] = [
-  // ── Merlin appears after boot, does his full intro ──
+  // ── Merlin appears after boot ──
   {
     id: 'story1_merlin_intro',
     conditions: [
@@ -20,13 +14,12 @@ export const story1Triggers: StoryTrigger[] = [
       { type: 'agentSpeak', character: 'merlin', text: 'Bienvenue sur Pindows 98 ! Je suis ravi de te voir ici !' },
       { type: 'agentSpeak', character: 'merlin', text: "Je me présente : je suis Merlin, ton guide personnel sur Pindows. Je serai là pour t'accompagner dans tes aventures numériques !" },
       { type: 'agentSpeak', character: 'merlin', text: "Mais je ne suis pas tout seul... Laisse-moi te présenter quelqu'un !" },
-      // Flag set AFTER all speech is done — next trigger won't fire until recheck
       { type: 'setFlag', flag: 'story1_merlin_done', value: true },
     ],
     once: true,
   },
 
-  // ── Links appears after Merlin finishes ──
+  // ── Links appears to the right of Merlin ──
   {
     id: 'story1_links_intro',
     conditions: [
@@ -34,6 +27,7 @@ export const story1Triggers: StoryTrigger[] = [
     ],
     actions: [
       { type: 'agentShow', character: 'links' },
+      { type: 'agentMoveTo', character: 'links', x: 250, y: 350, duration: 5000 },
       { type: 'agentPlay', character: 'links', animation: 'Greet' },
       { type: 'agentSpeak', character: 'links', text: 'Salut toi ! 🐱' },
       { type: 'agentSpeak', character: 'links', text: "Moi c'est Links ! Je suis l'assistant de la personnalisation. Tout ce qui est style, couleurs, déco... c'est mon rayon !" },
@@ -57,7 +51,7 @@ export const story1Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── After form → congratulate + unlock Paint → transition to quest 2 ──
+  // ── After form → congratulate + unlock Paint ──
   {
     id: 'story1_form_done',
     conditions: [
@@ -65,8 +59,10 @@ export const story1Triggers: StoryTrigger[] = [
     ],
     actions: [
       { type: 'agentPlay', character: 'merlin', animation: 'Congratulate' },
+      { type: 'agentStopCurrent', character: 'merlin' },
       { type: 'agentSpeak', character: 'merlin', text: 'Parfait ! Enchanté de faire ta connaissance ! ✨' },
       { type: 'agentPlay', character: 'links', animation: 'Congratulate' },
+      { type: 'agentStopCurrent', character: 'links' },
       { type: 'agentSpeak', character: 'links', text: "Super ! Maintenant que je te connais mieux, j'ai un petit cadeau pour toi..." },
       { type: 'agentSpeak', character: 'links', text: '🎨 Tu viens de débloquer Paint ! Tu pourras dessiner tout ce que tu veux !' },
       { type: 'unlockApp', app: 'paint' },

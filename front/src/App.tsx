@@ -3,6 +3,7 @@ import { useWindowManager } from './hooks/useWindowManager';
 import { useAgentManager } from './hooks/useAgentManager';
 import { useGameEngine } from './hooks/useGameEngine';
 import { GameContext } from './game/GameContext';
+import { SpeechBubbleLayer } from './components/SpeechBubble';
 import { BootScreen } from './components/BootScreen';
 import { BSOD } from './components/BSOD';
 import { Desktop } from './components/Desktop/Desktop';
@@ -138,6 +139,8 @@ function App() {
         onShutDown={() => setShutdownScreen(true)}
         onTaskbarItemClick={handleTaskbarItemClick}
       />
+
+      <SpeechBubbleLayer bubbles={agents.bubbles} getAgentEl={agents.getAgentEl} onBubbleClick={agents.skipCurrentSpeech} />
 
       {/* Story form overlay */}
       {gameState.activeForm && (

@@ -24,6 +24,8 @@ function applyRuntimeAction(state: GameState, action: TriggerAction): GameState 
       return { ...state, shakingIcon: action.iconId, bleedingIcon: action.iconId };
     case 'stopShakeIcon':
       return { ...state, shakingIcon: null };
+    case 'stopBleeding':
+      return { ...state, bleedingIcon: null };
     case 'unlockApp':
       return state.unlockedApps.includes(action.app)
         ? state
@@ -62,10 +64,18 @@ export function useGameEngine({ agentManager, onOpenWindow }: Options) {
         agentManager.hide(action.character, action.instant);
         break;
       case 'agentSpeak':
-        await agentManager.speak(action.character, action.text);
+        if (action.wait === false) {
+          agentManager.speakAsync(action.character, action.text);
+        } else {
+          await agentManager.speak(action.character, action.text);
+        }
         break;
       case 'agentPlay':
         agentManager.play(action.character, action.animation);
+        await new Promise<void>(r => setTimeout(r, 300));
+        break;
+      case 'agentStopCurrent':
+        agentManager.stopCurrent(action.character);
         break;
       case 'agentMoveTo':
         await agentManager.moveTo(action.character, action.x, action.y, action.duration);

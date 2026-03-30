@@ -43,10 +43,11 @@ export type TriggerCondition =
 
 export type TriggerAction =
   | { type: 'setFlag'; flag: string; value: boolean }
-  | { type: 'agentSpeak'; character: CharacterId; text: string }
+  | { type: 'agentSpeak'; character: CharacterId; text: string; wait?: boolean }
   | { type: 'agentShow'; character: CharacterId }
   | { type: 'agentHide'; character: CharacterId; instant?: boolean }
   | { type: 'agentPlay'; character: CharacterId; animation: string }
+  | { type: 'agentStopCurrent'; character: CharacterId }
   | { type: 'agentMoveTo'; character: CharacterId; x: number; y: number; duration?: number }
   | { type: 'setCharacterStatus'; character: CharacterId; status: CharacterStatus }
   | { type: 'openWindow'; windowType: WindowType }
@@ -56,7 +57,8 @@ export type TriggerAction =
   | { type: 'delay'; ms: number }
   | { type: 'sendMail'; from: string; to: string; subject: string; body: string }
   | { type: 'shakeIcon'; iconId: string }
-  | { type: 'stopShakeIcon' };
+  | { type: 'stopShakeIcon' }
+  | { type: 'stopBleeding' };
 
 export type GameEvent =
   | { type: 'boot_complete' }

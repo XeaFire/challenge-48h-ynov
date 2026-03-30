@@ -1499,6 +1499,66 @@ body {
   100% { height: var(--flow-h); opacity: 1; }
 }
 
+/* ===== SPEECH BUBBLES ===== */
+.speech-bubbles-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50000;
+}
+
+.speech-bubble {
+  position: absolute;
+  background: #ffffcc;
+  border: 2px solid #000;
+  border-radius: 4px;
+  padding: 6px 10px;
+  max-width: 260px;
+  min-width: 100px;
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.speech-bubble-name {
+  font-weight: bold;
+  font-size: 10px;
+  color: #000080;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.speech-bubble-text {
+  color: #000;
+  word-wrap: break-word;
+}
+
+.speech-bubble-tip {
+  position: absolute;
+  bottom: -10px;
+  left: 20px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid #000;
+}
+
+.speech-bubble-tip::after {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: -7px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 9px solid #ffffcc;
+}
+
 /* ===== ANIMATIONS ===== */
 @keyframes blink {
   50% { opacity: 0; }

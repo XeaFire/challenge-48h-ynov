@@ -84,9 +84,8 @@ export function Desktop({ onOpenWindow, onTriggerBSOD, onCloseStartMenu, childre
     }
   };
 
-  // Filter icons by unlocked apps, always show IE (joke)
   const visibleIcons = DESKTOP_ICONS.filter(icon => {
-    if (icon.action.type === 'triggerBSOD') return true;
+    if (icon.action.type === 'triggerBSOD') return gameState.unlockedApps.includes('ie');
     return gameState.unlockedApps.includes(icon.action.windowType);
   });
 

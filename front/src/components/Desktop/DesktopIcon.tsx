@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 
 interface DesktopIconProps {
   x: number;
@@ -11,6 +11,17 @@ interface DesktopIconProps {
 }
 
 export function DesktopIcon({ x, y, icon, label, shaking, bleeding, onDoubleClick }: DesktopIconProps) {
+  const [fading, setFading] = useState(false);
+  const [hidden, setHidden] = useState(false);
+
+  // Apres 30s de saignement, fade out sur 3s puis disparait
+  useEffect(() => {
+    if (!bleeding) { setFading(false); setHidden(false); return; }
+    const fadeTimer = setTimeout(() => setFading(true), 30000);
+    const hideTimer = setTimeout(() => setHidden(true), 33000);
+    return () => { clearTimeout(fadeTimer); clearTimeout(hideTimer); };
+  }, [bleeding]);
+
   return (
     <div
       className={`desktop-icon${shaking ? ' desktop-icon-shaking' : ''}`}
@@ -19,7 +30,6 @@ export function DesktopIcon({ x, y, icon, label, shaking, bleeding, onDoubleClic
     >
       {icon}
       <span className="icon-label">{label}</span>
-      {/* Splatter particles — only during shake */}
       {shaking && (
         <div className="blood-splash-container">
           {Array.from({ length: 20 }, (_, i) => (
@@ -27,9 +37,14 @@ export function DesktopIcon({ x, y, icon, label, shaking, bleeding, onDoubleClic
           ))}
         </div>
       )}
-      {/* Blood streams — persist forever once triggered */}
-      {bleeding && (
-        <div className="blood-streams">
+      {bleeding && !hidden && (
+        <div
+          className="blood-streams"
+          style={{
+            opacity: fading ? 0 : 1,
+            transition: fading ? 'opacity 3s ease-out' : undefined,
+          }}
+        >
           <div className="blood-stream blood-stream-0" />
           <div className="blood-stream blood-stream-1" />
           <div className="blood-stream blood-stream-2" />

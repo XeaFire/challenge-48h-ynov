@@ -1,7 +1,8 @@
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { initAgent } from 'clippyjs';
 import { Bonzi, Clippy, Genie, Genius, Links, Merlin, Peedy, Rocky, Rover } from 'clippyjs/agents';
 import type { CharacterId } from '../game/types';
+import type { BubbleData } from '../components/SpeechBubble';
 
 type Agent = Awaited<ReturnType<typeof initAgent>>;
 
@@ -10,19 +11,38 @@ const LOADERS: Record<CharacterId, Parameters<typeof initAgent>[0]> = {
   links: Links, merlin: Merlin, peedy: Peedy, rocky: Rocky, rover: Rover,
 };
 
-/** Estimate reading time based on text length */
+const NAMES: Record<CharacterId, string> = {
+  merlin: 'Merlin', links: 'Links', bonzi: 'Bonzi', clippy: 'Clippy',
+  genie: 'Genie', genius: 'Genius', peedy: 'Peedy', rocky: 'Rocky', rover: 'Rover',
+};
+
 function readTime(text: string): number {
-  return Math.max(2500, text.length * 50);
+  const words = text.split(/\s+/).length;
+  return Math.max(2000, words * 250);
 }
+
+let bubbleIdCounter = 0;
 
 export function useAgentManager() {
   const agents = useRef<Map<CharacterId, Agent>>(new Map());
+  const [bubbles, setBubbles] = useState<BubbleData[]>([]);
+  const skipResolve = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     return () => {
-      agents.current.forEach(a => a.dispose());
+      agents.current.forEach(a => { try { a.dispose(); } catch { /* */ } });
       agents.current.clear();
     };
+  }, []);
+
+  const getAgentEl = useCallback((id: CharacterId): HTMLElement | null => {
+    const agent = agents.current.get(id);
+    if (!agent) return null;
+    return (agent as unknown as { _el: HTMLElement })._el ?? null;
+  }, []);
+
+  const skipCurrentSpeech = useCallback(() => {
+    if (skipResolve.current) skipResolve.current();
   }, []);
 
   const show = useCallback(async (id: CharacterId) => {
@@ -36,31 +56,51 @@ export function useAgentManager() {
     const agent = agents.current.get(id);
     if (!agent) return;
     agents.current.delete(id);
+    setBubbles(prev => prev.filter(b => b.characterId !== id));
     try {
-      if (instant) {
-        // Each clippyjs agent has fully isolated state (no shared globals),
-        // so dispose() is safe and properly cleans up: DOM elements, balloon,
-        // animation timers, event listeners, and audio.
-        agent.dispose();
-      } else {
-        agent.hide(false, () => { try { agent.dispose(); } catch { /* ignore */ } });
-      }
-    } catch {
-      // Ensure cleanup even if something throws
-    }
+      if (instant) agent.dispose();
+      else agent.hide(false, () => { try { agent.dispose(); } catch { /* */ } });
+    } catch { /* */ }
   }, []);
 
-  /**
-   * Show speech bubble and wait for it to auto-close.
-   * Returns a Promise that resolves after a delay proportional to text length.
-   */
   const speak = useCallback((id: CharacterId, text: string): Promise<void> => {
     return new Promise<void>(resolve => {
-      const agent = agents.current.get(id);
-      if (!agent) { resolve(); return; }
-      agent.speak(text, false);
-      setTimeout(resolve, readTime(text));
+      if (!agents.current.has(id)) { resolve(); return; }
+
+      const bubbleId = ++bubbleIdCounter;
+      setBubbles(prev => [...prev.filter(b => b.characterId !== id), {
+        id: bubbleId, characterId: id, characterName: NAMES[id], text,
+      }]);
+
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        skipResolve.current = null;
+        setBubbles(prev => prev.filter(b => b.id !== bubbleId));
+        resolve();
+      };
+
+      skipResolve.current = finish;
+      setTimeout(finish, readTime(text));
     });
+  }, []);
+
+  const speakAsync = useCallback((id: CharacterId, text: string) => {
+    if (!agents.current.has(id)) return;
+
+    const bubbleId = ++bubbleIdCounter;
+    setBubbles(prev => [...prev.filter(b => b.characterId !== id), {
+      id: bubbleId, characterId: id, characterName: NAMES[id], text,
+    }]);
+
+    setTimeout(() => {
+      setBubbles(prev => prev.filter(b => b.id !== bubbleId));
+    }, readTime(text));
+  }, []);
+
+  const stopCurrent = useCallback((id: CharacterId) => {
+    agents.current.get(id)?.stopCurrent();
   }, []);
 
   const play = useCallback((id: CharacterId, animation: string) => {
@@ -76,7 +116,7 @@ export function useAgentManager() {
     });
   }, []);
 
-  return { show, hide, speak, play, moveTo };
+  return { show, hide, speak, speakAsync, play, moveTo, stopCurrent, bubbles, getAgentEl, skipCurrentSpeech };
 }
 
 export type AgentManager = ReturnType<typeof useAgentManager>;
