@@ -1,0 +1,493 @@
+/* ===== RESET & BASE ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, Geneva, sans-serif;
+  font-size: 11px;
+  overflow: hidden;
+  height: 100vh;
+  user-select: none;
+  cursor: default;
+}
+
+/* ===== WIN98 STYLING UTILS ===== */
+.win98-border-outset {
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+.win98-border-inset {
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.win98-border-deep-inset {
+  border: 2px solid;
+  border-color: #808080 #dfdfdf #dfdfdf #808080;
+  box-shadow: inset 1px 1px 0 #000;
+}
+
+/* ===== DESKTOP ===== */
+#desktop {
+  width: 100vw;
+  height: calc(100vh - 28px);
+  background-color: #008080;
+  position: relative;
+}
+
+/* ===== DESKTOP ICONS ===== */
+.desktop-icon {
+  position: absolute;
+  width: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.desktop-icon:hover .icon-label,
+.desktop-icon.selected .icon-label {
+  background: #000080;
+  color: #fff;
+}
+
+.desktop-icon:hover .icon-img,
+.desktop-icon.selected .icon-img {
+  filter: brightness(0.7) sepia(1) hue-rotate(200deg) saturate(3);
+}
+
+.icon-img {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+
+.icon-label {
+  margin-top: 2px;
+  text-align: center;
+  color: #fff;
+  font-size: 11px;
+  padding: 1px 2px;
+  word-wrap: break-word;
+  text-shadow: 1px 1px 1px #000;
+}
+
+.desktop-icon:hover .icon-label,
+.desktop-icon.selected .icon-label {
+  text-shadow: none;
+}
+
+/* ===== TASKBAR ===== */
+#taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  background: #c0c0c0;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  z-index: 9999;
+  border-top: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+/* ===== START BUTTON ===== */
+#start-btn {
+  height: 22px;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: #c0c0c0;
+  font-weight: bold;
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+#start-btn:active, #start-btn.active {
+  border-color: #808080 #ffffff #ffffff #808080;
+  padding: 1px 5px 0 7px;
+}
+
+#start-btn .start-logo {
+  width: 16px;
+  height: 16px;
+}
+
+/* ===== TASKBAR ITEMS ===== */
+#taskbar-items {
+  flex: 1;
+  display: flex;
+  gap: 2px;
+  margin-left: 4px;
+  overflow: hidden;
+}
+
+.taskbar-item {
+  height: 22px;
+  min-width: 120px;
+  max-width: 160px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  background: #c0c0c0;
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.taskbar-item.active {
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #c8c8c8;
+  font-weight: bold;
+}
+
+/* ===== CLOCK ===== */
+#clock {
+  height: 22px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  margin-left: auto;
+}
+
+/* ===== START MENU ===== */
+#start-menu {
+  display: none;
+  position: fixed;
+  bottom: 28px;
+  left: 0;
+  width: 180px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  z-index: 10000;
+}
+
+#start-menu.visible { display: block; }
+
+#start-menu-sidebar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 22px;
+  background: linear-gradient(to top, #000080, #1084d0);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 4px;
+}
+
+#start-menu-sidebar span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  color: #c0c0c0;
+  font-weight: bold;
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+
+#start-menu-items {
+  margin-left: 22px;
+  padding: 2px 0;
+}
+
+.start-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 6px;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.start-menu-item:hover {
+  background: #000080;
+  color: #fff;
+}
+
+.start-menu-item .menu-icon {
+  width: 16px;
+  height: 16px;
+  image-rendering: pixelated;
+}
+
+.start-menu-separator {
+  height: 1px;
+  background: #808080;
+  margin: 2px 4px 2px 26px;
+  border-bottom: 1px solid #fff;
+}
+
+/* ===== WINDOWS ===== */
+.window {
+  position: absolute;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  min-height: 120px;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+}
+
+.window.maximized {
+  left: 0 !important;
+  top: 0 !important;
+  width: 100vw !important;
+  height: calc(100vh - 28px) !important;
+  box-shadow: none;
+}
+
+.window-titlebar {
+  height: 18px;
+  background: linear-gradient(to right, #000080, #1084d0);
+  display: flex;
+  align-items: center;
+  padding: 0 2px;
+  cursor: default;
+  flex-shrink: 0;
+}
+
+.window.inactive .window-titlebar {
+  background: linear-gradient(to right, #808080, #b0b0b0);
+}
+
+.window-titlebar-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 3px;
+  image-rendering: pixelated;
+}
+
+.window-title {
+  flex: 1;
+  color: #fff;
+  font-size: 11px;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.window-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.window-btn {
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 8px;
+  font-family: "Marlett", sans-serif;
+  line-height: 1;
+}
+
+.window-btn:active {
+  border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.window-btn span {
+  font-family: inherit;
+  font-size: 7px;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.window-menubar {
+  display: flex;
+  padding: 1px 0;
+  border-bottom: 1px solid #808080;
+  flex-shrink: 0;
+}
+
+.window-menu-item {
+  padding: 2px 8px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.window-menu-item:hover {
+  background: #000080;
+  color: #fff;
+}
+
+.window-body {
+  flex: 1;
+  margin: 2px;
+  overflow: auto;
+}
+
+.window-body-inset {
+  background: #fff;
+  border: 2px solid;
+  border-color: #808080 #dfdfdf #dfdfdf #808080;
+  box-shadow: inset 1px 1px 0 #000;
+}
+
+.window-statusbar {
+  height: 18px;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  border-top: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+/* ===== NOTEPAD SPECIFIC ===== */
+.notepad-textarea {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: "Fixedsys", "Courier New", monospace;
+  font-size: 13px;
+  padding: 2px;
+  background: #fff;
+}
+
+/* ===== MY COMPUTER SPECIFIC ===== */
+.file-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+}
+
+.file-item {
+  width: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.file-item:hover .file-label {
+  background: #000080;
+  color: #fff;
+}
+
+.file-item .file-icon {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+
+.file-label {
+  margin-top: 2px;
+  text-align: center;
+  font-size: 11px;
+  padding: 1px 2px;
+}
+
+/* ===== ABOUT DIALOG ===== */
+.about-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.about-content h2 {
+  font-size: 16px;
+  margin: 4px 0;
+}
+
+.about-content p {
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.win98-button {
+  padding: 4px 20px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.win98-button:active {
+  border-color: #808080 #ffffff #ffffff #808080;
+}
+
+/* ===== BSOD ===== */
+.bsod {
+  position: fixed;
+  inset: 0;
+  background: #000080;
+  color: #fff;
+  font-family: "Fixedsys", "Courier New", monospace;
+  font-size: 14px;
+  padding: 40px;
+  z-index: 99999;
+  line-height: 1.6;
+}
+
+/* ===== BOOT SCREEN ===== */
+.boot-screen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  color: #c0c0c0;
+  font-family: "Fixedsys", "Courier New", monospace;
+  font-size: 14px;
+  padding: 20px;
+  z-index: 99998;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.boot-logo {
+  font-size: 28px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.boot-progress {
+  width: 200px;
+  height: 18px;
+  background: #000;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  padding: 2px;
+}
+
+.boot-progress-bar {
+  height: 100%;
+  background: #000080;
+  transition: width 0.3s;
+}
