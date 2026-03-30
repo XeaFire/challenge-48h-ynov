@@ -108,6 +108,43 @@ export function FloppyDiskIcon() {
   );
 }
 
+export function ExplorerIcon({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={PIXEL_STYLE}>
+      <rect x="3" y="6" width="26" height="20" rx="1" fill="#c0c0c0" stroke="#000" strokeWidth="0.5" />
+      <rect x="3" y="4" width="14" height="4" rx="1" fill="#ffcc00" stroke="#000" strokeWidth="0.5" />
+      <rect x="3" y="6" width="26" height="20" rx="1" fill="#ffcc00" stroke="#000" strokeWidth="0.5" />
+      <rect x="5" y="9" width="22" height="15" fill="#fff" stroke="#808080" strokeWidth="0.5" />
+      <rect x="7" y="11" width="6" height="5" fill="#ffcc00" stroke="#808080" strokeWidth="0.3" />
+      <rect x="15" y="11" width="6" height="5" fill="#ffcc00" stroke="#808080" strokeWidth="0.3" />
+      <line x1="7" y1="19" x2="25" y2="19" stroke="#808080" strokeWidth="0.5" />
+      <line x1="7" y1="21" x2="25" y2="21" stroke="#808080" strokeWidth="0.5" />
+    </svg>
+  );
+}
+
+export function FileIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" style={PIXEL_STYLE}>
+      <rect x="2" y="1" width="9" height="14" fill="#fff" stroke="#000" strokeWidth="0.5" />
+      <polygon points="11,1 14,4 11,4" fill="#c0c0c0" stroke="#000" strokeWidth="0.3" />
+      <rect x="11" y="4" width="3" height="11" fill="#fff" stroke="#000" strokeWidth="0.5" />
+      <line x1="4" y1="6" x2="12" y2="6" stroke="#000080" strokeWidth="0.3" />
+      <line x1="4" y1="8" x2="12" y2="8" stroke="#000080" strokeWidth="0.3" />
+      <line x1="4" y1="10" x2="10" y2="10" stroke="#000080" strokeWidth="0.3" />
+    </svg>
+  );
+}
+
+export function SmallFolderIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" style={PIXEL_STYLE}>
+      <rect x="1" y="4" width="14" height="10" rx="0.5" fill="#ffcc00" stroke="#000" strokeWidth="0.5" />
+      <rect x="1" y="2" width="7" height="3" rx="0.5" fill="#ffcc00" stroke="#000" strokeWidth="0.5" />
+    </svg>
+  );
+}
+
 export function PaintIcon({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" style={PIXEL_STYLE}>

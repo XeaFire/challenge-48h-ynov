@@ -8,6 +8,7 @@ const WINDOW_DEFAULTS: Record<WindowType, { title: string; width: number; height
   about: { title: 'A propos de Pindows 98', width: 380, height: 260 },
   calculator: { title: 'Calculatrice', width: 260, height: 305 },
   paint: { title: 'Sans titre - Paint', width: 640, height: 480 },
+  explorer: { title: 'Explorateur Windows', width: 600, height: 420 },
 };
 
 const CASCADE_OFFSET = 20;
