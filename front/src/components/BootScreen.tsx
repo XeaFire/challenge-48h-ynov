@@ -12,7 +12,6 @@ export function BootScreen({ onComplete }: BootScreenProps) {
     const interval = setInterval(() => {
       setProgress(current => {
         const next = current + Math.random() * 15 + 5;
-
         if (next >= 100) {
           clearInterval(interval);
           setTimeout(() => {
@@ -21,11 +20,9 @@ export function BootScreen({ onComplete }: BootScreenProps) {
           }, 400);
           return 100;
         }
-
         return next;
       });
     }, 200);
-
     return () => clearInterval(interval);
   }, [onComplete]);
 
@@ -36,10 +33,7 @@ export function BootScreen({ onComplete }: BootScreenProps) {
       <div className="boot-logo">Pindows 98</div>
       <div style={{ color: '#808080' }}>Starting Pindows...</div>
       <div className="boot-progress">
-        <div
-          className="boot-progress-bar"
-          style={{ width: `${Math.min(progress, 100)}%` }}
-        />
+        <div className="boot-progress-bar" style={{ width: `${Math.min(progress, 100)}%` }} />
       </div>
     </div>
   );
