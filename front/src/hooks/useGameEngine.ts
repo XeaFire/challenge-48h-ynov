@@ -4,6 +4,7 @@ import type { AgentManager } from './useAgentManager';
 import { createInitialState } from '../game/initialState';
 import { evaluateTriggers } from '../game/storyEngine';
 import { STORY_TRIGGERS } from '../game/storyData';
+import { mailStore } from './useMailStore';
 import type { WindowType } from '../types';
 
 interface Options {
@@ -11,48 +12,126 @@ interface Options {
   onOpenWindow?: (type: WindowType) => void;
 }
 
+/**
+ * Actions that must mutate state at RUNTIME (during sequential execution)
+ * rather than at evaluation time. This is necessary because their effects
+ * need to be visible to React between other async actions (e.g. shakeIcon
+ * must be visible during the delay before stopShakeIcon).
+ */
+function applyRuntimeAction(state: GameState, action: TriggerAction): GameState | null {
+  switch (action.type) {
+    case 'shakeIcon':
+      return { ...state, shakingIcon: action.iconId, bleedingIcon: action.iconId };
+    case 'stopShakeIcon':
+      return { ...state, shakingIcon: null };
+    case 'unlockApp':
+      return state.unlockedApps.includes(action.app)
+        ? state
+        : { ...state, unlockedApps: [...state.unlockedApps, action.app] };
+    case 'lockApp':
+      return { ...state, unlockedApps: state.unlockedApps.filter(a => a !== action.app) };
+    default:
+      return null; // not a runtime action
+  }
+}
+
 export function useGameEngine({ agentManager, onOpenWindow }: Options) {
   const stateRef = useRef<GameState>(createInitialState());
   const [gameState, setGameState] = useState<GameState>(stateRef.current);
   const firedTriggers = useRef(new Set<string>());
   const processingRef = useRef(false);
-  const queue = useRef<TriggerAction[][]>([]);
+  const pendingEvents = useRef<GameEvent[]>([]);
 
-  const processQueue = useCallback(async () => {
+  const updateState = useCallback((state: GameState) => {
+    stateRef.current = state;
+    setGameState(state);
+  }, []);
+
+  const executeAction = useCallback(async (action: TriggerAction): Promise<void> => {
+    // Apply runtime state mutations immediately so React sees them
+    const runtimeState = applyRuntimeAction(stateRef.current, action);
+    if (runtimeState) {
+      updateState(runtimeState);
+    }
+
+    switch (action.type) {
+      case 'agentShow':
+        await agentManager.show(action.character);
+        break;
+      case 'agentHide':
+        agentManager.hide(action.character, action.instant);
+        break;
+      case 'agentSpeak':
+        await agentManager.speak(action.character, action.text);
+        break;
+      case 'agentPlay':
+        agentManager.play(action.character, action.animation);
+        break;
+      case 'agentMoveTo':
+        await agentManager.moveTo(action.character, action.x, action.y, action.duration);
+        break;
+      case 'openWindow':
+        onOpenWindow?.(action.windowType);
+        break;
+      case 'delay':
+        await new Promise<void>(r => setTimeout(r, action.ms));
+        break;
+      case 'sendMail':
+        mailStore.send({ from: action.from, to: action.to, subject: action.subject, body: action.body });
+        break;
+      // setFlag, setCharacterStatus, showForm → applied at evaluation time only
+      // shakeIcon, stopShakeIcon, unlockApp, lockApp → applied above via applyRuntimeAction
+    }
+  }, [agentManager, onOpenWindow, updateState]);
+
+  const processActions = useCallback(async (actions: TriggerAction[]) => {
+    for (const action of actions) {
+      try {
+        await executeAction(action);
+      } catch (e) {
+        console.warn('[GameEngine] action failed:', action.type, e);
+      }
+    }
+
+    // Re-evaluate: flags set during evaluation may enable new triggers
+    const { newState, actions: newActions, newlyFiredIds } = evaluateTriggers(
+      stateRef.current, STORY_TRIGGERS, { type: 'recheck' }, firedTriggers.current,
+    );
+
+    for (const id of newlyFiredIds) firedTriggers.current.add(id);
+    updateState(newState);
+
+    if (newActions.length > 0) {
+      await processActions(newActions);
+    }
+  }, [executeAction, updateState]);
+
+  const processNext = useCallback(async () => {
     if (processingRef.current) return;
     processingRef.current = true;
 
-    while (queue.current.length > 0) {
-      for (const action of queue.current.shift()!) {
-        switch (action.type) {
-          case 'agentShow': await agentManager.show(action.character); break;
-          case 'agentHide': agentManager.hide(action.character); break;
-          case 'agentSpeak': agentManager.speak(action.character, action.text); break;
-          case 'agentPlay': agentManager.play(action.character, action.animation); break;
-          case 'agentMoveTo': agentManager.moveTo(action.character, action.x, action.y); break;
-          case 'openWindow': onOpenWindow?.(action.windowType); break;
-        }
+    while (pendingEvents.current.length > 0) {
+      const event = pendingEvents.current.shift()!;
+
+      const { newState, actions, newlyFiredIds } = evaluateTriggers(
+        stateRef.current, STORY_TRIGGERS, event, firedTriggers.current,
+      );
+
+      for (const id of newlyFiredIds) firedTriggers.current.add(id);
+      updateState(newState);
+
+      if (actions.length > 0) {
+        await processActions(actions);
       }
     }
 
     processingRef.current = false;
-  }, [agentManager, onOpenWindow]);
+  }, [processActions, updateState]);
 
   const dispatch = useCallback((event: GameEvent) => {
-    const { newState, actions, newlyFiredIds } = evaluateTriggers(
-      stateRef.current, STORY_TRIGGERS, event, firedTriggers.current,
-    );
-
-    for (const id of newlyFiredIds) firedTriggers.current.add(id);
-
-    stateRef.current = newState;
-    setGameState(newState);
-
-    if (actions.length > 0) {
-      queue.current.push(actions);
-      processQueue();
-    }
-  }, [processQueue]);
+    pendingEvents.current.push(event);
+    processNext();
+  }, [processNext]);
 
   return { gameState, dispatch };
 }

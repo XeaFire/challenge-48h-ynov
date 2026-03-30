@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { WindowType } from '../../types';
+import { useGame } from '../../game/GameContext';
 import { DesktopIcon } from './DesktopIcon';
 import { ComputerIcon, NotepadIcon, RecycleBinIcon, InternetExplorerIcon, CalculatorIcon, PaintIcon, ExplorerIcon, MailIcon } from '../../icons';
 
@@ -73,6 +74,8 @@ const DESKTOP_ICONS: DesktopIconConfig[] = [
 ];
 
 export function Desktop({ onOpenWindow, onTriggerBSOD, onCloseStartMenu, children }: DesktopProps) {
+  const { gameState } = useGame();
+
   const handleIconAction = (action: IconAction) => {
     if (action.type === 'openWindow') {
       onOpenWindow(action.windowType);
@@ -81,15 +84,29 @@ export function Desktop({ onOpenWindow, onTriggerBSOD, onCloseStartMenu, childre
     }
   };
 
+  // Filter icons by unlocked apps, always show IE (joke)
+  const visibleIcons = DESKTOP_ICONS.filter(icon => {
+    if (icon.action.type === 'triggerBSOD') return true;
+    return gameState.unlockedApps.includes(icon.action.windowType);
+  });
+
+  // Recompute Y positions so there are no gaps
+  const repositioned = visibleIcons.map((icon, i) => ({
+    ...icon,
+    y: 10 + i * 90,
+  }));
+
   return (
     <div id="desktop" onClick={onCloseStartMenu}>
-      {DESKTOP_ICONS.map(({ id, x, y, icon, label, action }) => (
+      {repositioned.map(({ id, x, y, icon, label, action }) => (
         <DesktopIcon
           key={id}
           x={x}
           y={y}
           icon={icon}
           label={label}
+          shaking={gameState.shakingIcon === id}
+          bleeding={gameState.bleedingIcon === id}
           onDoubleClick={() => handleIconAction(action)}
         />
       ))}
