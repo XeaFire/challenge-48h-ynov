@@ -542,6 +542,191 @@ body {
   width: 40px;
 }
 
+/* ===== PAINT ===== */
+.paint {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #c0c0c0;
+}
+
+.paint-toolbar {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 30px;
+  width: 52px;
+  padding: 2px;
+  border-right: 1px solid #808080;
+  background: #c0c0c0;
+  z-index: 1;
+  gap: 4px;
+}
+
+.paint-tools {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  padding: 2px;
+}
+
+.paint-tool-btn {
+  width: 22px;
+  height: 22px;
+  background: #c0c0c0;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.paint-tool-btn:hover {
+  border: 1px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+.paint-tool-btn.active {
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #b0b0b0;
+}
+
+.paint-line-widths {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  padding: 2px;
+  align-items: center;
+}
+
+.paint-width-btn {
+  width: 38px;
+  height: 10px;
+  background: #c0c0c0;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.paint-width-btn:hover {
+  border: 1px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+}
+
+.paint-width-btn.active {
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #b0b0b0;
+}
+
+.paint-canvas-area {
+  flex: 1;
+  overflow: auto;
+  margin-left: 52px;
+  background: #808080;
+  border: 2px solid;
+  border-color: #808080 #dfdfdf #dfdfdf #808080;
+  box-shadow: inset 1px 1px 0 #000;
+}
+
+.paint-canvas-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.paint-canvas {
+  display: block;
+  cursor: crosshair;
+  background: #fff;
+}
+
+.paint-canvas-preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.paint-bottom {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px;
+  border-top: 1px solid #808080;
+  flex-shrink: 0;
+}
+
+.paint-active-colors {
+  position: relative;
+  width: 30px;
+  height: 26px;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.paint-color-active-fg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #000;
+  z-index: 2;
+}
+
+.paint-color-active-bg {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #000;
+  z-index: 1;
+}
+
+.paint-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  height: 26px;
+  align-content: flex-start;
+}
+
+.paint-color-btn {
+  width: 12px;
+  height: 12px;
+  border: 1px solid #808080;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.paint-color-btn:hover {
+  border-color: #fff;
+}
+
+.paint-coords {
+  margin-left: auto;
+  font-size: 11px;
+  color: #000;
+  border: 1px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  padding: 1px 6px;
+}
+
 /* ===== BSOD ===== */
 .bsod {
   position: fixed;

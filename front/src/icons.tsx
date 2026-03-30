@@ -108,6 +108,22 @@ export function FloppyDiskIcon() {
   );
 }
 
+export function PaintIcon({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={PIXEL_STYLE}>
+      <rect x="4" y="4" width="24" height="24" fill="#fff" stroke="#000" strokeWidth="1" />
+      <rect x="6" y="6" width="20" height="20" fill="#fff" />
+      <rect x="8" y="10" width="6" height="4" fill="#ff0000" />
+      <rect x="12" y="8" width="5" height="6" fill="#00ff00" />
+      <rect x="16" y="12" width="7" height="5" fill="#0000ff" />
+      <rect x="10" y="14" width="5" height="5" fill="#ffff00" />
+      <line x1="22" y1="4" x2="28" y2="2" stroke="#808080" strokeWidth="1.5" />
+      <line x1="24" y1="8" x2="28" y2="2" stroke="#ffcc00" strokeWidth="2" />
+      <circle cx="28" cy="2" r="1.5" fill="#ffcc00" />
+    </svg>
+  );
+}
+
 export function CalculatorIcon({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" style={PIXEL_STYLE}>
