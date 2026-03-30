@@ -111,18 +111,6 @@ function getNodeAtPath(root: FsNode, path: string[]): FsNode | null {
   return current;
 }
 
-function getAllFolders(node: FsNode, path: string[] = []): { path: string[]; name: string; depth: number }[] {
-  const result: { path: string[]; name: string; depth: number }[] = [];
-  if (node.type === 'folder') {
-    result.push({ path, name: node.name, depth: path.length });
-    for (const child of node.children ?? []) {
-      if (child.type === 'folder') {
-        result.push(...getAllFolders(child, [...path, child.name]));
-      }
-    }
-  }
-  return result;
-}
 
 interface TreeNodeProps {
   node: FsNode;

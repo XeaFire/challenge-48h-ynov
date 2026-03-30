@@ -14,9 +14,10 @@ export function useAgentManager() {
   const agents = useRef<Map<CharacterId, Agent>>(new Map());
 
   useEffect(() => {
+    const current = agents.current;
     return () => {
-      agents.current.forEach(a => a.dispose());
-      agents.current.clear();
+      current.forEach(a => a.dispose());
+      current.clear();
     };
   }, []);
 
