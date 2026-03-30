@@ -108,6 +108,24 @@ export function FloppyDiskIcon() {
   );
 }
 
+export function CalculatorIcon({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={PIXEL_STYLE}>
+      <rect x="5" y="2" width="22" height="28" rx="1" fill="#c0c0c0" stroke="#000" strokeWidth="1" />
+      <rect x="7" y="4" width="18" height="6" fill="#8fbc8f" stroke="#808080" strokeWidth="0.5" />
+      <rect x="7" y="12" width="4" height="4" fill="#fff" stroke="#808080" strokeWidth="0.3" />
+      <rect x="13" y="12" width="4" height="4" fill="#fff" stroke="#808080" strokeWidth="0.3" />
+      <rect x="19" y="12" width="4" height="4" fill="#ff8c00" stroke="#808080" strokeWidth="0.3" />
+      <rect x="7" y="18" width="4" height="4" fill="#fff" stroke="#808080" strokeWidth="0.3" />
+      <rect x="13" y="18" width="4" height="4" fill="#fff" stroke="#808080" strokeWidth="0.3" />
+      <rect x="19" y="18" width="4" height="4" fill="#ff8c00" stroke="#808080" strokeWidth="0.3" />
+      <rect x="7" y="24" width="4" height="4" fill="#fff" stroke="#808080" strokeWidth="0.3" />
+      <rect x="13" y="24" width="4" height="4" fill="#fff" stroke="#808080" strokeWidth="0.3" />
+      <rect x="19" y="24" width="4" height="4" fill="#4169e1" stroke="#808080" strokeWidth="0.3" />
+    </svg>
+  );
+}
+
 export function PindowsLogo() {
   return (
     <svg width="64" height="64" viewBox="0 0 64 64">

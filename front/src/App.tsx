@@ -9,6 +9,7 @@ import { MyComputer } from './components/windows/MyComputer';
 import { Notepad } from './components/windows/Notepad';
 import { RecycleBin } from './components/windows/RecycleBin';
 import { AboutDialog } from './components/windows/AboutDialog';
+import { Calculator } from './components/windows/Calculator';
 import type { WindowType } from './types';
 
 const WINDOW_CONFIG: Record<WindowType, { menu?: string[]; statusbar?: string; insetBody?: boolean }> = {
@@ -16,6 +17,7 @@ const WINDOW_CONFIG: Record<WindowType, { menu?: string[]; statusbar?: string; i
   notepad: { menu: ['Fichier', 'Edition', 'Rechercher', '?'] },
   recyclebin: { menu: ['Fichier', 'Edition', 'Affichage', '?'], statusbar: '0 objet(s)' },
   about: { insetBody: false },
+  calculator: { menu: ['Edition', 'Affichage', '?'], insetBody: false },
 };
 
 function App() {
@@ -75,6 +77,7 @@ function App() {
       case 'notepad': return <Notepad />;
       case 'recyclebin': return <RecycleBin />;
       case 'about': return <AboutDialog onClose={() => closeWindow(windowId)} />;
+      case 'calculator': return <Calculator />;
     }
   }
 
