@@ -246,6 +246,7 @@ type Tab = 'drives' | 'tools' | 'passwords';
 
 export function MyComputer() {
   const [tab, setTab] = useState<Tab>('drives');
+  const [ghostVisible, setGhostVisible] = useState(true);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -278,6 +279,42 @@ export function MyComputer() {
         {tab === 'drives' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: 4 }}>
             {DRIVES.map(d => <DriveBar key={d.letter} drive={d} />)}
+            {ghostVisible && (
+              <div
+                onClick={() => setGhostVisible(false)}
+                title=""
+                style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 8px', cursor: 'default', opacity: 0.45 }}
+              >
+                <div style={{ width: 32, height: 32, flexShrink: 0 }}>
+                  <svg width={32} height={32} viewBox="0 0 32 32" style={{ imageRendering: 'pixelated' }}>
+                    <rect x="4" y="8" width="24" height="16" rx="1" fill="#808080" stroke="#444" strokeWidth="0.5" />
+                    <rect x="6" y="10" width="20" height="12" fill="#555" />
+                    <text x="16" y="20" textAnchor="middle" fill="#aaa" fontSize="7" fontFamily="monospace">???</text>
+                  </svg>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 11, fontWeight: 'bold', marginBottom: 2, color: '#555', fontFamily: 'monospace' }}>
+                    ░░░░░░░░ (?:)
+                  </div>
+                  <div style={{
+                    height: 14, background: '#eee',
+                    border: '1px solid #808080', position: 'relative',
+                  }}>
+                    <div style={{ height: '100%', width: '100%', background: '#888' }} />
+                    <span style={{
+                      position: 'absolute', inset: 0,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 9, fontWeight: 'bold', color: '#fff',
+                    }}>
+                      ???
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 9, color: '#999', marginTop: 1, fontFamily: 'monospace' }}>
+                    ??? utilise sur ???
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

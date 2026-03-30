@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useWindowManager } from './hooks/useWindowManager';
 import { useAgentManager } from './hooks/useAgentManager';
 import { useGameEngine } from './hooks/useGameEngine';
@@ -34,6 +34,12 @@ function App() {
   const [bsodVisible, setBsodVisible] = useState(false);
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [shutdownScreen, setShutdownScreen] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setBsodVisible(true);
+    window.addEventListener('trigger-bsod', handler);
+    return () => window.removeEventListener('trigger-bsod', handler);
+  }, []);
 
   const agents = useAgentManager();
   const {
