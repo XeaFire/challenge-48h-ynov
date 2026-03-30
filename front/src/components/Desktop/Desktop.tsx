@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { WindowType } from '../../types';
 import { DesktopIcon } from './DesktopIcon';
-import { ComputerIcon, NotepadIcon, RecycleBinIcon, InternetExplorerIcon, CalculatorIcon, PaintIcon, ExplorerIcon } from '../../icons';
+import { ComputerIcon, NotepadIcon, RecycleBinIcon, InternetExplorerIcon, CalculatorIcon, PaintIcon, ExplorerIcon, SolitaireIcon } from '../../icons';
 
 interface DesktopProps {
   onOpenWindow: (type: WindowType) => void;
@@ -67,8 +67,15 @@ const DESKTOP_ICONS: DesktopIconConfig[] = [
     action: { type: 'openWindow', windowType: 'paint' },
   },
   {
-    id: 'ie',
+    id: 'solitaire',
     x: 10, y: 550,
+    icon: <SolitaireIcon />,
+    label: 'Solitaire',
+    action: { type: 'openWindow', windowType: 'solitaire' },
+  },
+  {
+    id: 'ie',
+    x: 10, y: 640,
     icon: <InternetExplorerIcon />,
     label: 'Internet Explorer',
     action: { type: 'triggerBSOD' },

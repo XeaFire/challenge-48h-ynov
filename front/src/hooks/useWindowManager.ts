@@ -9,6 +9,7 @@ const WINDOW_DEFAULTS: Record<WindowType, { title: string; width: number; height
   calculator: { title: 'Calculatrice', width: 260, height: 305 },
   paint: { title: 'Sans titre - Paint', width: 640, height: 480 },
   explorer: { title: 'Explorateur Windows', width: 600, height: 420 },
+  solitaire: { title: 'Solitaire', width: 540, height: 520 },
 };
 
 const CASCADE_OFFSET = 20;
