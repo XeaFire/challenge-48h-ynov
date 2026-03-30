@@ -25,7 +25,7 @@ export function useAgentManager() {
     if (agents.current.has(id)) return;
     const agent = await initAgent(LOADERS[id]);
     agents.current.set(id, agent);
-    agent.show();
+    agent.show(false);
   }, []);
 
   const hide = useCallback((id: CharacterId) => {
