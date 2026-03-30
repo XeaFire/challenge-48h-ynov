@@ -1,0 +1,7 @@
+:80 {
+	root * /srv
+	file_server
+
+	# SPA fallback: redirect all non-file requests to index.html
+	try_files {path} /index.html
+}
