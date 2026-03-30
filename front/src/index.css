@@ -243,8 +243,11 @@ body {
   display: flex;
   flex-direction: column;
   min-width: 200px;
-  min-height: 120px;
+  min-height: 200px;
+  resize: both;
+  overflow: auto;
   box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+  transition: all 0.2s ease-in-out;
 }
 
 .window.maximized {
