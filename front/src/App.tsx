@@ -12,6 +12,7 @@ import { AboutDialog } from './components/windows/AboutDialog';
 import { Calculator } from './components/windows/Calculator';
 import { Paint } from './components/windows/Paint';
 import { Explorer } from './components/windows/Explorer';
+import { MailApp } from './components/windows/MailApp';
 import type { WindowType } from './types';
 
 const WINDOW_CONFIG: Record<WindowType, { menu?: string[]; statusbar?: string; insetBody?: boolean }> = {
@@ -22,6 +23,7 @@ const WINDOW_CONFIG: Record<WindowType, { menu?: string[]; statusbar?: string; i
   calculator: { menu: ['Edition', 'Affichage', '?'], insetBody: false },
   paint: { menu: ['Fichier', 'Edition', 'Affichage', 'Image', 'Couleurs', '?'], statusbar: 'Pour obtenir de l\'aide, cliquez sur ? , Rubriques d\'aide.' },
   explorer: { menu: ['Fichier', 'Edition', 'Affichage', 'Outils', '?'] },
+  mail: { menu: ['Fichier', 'Edition', 'Affichage', 'Message', 'Outils', '?'] },
 };
 
 function App() {
@@ -84,6 +86,7 @@ function App() {
       case 'calculator': return <Calculator />;
       case 'paint': return <Paint />;
       case 'explorer': return <Explorer />;
+      case 'mail': return <MailApp />;
     }
   }
 
