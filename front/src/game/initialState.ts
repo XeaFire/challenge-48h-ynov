@@ -13,8 +13,6 @@ export function createInitialState(): GameState {
   const unlockedApps: string[] = ['mycomputer', 'notepad', 'recyclebin', 'calculator', 'explorer', 'mail', 'minesweeper', 'solitaire'];
   return { characters, flags: {}, unlockedApps, profile: {}, activeForm: null, shakingIcon: null, bleedingIcon: null, notification: null, lockedApps: [], screenShake: false, subliminalText: null, windowsLocked: false, lockedWindows: [] };
 }
-
-/** Flags + fired trigger IDs to skip to a specific story start */
 export interface DebugPreset {
   label: string;
   flags: Record<string, boolean>;

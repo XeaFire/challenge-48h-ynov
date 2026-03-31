@@ -35,7 +35,6 @@ interface DragState {
   sel: Sel;
 }
 
-// ─── Constants ───────────────────────────────────────────────────────────────
 
 const SUITS: Suit[] = ['hearts', 'diamonds', 'clubs', 'spades'];
 const SYM: Record<Suit, string> = { hearts: '♥', diamonds: '♦', clubs: '♣', spades: '♠' };
@@ -46,7 +45,6 @@ const opp = (a: Suit, b: Suit) => isRed(a) !== isRed(b);
 const CW = 62, CH = 88;
 const FD_STEP = 14, FU_STEP = 20;
 
-// ─── Game logic ───────────────────────────────────────────────────────────────
 
 function mkDeck(): Card[] {
   return SUITS.flatMap(suit =>
@@ -103,7 +101,6 @@ function flipTop(col: Card[]): Card[] {
   return l.faceUp ? col : [...col.slice(0, -1), { ...l, faceUp: true }];
 }
 
-// Remove selected cards from their source pile
 function removeFromSrc(g: G, cards: Card[]): { waste: Card[]; fnd: Card[][]; tab: Card[][]; bonus: number } {
   const waste = [...g.waste];
   const fnd = g.fnd.map(f => [...f]);
@@ -127,7 +124,6 @@ function removeFromSrc(g: G, cards: Card[]): { waste: Card[]; fnd: Card[][]; tab
   return { waste, fnd, tab, bonus };
 }
 
-// Try to move selection to a tableau column; returns new state or null if invalid
 function tryMoveToTab(g: G, destCol: number): G | null {
   if (!g.sel) return null;
   const cards = getSelCards(g);
@@ -143,7 +139,6 @@ function tryMoveToTab(g: G, destCol: number): G | null {
   return { ...g, waste, fnd, tab, sel: null, score: g.score + baseScore + bonus, moves: g.moves + 1 };
 }
 
-// Try to move selection to a foundation; returns new state or null if invalid
 function tryMoveToFnd(g: G, fi: number): G | null {
   if (!g.sel) return null;
   const cards = getSelCards(g);
@@ -156,7 +151,6 @@ function tryMoveToFnd(g: G, fi: number): G | null {
   return { ...g, waste, fnd, tab, sel: null, score: g.score + 10 + bonus, moves: g.moves + 1, won };
 }
 
-// ─── Card visuals ─────────────────────────────────────────────────────────────
 
 function CardBack({ selected, dimmed }: { selected?: boolean; dimmed?: boolean }) {
   return (
@@ -173,7 +167,6 @@ function CardBack({ selected, dimmed }: { selected?: boolean; dimmed?: boolean }
   );
 }
 
-// Pip positions for each card value (x: 0=left 1=center 2=right, y: 0-4 top to bottom, flip: upside down)
 const PIP_LAYOUTS: Record<number, { x: number; y: number; flip?: boolean }[]> = {
   1:  [{ x: 1, y: 2 }],
   2:  [{ x: 1, y: 0 }, { x: 1, y: 4, flip: true }],
@@ -193,7 +186,6 @@ function Pips({ suit, value }: { suit: Suit; value: number }) {
   const layout = PIP_LAYOUTS[value];
 
   if (!layout) {
-    // Face cards (J, Q, K)
     const face = value === 11 ? 'J' : value === 12 ? 'Q' : 'K';
     const faceColor = isRed(suit) ? '#cc0000' : '#222';
     return (
@@ -203,7 +195,6 @@ function Pips({ suit, value }: { suit: Suit; value: number }) {
     );
   }
 
-  // Ace: big center symbol
   if (value === 1) {
     return (
       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', fontSize: 38, color, pointerEvents: 'none' }}>
@@ -277,7 +268,6 @@ function EmptySlot({ label, onClick }: { label?: string; onClick?: () => void })
   );
 }
 
-// ─── Column offset helper ─────────────────────────────────────────────────────
 
 function colTop(col: Card[], ri: number): number {
   let top = 0;
@@ -290,7 +280,6 @@ function colHeight(col: Card[]): number {
   return colTop(col, col.length - 1) + CH;
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
 
 export function Solitaire() {
   const [g, setG] = useState<G>(newGame);
@@ -315,7 +304,6 @@ export function Solitaire() {
 
   const reset = () => { setG(newGame()); setHistory([]); setDrag(null); };
 
-  // ─── Drag handlers ────────────────────────────────────────────────────────
 
   const startDrag = useCallback((e: React.MouseEvent, sel: Sel, cards: Card[], originEl: HTMLElement) => {
     e.preventDefault();
@@ -344,13 +332,10 @@ export function Solitaire() {
     const dropX = drag.currentX;
     const dropY = drag.currentY;
 
-    // Find drop target
     const boardRect = boardRef.current.getBoundingClientRect();
 
-    // Check foundations (top row, after stock+waste+spacer)
     const fndStartX = boardRect.left + (CW + 8) * 3; // stock + waste + spacer
     const fndY = boardRect.top + 10; // padding
-    // Account for top bar height (~28px)
     const topBarHeight = 28;
     const rowY = fndY + topBarHeight;
 
@@ -366,7 +351,6 @@ export function Solitaire() {
       }
     }
 
-    // Check tableau columns
     const tabY = rowY + CH + 12;
     for (let ci = 0; ci < 7; ci++) {
       const cx = boardRect.left + 8 + ci * (CW + 8);
@@ -380,7 +364,6 @@ export function Solitaire() {
       }
     }
 
-    // No valid target, cancel
     setG(prev => ({ ...prev, sel: null }));
     setDrag(null);
   }, [drag]);
@@ -395,7 +378,6 @@ export function Solitaire() {
     };
   }, [drag, onMouseMove, onMouseUp]);
 
-  // Check if a card is being dragged (to dim it in place)
   const isDragged = (from: string, col?: number, idx?: number, fi?: number) => {
     if (!drag) return false;
     if (drag.sel.from !== from) return false;
@@ -408,9 +390,7 @@ export function Solitaire() {
     return false;
   };
 
-  // ─── Click handlers (fallback for non-drag interactions) ──────────────────
 
-  // Stock click: flip or recycle
   const onStock = () => doMove(prev => {
     if (prev.stock.length === 0) {
       return { ...prev, stock: [...prev.waste].reverse().map(c => ({ ...c, faceUp: false })), waste: [], sel: null, score: Math.max(0, prev.score - 100) };
@@ -419,14 +399,12 @@ export function Solitaire() {
     return { ...prev, stock: prev.stock.slice(0, -1), waste: [...prev.waste, top], sel: null, moves: prev.moves + 1 };
   });
 
-  // Waste click: select or start drag
   const onWasteDown = (e: React.MouseEvent) => {
     if (!g.waste.length) return;
     const card = g.waste[g.waste.length - 1];
     startDrag(e, { from: 'waste' }, [card], e.currentTarget as HTMLElement);
   };
 
-  // Foundation click
   const onFnd = (fi: number) => doMove(prev => {
     if (prev.sel) {
       const moved = tryMoveToFnd(prev, fi);
@@ -444,7 +422,6 @@ export function Solitaire() {
     startDrag(e, { from: 'foundation', fi }, [card], e.currentTarget as HTMLElement);
   };
 
-  // Tableau card mousedown: start drag
   const onTabCardDown = (col: number, cardIdx: number) => (e: React.MouseEvent) => {
     e.stopPropagation();
     const colCards = g.tab[col];
@@ -452,7 +429,6 @@ export function Solitaire() {
     const card = colCards[cardIdx];
 
     if (!card.faceUp) {
-      // Flip face-down top card
       if (cardIdx === colCards.length - 1) {
         doMove(prev => {
           const tab = prev.tab.map(c => [...c]);
@@ -467,14 +443,12 @@ export function Solitaire() {
     startDrag(e, { from: 'tableau', col, idx: cardIdx }, cards, e.currentTarget as HTMLElement);
   };
 
-  // Empty area of column: move to it via click
   const onTabCol = (col: number) => doMove(prev => {
     if (!prev.sel) return prev;
     const moved = tryMoveToTab(prev, col);
     return moved ?? { ...prev, sel: null };
   });
 
-  // ─── Render ──────────────────────────────────────────────────────────────
 
   const isFndSel = (fi: number) => g.sel?.from === 'foundation' && (g.sel as { from: 'foundation'; fi: number }).fi === fi;
   const isTabSel = (col: number, ri: number) =>

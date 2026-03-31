@@ -49,7 +49,6 @@ function getPermissionsForUser(name: string): string {
 }
 
 const DNS_RECORDS: Record<string, { ip: string; fqdn: string }> = {
-  // Characters
   merlin:   { ip: '10.98.0.1',  fqdn: 'merlin.pindows.local' },
   links:    { ip: '10.98.0.2',  fqdn: 'links.pindows.local' },
   bonzi:    { ip: '10.98.0.3',  fqdn: 'bonzi.pindows.local' },
@@ -60,7 +59,6 @@ const DNS_RECORDS: Record<string, { ip: string; fqdn: string }> = {
   peedy:    { ip: '10.98.0.7',  fqdn: 'peedy.pindows.local' },
   rocky:    { ip: '10.98.0.8',  fqdn: 'rocky.pindows.local' },
   rover:    { ip: '10.98.0.9',  fqdn: 'rover.pindows.local' },
-  // Story domains (indices)
   'avost':                  { ip: '10.98.0.6',  fqdn: 'avost.antivirus.com' },
   'avost.antivirus.com':    { ip: '10.98.0.6',  fqdn: 'avost.antivirus.com' },
   'faurnite.battlepass.com':{ ip: '10.98.0.5',  fqdn: 'faurnite.battlepass.com' },
@@ -68,7 +66,6 @@ const DNS_RECORDS: Record<string, { ip: string; fqdn: string }> = {
   'devine-moi.fr':          { ip: '10.98.0.5',  fqdn: 'devine-moi.fr' },
   'maison.bonzai.local':    { ip: '10.98.0.3',  fqdn: 'maison.bonzai.local' },
   'jeux-singes-roses.fr':   { ip: '10.98.0.3',  fqdn: 'jeux-singes-roses.fr' },
-  // Real-world domains (random IPs, no story relevance)
   'google.com':             { ip: '8.8.8.8',    fqdn: 'google.com' },
   'google':                 { ip: '8.8.8.8',    fqdn: 'google.com' },
   'youtube.com':            { ip: '142.250.74.206', fqdn: 'youtube.com' },
@@ -82,7 +79,6 @@ const DNS_RECORDS: Record<string, { ip: string; fqdn: string }> = {
   'discord.com':            { ip: '162.159.128.233', fqdn: 'discord.com' },
   'github.com':             { ip: '140.82.121.3', fqdn: 'github.com' },
   'stackoverflow.com':      { ip: '151.101.1.69', fqdn: 'stackoverflow.com' },
-  // Internal
   'pindows':                { ip: '10.98.0.100',fqdn: 'pindows.local' },
   'pindows.local':          { ip: '10.98.0.100',fqdn: 'pindows.local' },
   'localhost':              { ip: '127.0.0.1',  fqdn: 'localhost' },
@@ -322,7 +318,6 @@ export function Terminal() {
 
     setLines(prev => [...prev, `C:\\>${cmd}`, ...result.split('\n')]);
 
-    // Dispatch event when user checks Bonzi's permissions specifically
     const parts = cmd.trim().toLowerCase().split(/\s+/);
     if (parts[0] === 'permissions' && parts[1] === 'bonzi') {
       dispatch({ type: 'item_clicked', itemId: 'used_permissions_bonzi', windowType: 'terminal' });

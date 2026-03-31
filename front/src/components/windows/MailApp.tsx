@@ -19,7 +19,6 @@ export function MailApp() {
   const [selectedMailId, setSelectedMailId] = useState<string | null>(null);
   const [view, setView] = useState<View>('list');
 
-  // Compose state
   const [composeTo, setComposeTo] = useState('');
   const [composeSubject, setComposeSubject] = useState('');
   const [composeBody, setComposeBody] = useState('');

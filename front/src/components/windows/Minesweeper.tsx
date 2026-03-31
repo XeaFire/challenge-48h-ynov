@@ -16,7 +16,6 @@ const DIFFICULTY_CONFIG = {
   hard: { size: 16, mines: 40, label: 'Difficile' },
 };
 
-// Number of safe clicks before the trap triggers in hard mode
 const HARD_TRAP_MIN_CLICKS = 3;
 const HARD_TRAP_MAX_CLICKS = 6;
 
@@ -45,7 +44,6 @@ function createBoard(size: number, mineCount: number): Cell[][] {
     }
   }
 
-  // Place mines
   let minesPlaced = 0;
   while (minesPlaced < mineCount) {
     const x = Math.floor(Math.random() * size);
@@ -56,7 +54,6 @@ function createBoard(size: number, mineCount: number): Cell[][] {
     }
   }
 
-  // Calculate neighbor mines
   for (let i = 0; i < size; i++) {
     for (let j = 0; j < size; j++) {
       if (!board[i][j].isMine) {
@@ -162,7 +159,6 @@ export function Minesweeper() {
       setFirstClick(false);
     }
 
-    // Hard mode trap: after a random number of safe clicks, the cell becomes a mine
     if (difficulty === 'hard' && !newBoard[x][y].isMine && clickCount >= trapAt) {
       newBoard = newBoard.map(row => row.map(cell => ({ ...cell })));
       newBoard[x][y].isMine = true;

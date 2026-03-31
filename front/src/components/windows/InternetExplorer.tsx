@@ -340,7 +340,6 @@ export function InternetExplorer() {
   const [currentPage, setCurrentPage] = useState<string>(HOME_PAGE);
   const [loading, setLoading] = useState(false);
 
-  // Auto-load a page based on story flags
   useEffect(() => {
     if (gameState.flags.story3_faurnite_spam) {
       setAddress('faurnite.battlepass.com');

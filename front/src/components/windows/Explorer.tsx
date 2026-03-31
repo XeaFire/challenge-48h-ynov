@@ -107,7 +107,6 @@ const FILE_SYSTEM: FsNode = {
   ],
 };
 
-// Characters that hide during story4 (NOT Rocky — he's special)
 const CHARACTER_FOLDERS: { parentPath: string[]; node: FsNode }[] = [
   {
     parentPath: ['Windows', 'Fonts'],
@@ -135,7 +134,6 @@ const CHARACTER_FOLDERS: { parentPath: string[]; node: FsNode }[] = [
   },
 ];
 
-// Rocky's cadavre — only appears once all 6 others are found
 const CADAVRE_ROCKY_FOLDER: { parentPath: string[]; node: FsNode } = {
   parentPath: ['Mes documents'],
   node: { name: 'cadavre_rocky', type: 'folder', dark: true, characterId: 'rocky', children: [] },
@@ -160,13 +158,11 @@ function injectNode(root: FsNode, parentPath: string[], child: FsNode): void {
     current = next;
   }
   if (!current.children) current.children = [];
-  // Avoid duplicates
   if (!current.children.some(c => c.name === child.name)) {
     current.children.push(child);
   }
 }
 
-// ─── Easter egg helpers ───────────────────────────────────────────────────────
 
 const ZALGO = ['̷','̸','̡','̢','̛','̖','̗','̘','̙','̜','̝','̞','̟','̠','̤','̥','̦','̩','̪','̫','̬','̭','̮','̯','̰','̱','̲','̳','̹','̺','̻','̼','͇','͈','͉','͍','͎'];
 const GLITCH_FILES = new Set(['kernel32.dll', 'user32.dll', 'gdi32.dll']);
@@ -261,16 +257,13 @@ export function Explorer() {
   const isHiding = gameState.flags.story4_hiding;
   const allOthersFound = OTHER_CHARACTER_IDS.every(id => gameState.flags[`item_found_${id}`]);
 
-  // Build the file system with character folders injected when hide-and-seek is active
   const fileSystem = useMemo(() => {
     const fs = cloneFs(FILE_SYSTEM);
     if (!isHiding) return fs;
-    // Inject character folders for those not yet found
     for (const { parentPath, node } of CHARACTER_FOLDERS) {
       if (node.characterId && gameState.flags[`item_found_${node.characterId}`]) continue;
       injectNode(fs, parentPath, node);
     }
-    // Rocky's cadavre only appears once all 6 others are found
     if (allOthersFound && !gameState.flags.item_found_rocky) {
       injectNode(fs, CADAVRE_ROCKY_FOLDER.parentPath, CADAVRE_ROCKY_FOLDER.node);
     }
@@ -294,7 +287,6 @@ export function Explorer() {
   const children = (currentNode.children ?? []).filter(c => !(fileHidden && c.name === 'ne_pas_ouvrir.txt'));
 
   const navigateTo = useCallback((path: string[]) => {
-    // Check if the target folder is a character hiding spot
     const targetNode = getNodeAtPath(fileSystem, path);
     if (targetNode?.characterId) {
       dispatch({ type: 'item_clicked', itemId: `found_${targetNode.characterId}`, windowType: 'explorer' });
@@ -309,7 +301,6 @@ export function Explorer() {
     });
     setHistoryIndex(prev => prev + 1);
 
-    // Auto-expand path in tree
     const newExpanded = new Set(expanded);
     let partial: string[] = [];
     newExpanded.add('');
