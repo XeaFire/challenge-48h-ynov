@@ -8,16 +8,23 @@ const SCAM_PAGE = `
       *** FELICITATIONS !!! VOUS ETES LE 1.000.000eme VISITEUR !!! CLIQUEZ ICI POUR RECUPERER VOS 10.000 FORTBUX GRATUITS !!! ***
     </marquee>
   </div>
+
   <div style="text-align:center;padding:10px">
     <div style="font-size:28px;font-weight:bold;color:#00ff00;text-shadow:2px 2px #ff0000;letter-spacing:2px">
       <span style="color:#ff0000">~*~</span> FAURNITE <span style="color:#ff0000">~*~</span>
     </div>
-    <div style="font-size:14px;color:#ff00ff;margin:4px 0">Le VRAI Battle Royale Officiel (pas une copie)</div>
-    <div style="font-size:10px;color:#00ffff">[Site officiel certifie par Microsaft et Epyc Games]</div>
+    <div style="font-size:14px;color:#ff00ff;margin:4px 0">
+      Le VRAI Battle Royale Officiel (pas une copie)
+    </div>
+    <div style="font-size:10px;color:#00ffff">
+      [Site officiel certifie par Microsaft et Epyc Games]
+    </div>
   </div>
+
   <div style="background:#ff0000;color:#fff;font-size:18px;font-weight:bold;text-align:center;padding:8px;margin:6px;border:3px dashed #ffff00;animation:blink98 0.5s infinite">
     !!! OFFRE LIMITEE - EXPIRE DANS 00:03:27 !!!
   </div>
+
   <table style="width:90%;margin:0 auto;border-collapse:collapse">
     <tr>
       <td style="background:#000;border:2px solid #00ff00;padding:10px;text-align:center;width:50%">
@@ -26,7 +33,10 @@ const SCAM_PAGE = `
         <div style="color:#fff;font-size:11px">- 50.000 FortBux</div>
         <div style="color:#fff;font-size:11px">- Skin "Le Vrai Joueur"</div>
         <div style="color:#fff;font-size:11px">- Danse "Le Floss Supreme"</div>
-        <div style="background:#ff0000;color:#fff;padding:6px;margin:8px auto 4px;cursor:pointer;font-weight:bold;border:2px outset #ccc;max-width:150px">TELECHARGER.EXE</div>
+        <div style="color:#fff;font-size:11px">- Pioche en diamant</div>
+        <div style="background:#ff0000;color:#fff;padding:6px;margin:8px auto 4px;cursor:pointer;font-weight:bold;border:2px outset #ccc;max-width:150px">
+          TELECHARGER.EXE
+        </div>
         <div style="color:#808080;font-size:8px">*frais de livraison numerique: 49,99EUR</div>
       </td>
       <td style="background:#000;border:2px solid #ff00ff;padding:10px;text-align:center;width:50%">
@@ -35,7 +45,10 @@ const SCAM_PAGE = `
         <div style="color:#fff;font-size:11px">- 999.999 FortBux</div>
         <div style="color:#fff;font-size:11px">- TOUS les skins du jeu</div>
         <div style="color:#fff;font-size:11px">- Aimbot integre (100% legal)</div>
-        <div style="background:#ff00ff;color:#fff;padding:6px;margin:8px auto 4px;cursor:pointer;font-weight:bold;border:2px outset #ccc;max-width:150px">OBTENIR_MAINTENANT.EXE</div>
+        <div style="color:#fff;font-size:11px">- Acces anticipee Saison 99</div>
+        <div style="background:#ff00ff;color:#fff;padding:6px;margin:8px auto 4px;cursor:pointer;font-weight:bold;border:2px outset #ccc;max-width:150px">
+          OBTENIR_MAINTENANT.EXE
+        </div>
         <div style="color:#808080;font-size:8px">**votre carte bancaire sera debitee de 299EUR/mois</div>
       </td>
     </tr>
@@ -118,7 +131,18 @@ const ERROR_PAGE = `
     </div>
   </div>
   <hr style="border:none;border-top:1px solid #ccc;margin:16px 0" />
-  <div style="font-size:10px;color:#999;text-align:center">Internet Explorer - Erreur HTTP 404</div>
+  <div style="font-size:11px;color:#666;line-height:1.8">
+    <div style="font-weight:bold;margin-bottom:4px">Veuillez essayer les actions suivantes :</div>
+    <ul style="margin:0;padding-left:20px">
+      <li>Cliquez sur <span style="text-decoration:underline;color:#0000ff;cursor:pointer">Actualiser</span>, ou reessayez plus tard.</li>
+      <li>Verifiez que vous avez saisi l'adresse correctement.</li>
+      <li>Contactez le webmaster du site pour l'informer du probleme.</li>
+    </ul>
+  </div>
+  <hr style="border:none;border-top:1px solid #ccc;margin:16px 0" />
+  <div style="font-size:10px;color:#999;text-align:center">
+    Internet Explorer - Erreur HTTP 404
+  </div>
 </div>
 `;
 
@@ -126,7 +150,9 @@ const HOME_PAGE = `
 <div style="background:#fff;font-family:'MS Sans Serif',Arial,sans-serif;padding:20px;height:100%;box-sizing:border-box;text-align:center">
   <div style="margin-top:40px">
     <div style="font-size:20px;font-weight:bold;color:#0000aa;margin-bottom:8px">Bienvenue sur Internet Explorer</div>
-    <div style="font-size:12px;color:#666">Tapez une adresse dans la barre ci-dessus pour naviguer.</div>
+    <div style="font-size:12px;color:#666;margin-bottom:20px">Tapez une adresse dans la barre ci-dessus pour naviguer.</div>
+    <div style="font-size:11px;color:#999">Pindows 98 - Le meilleur navigateur du monde*</div>
+    <div style="font-size:8px;color:#ccc;margin-top:4px">*selon notre propre etude interne</div>
   </div>
 </div>
 `;

@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react';
 import type { GameState, GameEvent } from './types';
 import type { AgentManager } from '../hooks/useAgentManager';
+import type { WindowType } from '../types';
 
 interface GameContextValue {
   gameState: GameState;
