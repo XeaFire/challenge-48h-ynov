@@ -74,9 +74,8 @@ const DESKTOP_ICONS: DesktopIconConfig[] = [
     action: { type: 'openWindow', windowType: 'solitaire' },
   },
   {
-    id: 'ie',
-    x: 10, y: 640,
     id: 'minesweeper',
+    x: 10, y: 640,
     icon: <MinesweeperIcon />,
     label: 'Démineur',
     action: { type: 'openWindow', windowType: 'minesweeper' },
