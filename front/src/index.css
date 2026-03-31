@@ -10,6 +10,19 @@ body {
   cursor: default;
 }
 
+/* ===== CLIPPYJS AGENT OVERRIDES ===== */
+/* Keep agents above everything including form overlay */
+.clippy {
+  z-index: 60000 !important;
+  pointer-events: none !important;
+}
+
+/* Speech balloons must remain clickable */
+.clippy-balloon {
+  z-index: 60001 !important;
+  pointer-events: auto !important;
+}
+
 /* ===== WIN98 STYLING UTILS ===== */
 .win98-border-outset {
   border: 2px solid;
@@ -1268,6 +1281,282 @@ body {
   height: 100%;
   background: #000080;
   transition: width 0.3s;
+}
+
+/* ===== STORY FORM OVERLAY ===== */
+.story-form-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50000;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.story-form-box {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+  width: 380px;
+  max-width: 90vw;
+}
+
+.story-form-titlebar {
+  height: 20px;
+  background: linear-gradient(to right, #000080, #1084d0);
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+}
+
+.story-form-titlebar-text {
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.story-form-desc {
+  font-size: 11px;
+  color: #333;
+  padding: 8px 12px 4px;
+  line-height: 1.4;
+}
+
+.story-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 12px;
+}
+
+.story-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.story-form-field label {
+  font-size: 11px;
+  font-weight: bold;
+  color: #000;
+}
+
+.story-form-field input[type="text"] {
+  height: 22px;
+  border: 2px solid;
+  border-color: #808080 #dfdfdf #dfdfdf #808080;
+  box-shadow: inset 1px 1px 0 #000;
+  padding: 0 6px;
+  font-family: inherit;
+  font-size: 11px;
+  outline: none;
+  background: #fff;
+}
+
+.story-form-field input[type="text"]:focus {
+  border-color: #000080 #dfdfdf #dfdfdf #000080;
+}
+
+.story-form-color-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.story-form-color-wrapper input[type="color"] {
+  width: 40px;
+  height: 24px;
+  border: 2px solid;
+  border-color: #808080 #dfdfdf #dfdfdf #808080;
+  padding: 0;
+  cursor: pointer;
+  background: #fff;
+}
+
+.story-form-color-label {
+  font-size: 11px;
+  color: #808080;
+  font-family: "Fixedsys", "Courier New", monospace;
+}
+
+.story-form-actions {
+  display: flex;
+  justify-content: center;
+  padding: 8px 12px 12px;
+}
+
+.story-form-actions .win98-button {
+  padding: 4px 24px;
+  font-size: 12px;
+}
+
+.story-form-actions .win98-button:disabled {
+  color: #808080;
+  cursor: default;
+}
+
+/* ===== ICON SHAKE + BLOOD SPLATTER ===== */
+.desktop-icon-shaking {
+  animation: icon-shake 0.06s infinite alternate;
+}
+
+@keyframes icon-shake {
+  0%   { transform: translate(-4px, 0); }
+  25%  { transform: translate(4px, -3px); }
+  50%  { transform: translate(-3px, 4px); }
+  75%  { transform: translate(3px, -4px); }
+  100% { transform: translate(4px, 3px); }
+}
+
+.blood-splash-container {
+  position: absolute;
+  inset: -20px;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* ── Blood splatter particles ── */
+.blood-splat {
+  position: absolute;
+  background: #8b0000;
+  image-rendering: pixelated;
+  animation: blood-fly 0.8s ease-out infinite;
+  pointer-events: none;
+}
+
+/* 20 blood splats — dark reds, varied sizes, wide spread */
+.blood-splat-0  { width: 5px; height: 5px; top: 40px; left: 55px; animation-delay: 0s;    --bx: 50px;  --by: -45px; background: #8b0000; }
+.blood-splat-1  { width: 4px; height: 4px; top: 35px; left: 50px; animation-delay: 0.08s; --bx: -40px; --by: -55px; background: #6b0000; }
+.blood-splat-2  { width: 7px; height: 7px; top: 45px; left: 60px; animation-delay: 0.12s; --bx: 60px;  --by: 20px;  background: #a00000; }
+.blood-splat-3  { width: 4px; height: 4px; top: 50px; left: 45px; animation-delay: 0.18s; --bx: -50px; --by: 35px;  background: #8b0000; }
+.blood-splat-4  { width: 6px; height: 6px; top: 30px; left: 55px; animation-delay: 0.05s; --bx: 30px;  --by: -65px; background: #700000; }
+.blood-splat-5  { width: 3px; height: 3px; top: 40px; left: 40px; animation-delay: 0.25s; --bx: -55px; --by: -20px; background: #a00000; }
+.blood-splat-6  { width: 6px; height: 6px; top: 48px; left: 58px; animation-delay: 0.03s; --bx: 65px;  --by: -15px; background: #900000; }
+.blood-splat-7  { width: 3px; height: 3px; top: 32px; left: 48px; animation-delay: 0.3s;  --bx: -30px; --by: -60px; background: #b00000; }
+.blood-splat-8  { width: 8px; height: 8px; top: 42px; left: 52px; animation-delay: 0.1s;  --bx: 40px;  --by: 40px;  background: #8b0000; }
+.blood-splat-9  { width: 3px; height: 3px; top: 38px; left: 62px; animation-delay: 0.35s; --bx: 70px;  --by: -30px; background: #b00000; }
+.blood-splat-10 { width: 5px; height: 5px; top: 52px; left: 50px; animation-delay: 0.15s; --bx: -60px; --by: 45px;  background: #700000; }
+.blood-splat-11 { width: 3px; height: 3px; top: 28px; left: 56px; animation-delay: 0.4s;  --bx: 15px;  --by: -70px; background: #a00000; }
+.blood-splat-12 { width: 4px; height: 6px; top: 44px; left: 44px; animation-delay: 0.07s; --bx: -45px; --by: -40px; background: #8b0000; }
+.blood-splat-13 { width: 6px; height: 4px; top: 36px; left: 58px; animation-delay: 0.22s; --bx: 55px;  --by: -50px; background: #900000; }
+.blood-splat-14 { width: 3px; height: 5px; top: 50px; left: 55px; animation-delay: 0.28s; --bx: 35px;  --by: 55px;  background: #6b0000; }
+.blood-splat-15 { width: 5px; height: 3px; top: 34px; left: 42px; animation-delay: 0.16s; --bx: -65px; --by: -10px; background: #a00000; }
+.blood-splat-16 { width: 4px; height: 4px; top: 46px; left: 64px; animation-delay: 0.33s; --bx: 75px;  --by: 5px;   background: #8b0000; }
+.blood-splat-17 { width: 7px; height: 5px; top: 40px; left: 48px; animation-delay: 0.06s; --bx: -20px; --by: 60px;  background: #700000; }
+.blood-splat-18 { width: 3px; height: 3px; top: 30px; left: 60px; animation-delay: 0.38s; --bx: 45px;  --by: -55px; background: #b00000; }
+.blood-splat-19 { width: 5px; height: 7px; top: 42px; left: 46px; animation-delay: 0.2s;  --bx: -35px; --by: 50px;  background: #900000; }
+
+@keyframes blood-fly {
+  0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+  40%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--bx), var(--by)) scale(0.2); }
+}
+
+/* ── Blood streams — flow all the way down and STAY ── */
+.blood-streams {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  width: 70px;
+  height: 100vh;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.blood-stream {
+  position: absolute;
+  top: 0;
+  height: 0;
+  background: linear-gradient(
+    to bottom,
+    #8b0000 0%,
+    #6b0000 20%,
+    #5a0000 50%,
+    #4a0000 80%,
+    #3a0000cc 100%
+  );
+  border-radius: 0 0 3px 3px;
+  /* Flows down and STAYS — forwards fill mode */
+  animation: blood-flow var(--flow-dur) ease-in var(--flow-delay) forwards;
+  pointer-events: none;
+}
+
+/* 8 streams — slow creepy flow, varied widths, staggered delays */
+.blood-stream-0 { left: 20px; width: 4px; --flow-dur: 12s;  --flow-delay: 0.2s; --flow-h: 100vh; }
+.blood-stream-1 { left: 32px; width: 3px; --flow-dur: 16s;  --flow-delay: 1s;   --flow-h: 90vh; }
+.blood-stream-2 { left: 42px; width: 5px; --flow-dur: 10s;  --flow-delay: 0s;   --flow-h: 100vh; }
+.blood-stream-3 { left: 14px; width: 2px; --flow-dur: 20s;  --flow-delay: 2s;   --flow-h: 85vh; }
+.blood-stream-4 { left: 50px; width: 3px; --flow-dur: 14s;  --flow-delay: 0.5s; --flow-h: 95vh; }
+.blood-stream-5 { left: 26px; width: 6px; --flow-dur: 11s;  --flow-delay: 1.5s; --flow-h: 100vh; }
+.blood-stream-6 { left: 58px; width: 2px; --flow-dur: 18s;  --flow-delay: 3s;   --flow-h: 80vh; }
+.blood-stream-7 { left: 38px; width: 4px; --flow-dur: 13s;  --flow-delay: 0.8s; --flow-h: 100vh; }
+
+@keyframes blood-flow {
+  0%   { height: 0; opacity: 1; }
+  5%   { height: 10px; opacity: 1; }
+  100% { height: var(--flow-h); opacity: 1; }
+}
+
+/* ===== SPEECH BUBBLES ===== */
+.speech-bubbles-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50000;
+}
+
+.speech-bubble {
+  position: absolute;
+  background: #ffffcc;
+  border: 2px solid #000;
+  border-radius: 4px;
+  padding: 6px 10px;
+  max-width: 260px;
+  min-width: 100px;
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.speech-bubble-name {
+  font-weight: bold;
+  font-size: 10px;
+  color: #000080;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.speech-bubble-text {
+  color: #000;
+  word-wrap: break-word;
+}
+
+.speech-bubble-tip {
+  position: absolute;
+  bottom: -10px;
+  left: 20px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid #000;
+}
+
+.speech-bubble-tip::after {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: -7px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 9px solid #ffffcc;
 }
 
 /* ===== ANIMATIONS ===== */

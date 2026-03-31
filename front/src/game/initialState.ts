@@ -10,5 +10,6 @@ export function createInitialState(): GameState {
   for (const id of ALL_CHARACTERS) {
     characters[id] = { id, status: 'hidden' };
   }
-  return { characters, flags: {} };
+  const unlockedApps: string[] = [];
+  return { characters, flags: {}, unlockedApps, profile: {}, activeForm: null, shakingIcon: null, bleedingIcon: null };
 }
