@@ -15,7 +15,7 @@ export interface FormField {
   key: string;
   label: string;
   placeholder?: string;
-  type?: 'text' | 'color';
+  type?: 'text' | 'color' | 'button';
 }
 
 export interface GameState {

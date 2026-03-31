@@ -1,4 +1,4 @@
-export type WindowType = 'mycomputer' | 'notepad' | 'recyclebin' | 'about' | 'calculator' | 'paint' | 'explorer' | 'mail' | 'solitaire' | 'ie' | 'minesweeper' | 'imageviewer';
+export type WindowType = 'mycomputer' | 'notepad' | 'recyclebin' | 'about' | 'calculator' | 'paint' | 'explorer' | 'mail' | 'solitaire' | 'ie' | 'minesweeper' | 'imageviewer' | 'terminal';
 
 export interface Mail {
   id: string;

@@ -107,7 +107,7 @@ const FILE_SYSTEM: FsNode = {
   ],
 };
 
-// Character hiding spots: [parentPath, folderNode]
+// Characters that hide during story4 (NOT Rocky — he's special)
 const CHARACTER_FOLDERS: { parentPath: string[]; node: FsNode }[] = [
   {
     parentPath: ['Windows', 'Fonts'],
@@ -133,16 +133,15 @@ const CHARACTER_FOLDERS: { parentPath: string[]; node: FsNode }[] = [
     parentPath: ['Mes documents', 'Mes images'],
     node: { name: 'os_enterre', type: 'folder', characterId: 'rover', children: [] },
   },
-  {
-    parentPath: ['Mes documents'],
-    node: {
-      name: 'rocky_le_chien', type: 'folder', characterId: 'rocky',
-      children: [
-        { name: 'cadavre_rocky', type: 'folder', dark: true, children: [] },
-      ],
-    },
-  },
 ];
+
+// Rocky's cadavre — only appears once all 6 others are found
+const CADAVRE_ROCKY_FOLDER: { parentPath: string[]; node: FsNode } = {
+  parentPath: ['Mes documents'],
+  node: { name: 'cadavre_rocky', type: 'folder', dark: true, characterId: 'rocky', children: [] },
+};
+
+const OTHER_CHARACTER_IDS = ['merlin', 'genie', 'peedy', 'bonzi', 'genius', 'rover'];
 
 /** Deep-clone an FsNode tree */
 function cloneFs(node: FsNode): FsNode {
@@ -260,18 +259,23 @@ export function Explorer() {
   const [glitchNames, setGlitchNames] = useState<Record<string, string>>(initGlitchNames);
 
   const isHiding = gameState.flags.story4_hiding;
+  const allOthersFound = OTHER_CHARACTER_IDS.every(id => gameState.flags[`item_found_${id}`]);
 
   // Build the file system with character folders injected when hide-and-seek is active
   const fileSystem = useMemo(() => {
     const fs = cloneFs(FILE_SYSTEM);
     if (!isHiding) return fs;
+    // Inject character folders for those not yet found
     for (const { parentPath, node } of CHARACTER_FOLDERS) {
-      // Don't inject folders for already-found characters
       if (node.characterId && gameState.flags[`item_found_${node.characterId}`]) continue;
       injectNode(fs, parentPath, node);
     }
+    // Rocky's cadavre only appears once all 6 others are found
+    if (allOthersFound && !gameState.flags.item_found_rocky) {
+      injectNode(fs, CADAVRE_ROCKY_FOLDER.parentPath, CADAVRE_ROCKY_FOLDER.node);
+    }
     return fs;
-  }, [isHiding, gameState.flags]);
+  }, [isHiding, gameState.flags, allOthersFound]);
 
   useEffect(() => {
     let t: ReturnType<typeof setTimeout>;
@@ -290,6 +294,12 @@ export function Explorer() {
   const children = (currentNode.children ?? []).filter(c => !(fileHidden && c.name === 'ne_pas_ouvrir.txt'));
 
   const navigateTo = useCallback((path: string[]) => {
+    // Check if the target folder is a character hiding spot
+    const targetNode = getNodeAtPath(fileSystem, path);
+    if (targetNode?.characterId) {
+      dispatch({ type: 'item_clicked', itemId: `found_${targetNode.characterId}`, windowType: 'explorer' });
+    }
+
     setCurrentPath(path);
     setSelectedItem(null);
     setHistory(prev => {
@@ -308,7 +318,7 @@ export function Explorer() {
       newExpanded.add(partial.join('\\'));
     }
     setExpanded(newExpanded);
-  }, [historyIndex, expanded]);
+  }, [historyIndex, expanded, fileSystem, dispatch]);
 
   const goBack = useCallback(() => {
     if (historyIndex > 0) {
@@ -349,13 +359,9 @@ export function Explorer() {
       return;
     }
     if (child.type === 'folder') {
-      // If this is a character folder, dispatch the found event
-      if (child.characterId) {
-        dispatch({ type: 'item_clicked', itemId: `found_${child.characterId}`, windowType: 'explorer' });
-      }
       navigateTo([...currentPath, child.name]);
     }
-  }, [currentPath, navigateTo, dispatch]);
+  }, [currentPath, navigateTo]);
 
   const addressPath = 'C:\\' + currentPath.join('\\');
   const folderCount = children.filter(c => c.type === 'folder').length;

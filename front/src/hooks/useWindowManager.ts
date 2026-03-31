@@ -14,6 +14,7 @@ const WINDOW_DEFAULTS: Record<WindowType, { title: string; width: number; height
   ie: { title: 'Internet Explorer', width: 700, height: 500 },
   imageviewer: { title: 'Links_crush.png - Visionneuse', width: 420, height: 400 },
   minesweeper: { title: 'Démineur', width: 500, height: 560 },
+  terminal: { title: 'Invite de commandes', width: 650, height: 400 },
 };
 
 const CASCADE_OFFSET = 20;
