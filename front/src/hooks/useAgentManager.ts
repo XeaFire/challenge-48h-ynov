@@ -29,6 +29,7 @@ export function useAgentManager() {
   const skipResolve = useRef<(() => void) | null>(null);
 
   useEffect(() => {
+    const current = agents.current;
     return () => {
       agents.current.forEach(a => { try { a.dispose(); } catch { /* */ } });
       agents.current.clear();
@@ -49,7 +50,7 @@ export function useAgentManager() {
     if (agents.current.has(id)) return;
     const agent = await initAgent(LOADERS[id]);
     agents.current.set(id, agent);
-    agent.show();
+    agent.show(false);
   }, []);
 
   const hide = useCallback((id: CharacterId, instant?: boolean) => {
