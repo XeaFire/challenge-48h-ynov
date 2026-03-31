@@ -218,3 +218,13 @@ export function PindowsLogo() {
     </svg>
   );
 }
+
+export function MinesweeperIcon({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={PIXEL_STYLE}>
+      <rect x="4" y="4" width="24" height="24" fill="#c0c0c0" stroke="#000" strokeWidth="1" />
+      <rect x="6" y="6" width="20" height="20" fill="#fff" stroke="#808080" strokeWidth="0.5" />
+      <text x="50%" y="55%" textAnchor="middle" dominantBaseline="middle" fontSize="18" fontFamily="Arial">💣</text>
+    </svg>
+  );
+}

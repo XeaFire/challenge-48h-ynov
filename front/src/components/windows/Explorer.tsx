@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { SmallFolderIcon, FileIcon } from '../../icons';
 
 interface FsNode {
@@ -98,8 +98,28 @@ const FILE_SYSTEM: FsNode = {
     { name: 'autoexec.bat', type: 'file', size: '1 Ko', modified: '11/05/1998' },
     { name: 'config.sys', type: 'file', size: '1 Ko', modified: '11/05/1998' },
     { name: 'command.com', type: 'file', size: '93 Ko', modified: '11/05/1998' },
+    { name: 'ne_pas_ouvrir.txt', type: 'file', size: '1 Ko', modified: (() => { const d = new Date(); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; })() },
   ],
 };
+
+// ─── Easter egg helpers ───────────────────────────────────────────────────────
+
+const ZALGO = ['̷','̸','̡','̢','̛','̖','̗','̘','̙','̜','̝','̞','̟','̠','̤','̥','̦','̩','̪','̫','̬','̭','̮','̯','̰','̱','̲','̳','̹','̺','̻','̼','͇','͈','͉','͍','͎'];
+const GLITCH_FILES = new Set(['kernel32.dll', 'user32.dll', 'gdi32.dll']);
+
+function glitchify(name: string): string {
+  return name.split('').map(c => {
+    const n = Math.floor(Math.random() * 3) + 1;
+    const zalgos = Array.from({ length: n }, () => ZALGO[Math.floor(Math.random() * ZALGO.length)]).join('');
+    return c + zalgos;
+  }).join('');
+}
+
+function initGlitchNames(): Record<string, string> {
+  const result: Record<string, string> = {};
+  GLITCH_FILES.forEach(f => { result[f] = glitchify(f); });
+  return result;
+}
 
 function getNodeAtPath(root: FsNode, path: string[]): FsNode | null {
   let current = root;
@@ -168,9 +188,25 @@ export function Explorer() {
   const [history, setHistory] = useState<string[][]>([[]]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [easterEggPhase, setEasterEggPhase] = useState<'idle' | 'text' | 'flash1' | 'flash2' | 'flash3'>('idle');
+  const [fileHidden, setFileHidden] = useState(false);
+  const [glitchNames, setGlitchNames] = useState<Record<string, string>>(initGlitchNames);
+
+  useEffect(() => {
+    let t: ReturnType<typeof setTimeout>;
+    if (easterEggPhase === 'text')   t = setTimeout(() => { setFileHidden(true); setEasterEggPhase('flash1'); }, 2200);
+    if (easterEggPhase === 'flash1') t = setTimeout(() => setEasterEggPhase('flash2'), 80);
+    if (easterEggPhase === 'flash2') t = setTimeout(() => setEasterEggPhase('flash3'), 60);
+    if (easterEggPhase === 'flash3') t = setTimeout(() => setEasterEggPhase('idle'),   120);
+    return () => clearTimeout(t);
+  }, [easterEggPhase]);
+
+  const reglitch = useCallback((name: string) => {
+    setGlitchNames(prev => ({ ...prev, [name]: glitchify(name) }));
+  }, []);
 
   const currentNode = getNodeAtPath(FILE_SYSTEM, currentPath) ?? FILE_SYSTEM;
-  const children = currentNode.children ?? [];
+  const children = (currentNode.children ?? []).filter(c => !(fileHidden && c.name === 'ne_pas_ouvrir.txt'));
 
   const navigateTo = useCallback((path: string[]) => {
     setCurrentPath(path);
@@ -227,6 +263,10 @@ export function Explorer() {
   }, []);
 
   const handleDoubleClick = useCallback((child: FsNode) => {
+    if (child.name === 'ne_pas_ouvrir.txt') {
+      setEasterEggPhase('text');
+      return;
+    }
     if (child.type === 'folder') {
       navigateTo([...currentPath, child.name]);
     }
@@ -237,7 +277,26 @@ export function Explorer() {
   const fileCount = children.filter(c => c.type === 'file').length;
 
   return (
-    <div className="explorer">
+    <div className="explorer" style={{ position: 'relative' }}>
+      {easterEggPhase === 'text' && (
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 999,
+          background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <pre style={{
+            color: '#c0c0c0', fontFamily: '"Courier New", monospace', fontSize: 12,
+            textAlign: 'center', lineHeight: 1.8, margin: 0,
+          }}>{`Bloc-notes - ne_pas_ouvrir.txt\n\n\nje t'avais prévenu.`}</pre>
+        </div>
+      )}
+      {(easterEggPhase === 'flash1' || easterEggPhase === 'flash2' || easterEggPhase === 'flash3') && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 99999, pointerEvents: 'none',
+          background: easterEggPhase === 'flash1' ? '#ffffff'
+                    : easterEggPhase === 'flash2' ? '#ff2200'
+                    : '#ffffff',
+        }} />
+      )}
       {/* Toolbar */}
       <div className="explorer-toolbar">
         <button
@@ -303,24 +362,28 @@ export function Explorer() {
 
           {/* Items */}
           <div className="explorer-list-body">
-            {children.map(child => (
-              <div
-                key={child.name}
-                className={`explorer-list-item${selectedItem === child.name ? ' selected' : ''}`}
-                onClick={() => setSelectedItem(child.name)}
-                onDoubleClick={() => handleDoubleClick(child)}
-              >
-                <span className="explorer-col-name">
-                  {child.type === 'folder' ? <SmallFolderIcon size={16} /> : <FileIcon size={16} />}
-                  {child.name}
-                </span>
-                <span className="explorer-col-size">{child.size ?? ''}</span>
-                <span className="explorer-col-type">
-                  {child.type === 'folder' ? 'Dossier de fichiers' : getFileType(child.name)}
-                </span>
-                <span className="explorer-col-modified">{child.modified ?? ''}</span>
-              </div>
-            ))}
+            {children.map(child => {
+              const isGlitch = GLITCH_FILES.has(child.name);
+              const displayName = isGlitch ? glitchNames[child.name] : child.name;
+              return (
+                <div
+                  key={child.name}
+                  className={`explorer-list-item${selectedItem === child.name ? ' selected' : ''}`}
+                  onClick={() => { setSelectedItem(child.name); if (isGlitch) reglitch(child.name); }}
+                  onDoubleClick={() => handleDoubleClick(child)}
+                >
+                  <span className="explorer-col-name" style={isGlitch ? { color: '#660000', fontFamily: 'monospace' } : undefined}>
+                    {child.type === 'folder' ? <SmallFolderIcon size={16} /> : <FileIcon size={16} />}
+                    {displayName}
+                  </span>
+                  <span className="explorer-col-size">{child.size ?? ''}</span>
+                  <span className="explorer-col-type">
+                    {child.type === 'folder' ? 'Dossier de fichiers' : getFileType(child.name)}
+                  </span>
+                  <span className="explorer-col-modified">{child.modified ?? ''}</span>
+                </div>
+              );
+            })}
             {children.length === 0 && (
               <div className="explorer-empty">(Vide)</div>
             )}

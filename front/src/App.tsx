@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useWindowManager } from './hooks/useWindowManager';
 import { useAgentManager } from './hooks/useAgentManager';
 import { useGameEngine } from './hooks/useGameEngine';
@@ -20,6 +20,7 @@ import { Explorer } from './components/windows/Explorer';
 import { MailApp } from './components/windows/MailApp';
 import { InternetExplorer } from './components/windows/InternetExplorer';
 import { ImageViewer } from './components/windows/ImageViewer';
+import { Minesweeper } from './components/windows/Minesweeper';
 import type { WindowType } from './types';
 
 const WINDOW_CONFIG: Record<WindowType, { menu?: string[]; statusbar?: string; insetBody?: boolean }> = {
@@ -33,6 +34,7 @@ const WINDOW_CONFIG: Record<WindowType, { menu?: string[]; statusbar?: string; i
   mail: { menu: ['Fichier', 'Edition', 'Affichage', 'Message', 'Outils', '?'] },
   ie: { menu: ['Fichier', 'Edition', 'Affichage', 'Favoris', 'Outils', '?'], statusbar: 'Termine' },
   imageviewer: { menu: ['Fichier', 'Edition', '?'], statusbar: 'Links_crush.png — 332 Ko' },
+  minesweeper: { menu: ['Jeu', '?'], statusbar: 'Mines restantes: 10' },
 };
 
 function App() {
@@ -40,6 +42,12 @@ function App() {
   const [bsodVisible, setBsodVisible] = useState(false);
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [shutdownScreen, setShutdownScreen] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setBsodVisible(true);
+    window.addEventListener('trigger-bsod', handler);
+    return () => window.removeEventListener('trigger-bsod', handler);
+  }, []);
 
   const agents = useAgentManager();
   const {
@@ -100,6 +108,7 @@ function App() {
       case 'mail': return <MailApp />;
       case 'ie': return <InternetExplorer />;
       case 'imageviewer': return <ImageViewer />;
+      case 'minesweeper': return <Minesweeper />;
     }
   }
 
