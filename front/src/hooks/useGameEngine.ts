@@ -10,6 +10,7 @@ import type { WindowType } from '../types';
 interface Options {
   agentManager: AgentManager;
   onOpenWindow?: (type: WindowType) => void;
+  onCloseAllWindows?: () => void;
 }
 
 /**
@@ -32,12 +33,16 @@ function applyRuntimeAction(state: GameState, action: TriggerAction): GameState 
         : { ...state, unlockedApps: [...state.unlockedApps, action.app] };
     case 'lockApp':
       return { ...state, unlockedApps: state.unlockedApps.filter(a => a !== action.app) };
+    case 'screenShake':
+      return { ...state, screenShake: action.enabled };
+    case 'lockClose':
+      return { ...state, windowsLocked: action.locked };
     default:
       return null; // not a runtime action
   }
 }
 
-export function useGameEngine({ agentManager, onOpenWindow }: Options) {
+export function useGameEngine({ agentManager, onOpenWindow, onCloseAllWindows }: Options) {
   const stateRef = useRef<GameState>(createInitialState());
   const [gameState, setGameState] = useState<GameState>(stateRef.current);
   const firedTriggers = useRef(new Set<string>());
@@ -89,10 +94,18 @@ export function useGameEngine({ agentManager, onOpenWindow }: Options) {
       case 'sendMail':
         mailStore.send({ from: action.from, to: action.to, subject: action.subject, body: action.body });
         break;
+      case 'closeAllWindows':
+        onCloseAllWindows?.();
+        break;
+      case 'showSubliminal':
+        updateState({ ...stateRef.current, subliminalText: action.text });
+        await new Promise<void>(r => setTimeout(r, action.ms));
+        updateState({ ...stateRef.current, subliminalText: null });
+        break;
       // setFlag, setCharacterStatus, showForm → applied at evaluation time only
-      // shakeIcon, stopShakeIcon, unlockApp, lockApp → applied above via applyRuntimeAction
+      // shakeIcon, stopShakeIcon, screenShake, lockClose, unlockApp, lockApp → applied above via applyRuntimeAction
     }
-  }, [agentManager, onOpenWindow, updateState]);
+  }, [agentManager, onOpenWindow, onCloseAllWindows, updateState]);
 
   const processActions = useCallback(async (actions: TriggerAction[]) => {
     let currentActions = actions;

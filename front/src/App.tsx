@@ -18,6 +18,8 @@ import { Calculator } from './components/windows/Calculator';
 import { Paint } from './components/windows/Paint';
 import { Explorer } from './components/windows/Explorer';
 import { MailApp } from './components/windows/MailApp';
+import { InternetExplorer } from './components/windows/InternetExplorer';
+import { ImageViewer } from './components/windows/ImageViewer';
 import type { WindowType } from './types';
 
 const WINDOW_CONFIG: Record<WindowType, { menu?: string[]; statusbar?: string; insetBody?: boolean }> = {
@@ -29,6 +31,8 @@ const WINDOW_CONFIG: Record<WindowType, { menu?: string[]; statusbar?: string; i
   paint: { menu: ['Fichier', 'Edition', 'Affichage', 'Image', 'Couleurs', '?'], statusbar: 'Pour obtenir de l\'aide, cliquez sur ? , Rubriques d\'aide.' },
   explorer: { menu: ['Fichier', 'Edition', 'Affichage', 'Outils', '?'] },
   mail: { menu: ['Fichier', 'Edition', 'Affichage', 'Message', 'Outils', '?'] },
+  ie: { menu: ['Fichier', 'Edition', 'Affichage', 'Favoris', 'Outils', '?'], statusbar: 'Termine' },
+  imageviewer: { menu: ['Fichier', 'Edition', '?'], statusbar: 'Links_crush.png — 332 Ko' },
 };
 
 function App() {
@@ -40,13 +44,14 @@ function App() {
   const agents = useAgentManager();
   const {
     windows, focusOrder, activeWindowId,
-    openWindow, closeWindow, focusWindow,
+    openWindow, closeWindow, closeAllWindows, focusWindow,
     minimizeWindow, maximizeWindow, updateWindowPosition,
   } = useWindowManager();
 
   const { gameState, dispatch } = useGameEngine({
     agentManager: agents,
     onOpenWindow: openWindow,
+    onCloseAllWindows: closeAllWindows,
   });
 
   // Opens a window AND dispatches the game event so triggers can react
@@ -93,11 +98,13 @@ function App() {
       case 'paint': return <Paint />;
       case 'explorer': return <Explorer />;
       case 'mail': return <MailApp />;
+      case 'ie': return <InternetExplorer />;
+      case 'imageviewer': return <ImageViewer />;
     }
   }
 
   return (
-    <GameContext.Provider value={{ gameState, dispatch, agents }}>
+    <GameContext.Provider value={{ gameState, dispatch, agents, openWindow: handleOpenWindow, closeAllWindows }}>
       {!booted && <BootScreen onComplete={handleBootComplete} />}
       <BSOD visible={bsodVisible} onDismiss={() => setBsodVisible(false)} />
 
@@ -105,6 +112,7 @@ function App() {
         onOpenWindow={handleOpenWindow}
         onTriggerBSOD={() => setBsodVisible(true)}
         onCloseStartMenu={() => startMenuOpen && setStartMenuOpen(false)}
+        className={gameState.screenShake ? 'screen-shake' : ''}
       >
         {windows.map(window => {
           const config = WINDOW_CONFIG[window.type];
@@ -117,7 +125,7 @@ function App() {
               menu={config.menu}
               statusbar={config.statusbar}
               insetBody={config.insetBody}
-              onClose={() => closeWindow(window.id)}
+              onClose={() => { if (!gameState.windowsLocked) closeWindow(window.id); }}
               onMinimize={() => minimizeWindow(window.id)}
               onMaximize={() => maximizeWindow(window.id)}
               onFocus={() => focusWindow(window.id)}
@@ -141,6 +149,13 @@ function App() {
       />
 
       <SpeechBubbleLayer bubbles={agents.bubbles} getAgentEl={agents.getAgentEl} onBubbleClick={agents.skipCurrentSpeech} />
+
+      {/* Subliminal flash overlay */}
+      {gameState.subliminalText && (
+        <div className="subliminal-overlay">
+          <div className="subliminal-text">{gameState.subliminalText}</div>
+        </div>
+      )}
 
       {/* Story form overlay */}
       {gameState.activeForm && (
