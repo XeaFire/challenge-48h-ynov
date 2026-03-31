@@ -7,6 +7,7 @@ interface GameContextValue {
   gameState: GameState;
   dispatch: (event: GameEvent) => void;
   agents: AgentManager;
+  openWindow: (type: WindowType) => void;
   closeAllWindows: () => void;
 }
 

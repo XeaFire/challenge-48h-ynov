@@ -174,6 +174,15 @@ export function SmallFolderIcon({ size = 16 }: { size?: number }) {
   );
 }
 
+export function SmallDarkFolderIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" style={PIXEL_STYLE}>
+      <rect x="1" y="4" width="14" height="10" rx="0.5" fill="#1a1a1a" stroke="#333" strokeWidth="0.5" />
+      <rect x="1" y="2" width="7" height="3" rx="0.5" fill="#1a1a1a" stroke="#333" strokeWidth="0.5" />
+    </svg>
+  );
+}
+
 export function PaintIcon({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" style={PIXEL_STYLE}>
