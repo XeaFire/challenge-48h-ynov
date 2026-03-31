@@ -2,20 +2,20 @@
 
 > Tristan DIARD - Nicolas Michaux — Maël SOURISSEAU — Kevin GUARATO — Martin JAUDINOT
 
-**Jeu narratif d'enquete style Kinito Pet dans un faux Windows 98.** Les personnages sont les assistants clippy de Microsoft. Quelqu'un a tue Links. Trouvez le meurtrier.
+**Jeu narratif d'enquête style Kinito Pet dans un faux Windows 98.** Les personnages sont les assistants clippy de Microsoft. Quelqu'un a tué Links. Trouvez le meurtrier.
 
-## Fonctionnalites
+## Fonctionnalités
 
-- Desktop Windows 98 complet et fonctionnel (fenetres, drag, taskbar, start menu)
-- 9 personnages animes (Merlin, Links, Bonzi, Clippy, Genie, Genius, Peedy, Rocky, Rover) via [clippyjs](https://github.com/pithings/clippy)
-- Histoire en 6 chapitres avec systeme de triggers/flags
-- Applications jouables : Paint, Calculatrice, Solitaire, Demineur, Explorateur de fichiers, Bloc-notes, Boite mail, Internet Explorer, Terminal
-- Effets speciaux : ecran de sang, BSOD, screen shake, messages subliminaux, texte glitch
+- Desktop Windows 98 complet et fonctionnel (fenêtres, drag, taskbar, start menu)
+- 9 personnages animés (Merlin, Links, Bonzi, Clippy, Genie, Genius, Peedy, Rocky, Rover) via [clippyjs](https://github.com/pithings/clippy)
+- Histoire en 6 chapitres avec système de triggers/flags
+- Applications jouables : Paint, Calculatrice, Solitaire, Démineur, Explorateur de fichiers, Bloc-notes, Boîte mail, Internet Explorer, Terminal
+- Effets spéciaux : écran de sang, BSOD, screen shake, messages subliminaux, texte glitch
 - Bulles de dialogue React avec typewriter et skip au clic
 - Formulaires interactifs dans l'histoire
 - Musique de fond, SFX
 
-## Prerequis
+## Prérequis
 
 - Node.js >= 18
 - Bun
@@ -43,7 +43,7 @@ bun install
 bun run dev
 ```
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 Le backend n'est au final pas utilisé par manque de temps, il était prévu de pouvoir sauvegarder sa progression avec un code et avec le localStorage, et pouvoir reprendre sa partie.
 
 ## Docker
@@ -61,7 +61,7 @@ Le frontend est accessible sur le port `8082`, le backend sur `3001`.
 ├── front/src/
 │   ├── App.tsx              # Composant racine
 │   ├── types.ts             # Types globaux
-│   ├── icons.tsx            # Icones SVG Win98
+│   ├── icons.tsx            # Icônes SVG Win98
 │   ├── index.css            # Styles Win98
 │   ├── game/                # Moteur narratif (triggers, flags, stories 1-6)
 │   ├── hooks/               # useWindowManager, useAgentManager, useGameEngine, useMailStore
