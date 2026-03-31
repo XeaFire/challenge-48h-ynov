@@ -16,7 +16,7 @@ const WINDOW_DEFAULTS: Record<WindowType, { title: string; width: number; height
 };
 
 const CASCADE_OFFSET = 20;
-const CASCADE_ORIGIN = { x: 80, y: 40 };
+const CASCADE_ORIGIN = { x: 130, y: 30 };
 
 export function useWindowManager() {
   const [windows, setWindows] = useState<WindowState[]>([]);

@@ -24,10 +24,10 @@ export interface GameState {
   unlockedApps: string[];
   profile: Record<string, string>;
   activeForm: { formId: string; title: string; description?: string; fields: FormField[]; submitLabel?: string } | null;
-  /** Icon currently shaking (id from DESKTOP_ICONS), null if none */
   shakingIcon: string | null;
-  /** Icon permanently bleeding (persists after shake stops) */
   bleedingIcon: string | null;
+  notification: string | null;
+  lockedApps: string[];
   screenShake: boolean;
   subliminalText: string | null;
   windowsLocked: boolean;
@@ -62,6 +62,10 @@ export type TriggerAction =
   | { type: 'shakeIcon'; iconId: string }
   | { type: 'stopShakeIcon' }
   | { type: 'stopBleeding' }
+  | { type: 'showNotification'; text: string }
+  | { type: 'hideNotification' }
+  | { type: 'disableApp'; app: string }
+  | { type: 'enableApp'; app: string };
   | { type: 'screenShake'; enabled: boolean }
   | { type: 'showSubliminal'; text: string; ms: number }
   | { type: 'closeAllWindows' }

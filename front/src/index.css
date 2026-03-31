@@ -1502,6 +1502,63 @@ body {
   100% { height: var(--flow-h); opacity: 1; }
 }
 
+/* ===== QUEST NOTIFICATION ===== */
+.quest-notification-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 49000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  animation: quest-fade-in 0.3s ease-out;
+}
+
+.quest-notification {
+  background: linear-gradient(180deg, #000033 0%, #000066 50%, #000033 100%);
+  border: 3px solid #4488ff;
+  box-shadow: 0 0 30px rgba(68, 136, 255, 0.5), inset 0 0 20px rgba(68, 136, 255, 0.1);
+  padding: 24px 40px;
+  text-align: center;
+  max-width: 500px;
+  animation: quest-pop 0.4s ease-out;
+}
+
+.quest-notification-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.quest-notification-text {
+  color: #fff;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1.6;
+  text-shadow: 0 0 10px rgba(68, 136, 255, 0.8);
+  font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, sans-serif;
+}
+
+.quest-notification-signature {
+  margin-top: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffcc00;
+  text-shadow: 0 0 15px rgba(255, 204, 0, 0.8), 0 0 30px rgba(255, 204, 0, 0.4);
+  letter-spacing: 2px;
+  font-family: "MS Sans Serif", "Microsoft Sans Serif", Tahoma, sans-serif;
+}
+
+@keyframes quest-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes quest-pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 /* ===== SPEECH BUBBLES ===== */
 .speech-bubbles-layer {
   position: fixed;

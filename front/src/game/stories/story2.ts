@@ -17,7 +17,7 @@ export const story2Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── When Paint is opened → start the mail incident after 6 seconds ──
+  // ── When Paint is opened → mail incident after 6 seconds ──
   {
     id: 'story2_paint_opened',
     conditions: [
@@ -25,6 +25,9 @@ export const story2Triggers: StoryTrigger[] = [
       { type: 'flag', flag: 'opened_paint', value: true },
     ],
     actions: [
+      // Merlin a gauche, Links a droite de Paint
+      { type: 'agentMoveTo', character: 'merlin', x: 50, y: 300, duration: 1500 },
+      { type: 'agentMoveTo', character: 'links', x: 750, y: 300, duration: 1500 },
       { type: 'agentSpeak', character: 'merlin', text: 'Super ! Tu as ouvert Paint ! Dessine quelque chose de beau !' },
       { type: 'delay', ms: 6000 },
       {
@@ -34,33 +37,39 @@ export const story2Triggers: StoryTrigger[] = [
         subject: '⚠️ Alerte système : anomalie détectée',
         body: "ALERTE SYSTÈME\n\nUne anomalie a été détectée dans le module de messagerie.\nDes traces de peinture rouge ont été trouvées dans les fichiers système.\n\nVeuillez vérifier votre boîte de réception.\n\n— Pindows System Monitor",
       },
+      { type: 'unlockApp', app: 'mail' },
       { type: 'setFlag', flag: 'story2_mail_sent', value: true },
     ],
     once: true,
   },
 
-  // ── Links notices the mail, walks toward it, disappears, blood, Merlin reacts ──
+  // ── Links goes to mail, disappears, blood ──
   {
     id: 'story2_links_goes_to_mail',
     conditions: [
       { type: 'flag', flag: 'story2_mail_sent', value: true },
     ],
     actions: [
+      { type: 'disableApp', app: 'mail' },
       { type: 'agentSpeak', character: 'links', text: "Oh ? Un nouveau mail ? Je vais aller voir ça de plus près..." },
       { type: 'agentMoveTo', character: 'links', x: 40, y: 460, duration: 8000 },
+      { type: 'agentPlay', character: 'links', animation: 'IdleLegLick' },
+      { type: 'delay', ms: 800 },
       { type: 'agentHide', character: 'links', instant: true },
       { type: 'setCharacterStatus', character: 'links', status: 'dead' },
       { type: 'delay', ms: 1000 },
       { type: 'shakeIcon', iconId: 'mail' },
       { type: 'delay', ms: 1500 },
-      { type: 'agentPlay', character: 'merlin', animation: 'Surprised' },
-      { type: 'agentStopCurrent', character: 'merlin' },
-      { type: 'agentSpeak', character: 'merlin', text: "Oh ! Links a encore dû faire tomber son seau de peinture rouge ! Il est vraiment maladroit celui-là ! 😅" },
-      { type: 'delay', ms: 1500 },
+
+      // Merlin est un peu con, il pige pas
+      { type: 'agentSpeak', character: 'merlin', text: "Oh ! Links a encore dû renverser un pot de peinture ! Il est tellement maladroit celui-là ! 😅" },
+      { type: 'delay', ms: 2000 },
       { type: 'stopShakeIcon' },
-      { type: 'agentSpeak', character: 'merlin', text: "Links ?... Tu es là ?... LINKS ?!" },
-      { type: 'delay', ms: 1500 },
-      { type: 'agentSpeak', character: 'merlin', text: "Il... il ne répond pas..." },
+      { type: 'agentSpeak', character: 'merlin', text: "Links ? Hé ho ? Tu reviens ? On t'attend nous !" },
+      { type: 'delay', ms: 2000 },
+      { type: 'agentSpeak', character: 'merlin', text: "Bah... Il doit être parti aux toilettes. Il va revenir, t'inquiète !" },
+
+      // Le vrai mail creepy
       {
         type: 'sendMail',
         from: '???@̸̛̤̈́ṕ̵̰i̶̖̓n̷̰̈d̴̰̑o̷̟̊w̵̳̉s̸̗̈.̵̲̿f̸̖̀r̶̤̃',
@@ -73,94 +82,115 @@ export const story2Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Murder investigation: characters arrive one by one ──
+  // ── Characters arrive one by one, THEY figure it out ──
   {
     id: 'story2_investigation',
     conditions: [
       { type: 'flag', flag: 'story2_links_dead', value: true },
     ],
     actions: [
-      { type: 'delay', ms: 2000 },
+      { type: 'delay', ms: 3000 },
 
-      // Genie arrives
+      // Genie arrives a droite de Merlin
       { type: 'agentShow', character: 'genie' },
-      { type: 'agentMoveTo', character: 'genie', x: 300, y: 350, duration: 0 },
+      { type: 'agentMoveTo', character: 'genie', x: 200, y: 350, duration: 0 },
       { type: 'agentPlay', character: 'genie', animation: 'Greet' },
-      { type: 'agentSpeak', character: 'genie', text: "Qu'est-ce qui se passe ici ?! J'ai entendu un bruit terrible !" },
-      { type: 'agentSpeak', character: 'merlin', text: "Genie ! Links a disparu... et il y a du sang sur l'icône des mails..." },
-      { type: 'agentPlay', character: 'genie', animation: 'Surprised' },
-      { type: 'agentStopCurrent', character: 'genie' },
-      { type: 'agentSpeak', character: 'genie', text: "Du sang ?! Oh non..." },
+      { type: 'agentSpeak', character: 'genie', text: "C'est quoi ce bordel ?! Y'a du rouge PARTOUT sur les mails !" },
+      { type: 'delay', ms: 400 },
+      { type: 'agentSpeak', character: 'merlin', text: "T'inquiète, Links a juste renversé de la peinture !" },
+      { type: 'delay', ms: 400 },
+      { type: 'agentSpeak', character: 'genie', text: "Merlin... c'est PAS de la peinture. C'est du SANG." },
+      { type: 'delay', ms: 400 },
+      { type: 'agentSpeak', character: 'merlin', text: "Mais non ! Links fait toujours des bêtises comme ça !" },
 
       { type: 'delay', ms: 1500 },
 
-      // Peedy arrives
+      // Peedy arrives a droite de Genie
       { type: 'agentShow', character: 'peedy' },
-      { type: 'agentMoveTo', character: 'peedy', x: 500, y: 350, duration: 0 },
+      { type: 'agentMoveTo', character: 'peedy', x: 350, y: 350, duration: 0 },
       { type: 'agentPlay', character: 'peedy', animation: 'Greet' },
-      { type: 'agentSpeak', character: 'peedy', text: "Moi aussi j'ai entendu ! C'est quoi tout ce rouge sur les mails ?!" },
-      { type: 'agentSpeak', character: 'merlin', text: "On ne sait pas... Links est allé vérifier un mail et il a... disparu." },
-      { type: 'agentSpeak', character: 'peedy', text: "Disparu ?! Comment ça disparu ?!" },
+      { type: 'agentSpeak', character: 'peedy', text: "Oh non... c'est quoi tout ce rouge ?!" },
+      { type: 'delay', ms: 400 },
+      { type: 'agentSpeak', character: 'merlin', text: "Il est parti vérifier un mail. Sûrement en pause café !" },
+      { type: 'delay', ms: 400 },
+      { type: 'agentSpeak', character: 'genie', text: "MERLIN. Y'A DU SANG. C'EST PAS DU CAFÉ." },
 
       { type: 'delay', ms: 1500 },
 
-      // Bonzi arrives last
+      // Bonzi arrives en dernier, a droite
       { type: 'agentShow', character: 'bonzi' },
-      { type: 'agentMoveTo', character: 'bonzi', x: 700, y: 350, duration: 0 },
+      { type: 'agentMoveTo', character: 'bonzi', x: 500, y: 350, duration: 0 },
       { type: 'agentPlay', character: 'bonzi', animation: 'Greet' },
-      { type: 'agentSpeak', character: 'bonzi', text: "Hey ! Qu'est-ce que j'ai raté ? Pourquoi tout le monde est réuni ?" },
+      { type: 'agentSpeak', character: 'bonzi', text: "Salut tout le monde ! J'ai raté un truc ?" },
       { type: 'delay', ms: 800 },
 
-      // The accusation
-      { type: 'agentPlay', character: 'genie', animation: 'Alert' },
-      { type: 'agentSpeak', character: 'genie', text: "Attendez... c'est du SANG. Il y a eu un MEURTRE !" },
-      { type: 'agentSpeak', character: 'peedy', text: "Un meurtre ?! C'est horrible ! Qui a pu faire une chose pareille ?!" },
-      { type: 'agentSpeak', character: 'merlin', text: "Links était notre ami... Quelqu'un ici est responsable." },
+      // Genie connects the dots
+      { type: 'agentSpeak', character: 'genie', text: "Links disparaît, y'a du sang, et Bonzi arrive APRÈS ?!" },
+      { type: 'delay', ms: 400 },
+      { type: 'agentSpeak', character: 'peedy', text: "Bonzi est TOUJOURS le dernier quand y'a un problème." },
+      { type: 'delay', ms: 500 },
+      { type: 'agentSpeak', character: 'merlin', text: "... Ah. Ooooh. C'est pas de la peinture alors ?" },
+      { type: 'delay', ms: 400 },
+      { type: 'agentSpeak', character: 'genie', text: "NON." },
 
-      { type: 'delay', ms: 1500 },
+      { type: 'delay', ms: 1000 },
 
-      // Bonzi gets accused
-      { type: 'agentSpeak', character: 'genie', text: "Réfléchissons... Bonzi est arrivé en DERNIER. C'est très suspect." },
-      { type: 'agentSpeak', character: 'peedy', text: "Maintenant que tu le dis... Bonzi est TOUJOURS là quand il y a des problèmes !" },
-      { type: 'agentSpeak', character: 'merlin', text: "Les preuves sont accablantes, Bonzi... Tu étais le seul absent quand c'est arrivé." },
+      // Accusation de Bonzi
       { type: 'agentPlay', character: 'bonzi', animation: 'Surprised' },
       { type: 'agentStopCurrent', character: 'bonzi' },
-      { type: 'agentSpeak', character: 'bonzi', text: "QUOI ?! Mais je viens d'arriver ! J'ai RIEN fait !" },
-      { type: 'agentSpeak', character: 'genie', text: "C'est exactement ce qu'un coupable dirait !" },
-      { type: 'agentSpeak', character: 'peedy', text: "Avoue Bonzi ! Qu'est-ce que tu as fait à Links ?!" },
-      { type: 'agentSpeak', character: 'bonzi', text: "Non non non ! Je suis INNOCENT ! Vous faites une terrible erreur !" },
-      { type: 'agentSpeak', character: 'merlin', text: "Le procès aura lieu... En attendant, Bonzi, tu restes sous surveillance." },
+      { type: 'agentSpeak', character: 'bonzi', text: "Hé ho ! Pourquoi vous me regardez tous comme ça ?!" },
+      { type: 'delay', ms: 400 },
+      { type: 'agentSpeak', character: 'genie', text: "T'étais OÙ Bonzi ? Pendant que Links se faisait buter ?!" },
+      { type: 'delay', ms: 400 },
+      { type: 'agentSpeak', character: 'bonzi', text: "J'étais dans mes fichiers ! Je téléchargeais des trucs !" },
+      { type: 'delay', ms: 400 },
+      { type: 'agentSpeak', character: 'peedy', text: "C'est exactement ce qu'un meurtrier dirait." },
+      { type: 'delay', ms: 400 },
+      { type: 'agentSpeak', character: 'bonzi', text: "QUOI ?! Mais j'ai RIEN fait !!" },
+      { type: 'delay', ms: 400 },
+      { type: 'agentSpeak', character: 'genie', text: "On surveille Bonzi. Et on enquête." },
+      { type: 'delay', ms: 400 },
+      { type: 'agentSpeak', character: 'bonzi', text: "MAIS C'EST PAS MOI !!!" },
 
       { type: 'delay', ms: 1500 },
 
-      // Characters leave
+      // Depart un par un
+      { type: 'delay', ms: 1500 },
+
       { type: 'agentPlay', character: 'genie', animation: 'GoodBye' },
-      { type: 'agentSpeak', character: 'genie', text: "Je reviendrai pour le procès. Justice sera rendue pour Links." },
+      { type: 'agentSpeak', character: 'genie', text: "Je vais fouiller le système. Y'a forcément des traces." },
+      { type: 'agentSpeak', character: 'genie', text: "Toi aussi **{firstName}**, fouille de ton côté. Y'a sûrement des indices quelque part. Je compte sur toi." },
       { type: 'agentHide', character: 'genie' },
       { type: 'delay', ms: 800 },
       { type: 'agentPlay', character: 'peedy', animation: 'GoodBye' },
-      { type: 'agentSpeak', character: 'peedy', text: "Pauvre Links... Je n'arrive pas à y croire." },
+      { type: 'agentSpeak', character: 'peedy', text: "Pauvre Links..." },
       { type: 'agentHide', character: 'peedy' },
       { type: 'delay', ms: 800 },
-      { type: 'agentSpeak', character: 'merlin', text: "Continue à explorer Pindows... mais fais attention. Un meurtrier rôde peut-être encore..." },
+      { type: 'agentSpeak', character: 'merlin', text: "Je vais aller m'allonger... je me sens pas bien." },
       { type: 'agentPlay', character: 'merlin', animation: 'GoodBye' },
       { type: 'agentHide', character: 'merlin' },
       { type: 'delay', ms: 500 },
-      { type: 'agentSpeak', character: 'bonzi', text: "Je... je suis tout seul maintenant ? Hé ! Revenez ! Je suis innocent !" },
+      { type: 'agentSpeak', character: 'bonzi', text: "... C'EST PAS MOI BORDEL !" },
       { type: 'agentHide', character: 'bonzi' },
+
+      { type: 'unlockApp', app: 'paint' },
+      { type: 'unlockApp', app: 'ie' },
+      { type: 'enableApp', app: 'mail' },
 
       { type: 'setFlag', flag: 'story2_bonzi_accused', value: true },
       { type: 'setFlag', flag: 'story2_complete', value: true },
+    ],
+    once: true,
+  },
 
-      // Debloquer toutes les apps
-      { type: 'unlockApp', app: 'mycomputer' },
-      { type: 'unlockApp', app: 'notepad' },
-      { type: 'unlockApp', app: 'recyclebin' },
-      { type: 'unlockApp', app: 'calculator' },
-      { type: 'unlockApp', app: 'explorer' },
-      { type: 'unlockApp', app: 'mail' },
-      { type: 'unlockApp', app: 'paint' },
-      { type: 'unlockApp', app: 'ie' },
+  // ── Sang disparait quand le joueur ouvre les mails apres la scene ──
+  {
+    id: 'story2_mail_opened_clean_blood',
+    conditions: [
+      { type: 'flag', flag: 'item_mail_after_story2', value: true },
+    ],
+    actions: [
+      { type: 'stopBleeding' },
     ],
     once: true,
   },

@@ -14,8 +14,25 @@ interface SpeechBubbleLayerProps {
   onBubbleClick: () => void;
 }
 
+/** Parse **bold** dans le texte */
+function renderBold(text: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <b key={i}>{part.slice(2, -2)}</b>;
+    }
+    return part;
+  });
+}
+
+/** Compte les caracteres visibles (sans les **) */
+function plainLength(text: string): number {
+  return text.replace(/\*\*/g, '').length;
+}
+
 function TypewriterText({ text }: { text: string }) {
   const [length, setLength] = useState(0);
+  const total = plainLength(text);
 
   useEffect(() => {
     setLength(0);
@@ -23,12 +40,25 @@ function TypewriterText({ text }: { text: string }) {
     const interval = setInterval(() => {
       i++;
       setLength(i);
-      if (i >= text.length) clearInterval(interval);
+      if (i >= total) clearInterval(interval);
     }, 25);
     return () => clearInterval(interval);
-  }, [text]);
+  }, [text, total]);
 
-  return <>{text.slice(0, length)}</>;
+  // Couper le texte au bon endroit en ignorant les **
+  let visible = 0;
+  let cutIndex = 0;
+  for (let i = 0; i < text.length && visible < length; i++) {
+    if (text[i] === '*' && text[i + 1] === '*') {
+      cutIndex = i + 2;
+      i++; // skip second *
+      continue;
+    }
+    visible++;
+    cutIndex = i + 1;
+  }
+
+  return <>{renderBold(text.slice(0, cutIndex))}</>;
 }
 
 function TrackedBubble({ bubble, getAgentEl }: { bubble: BubbleData; getAgentEl: (id: CharacterId) => HTMLElement | null }) {

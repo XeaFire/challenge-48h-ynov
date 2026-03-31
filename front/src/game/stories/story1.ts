@@ -27,7 +27,7 @@ export const story1Triggers: StoryTrigger[] = [
     ],
     actions: [
       { type: 'agentShow', character: 'links' },
-      { type: 'agentMoveTo', character: 'links', x: 250, y: 350, duration: 5000 },
+      { type: 'agentMoveTo', character: 'links', x: 250, y: 350, duration: 0 },
       { type: 'agentPlay', character: 'links', animation: 'Greet' },
       { type: 'agentSpeak', character: 'links', text: 'Salut toi ! 🐱' },
       { type: 'agentSpeak', character: 'links', text: "Moi c'est Links ! Je suis l'assistant de la personnalisation. Tout ce qui est style, couleurs, déco... c'est mon rayon !" },
