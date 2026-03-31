@@ -4,6 +4,7 @@ import { useAgentManager } from './hooks/useAgentManager';
 import { useGameEngine } from './hooks/useGameEngine';
 import { GameContext } from './game/GameContext';
 import { SpeechBubbleLayer } from './components/SpeechBubble';
+import { QuestNotification } from './components/QuestNotification';
 import { BootScreen } from './components/BootScreen';
 import { BSOD } from './components/BSOD';
 import { Desktop } from './components/Desktop/Desktop';
@@ -51,9 +52,14 @@ function App() {
 
   // Opens a window AND dispatches the game event so triggers can react
   const handleOpenWindow = useCallback((type: WindowType) => {
+    if (gameState.lockedApps.includes(type)) return;
     openWindow(type);
     dispatch({ type: 'window_opened', windowType: type });
-  }, [openWindow, dispatch]);
+    // Ouvrir mail apres la story2 = nettoyer le sang
+    if (type === 'mail' && gameState.flags['story2_complete']) {
+      dispatch({ type: 'item_clicked', itemId: 'mail_after_story2', windowType: 'mail' });
+    }
+  }, [openWindow, dispatch, gameState.lockedApps, gameState.flags]);
 
   const handleBootComplete = useCallback(() => {
     setBooted(true);
@@ -141,6 +147,8 @@ function App() {
       />
 
       <SpeechBubbleLayer bubbles={agents.bubbles} getAgentEl={agents.getAgentEl} onBubbleClick={agents.skipCurrentSpeech} />
+
+      {gameState.notification && <QuestNotification text={gameState.notification} />}
 
       {/* Story form overlay */}
       {gameState.activeForm && (

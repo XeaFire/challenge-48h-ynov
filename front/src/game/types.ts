@@ -28,6 +28,8 @@ export interface GameState {
   shakingIcon: string | null;
   /** Icon permanently bleeding (persists after shake stops) */
   bleedingIcon: string | null;
+  notification: string | null;
+  lockedApps: string[];
 }
 
 export interface StoryTrigger {
@@ -58,7 +60,11 @@ export type TriggerAction =
   | { type: 'sendMail'; from: string; to: string; subject: string; body: string }
   | { type: 'shakeIcon'; iconId: string }
   | { type: 'stopShakeIcon' }
-  | { type: 'stopBleeding' };
+  | { type: 'stopBleeding' }
+  | { type: 'showNotification'; text: string }
+  | { type: 'hideNotification' }
+  | { type: 'disableApp'; app: string }
+  | { type: 'enableApp'; app: string };
 
 export type GameEvent =
   | { type: 'boot_complete' }

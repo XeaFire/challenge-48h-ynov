@@ -28,18 +28,16 @@ function applyStateAction(state: GameState, action: TriggerAction): GameState {
         },
       };
     case 'unlockApp':
-      return state.unlockedApps.includes(action.app)
-        ? state
-        : { ...state, unlockedApps: [...state.unlockedApps, action.app] };
     case 'lockApp':
-      return { ...state, unlockedApps: state.unlockedApps.filter(a => a !== action.app) };
     case 'showForm':
-      return { ...state, activeForm: { formId: action.formId, title: action.title, description: action.description, fields: action.fields, submitLabel: action.submitLabel } };
     case 'shakeIcon':
     case 'stopShakeIcon':
-      // Applied only at RUNTIME (in applyRuntimeAction) so the effect
-      // is visible at the correct moment during sequential execution,
-      // not at evaluation time before any actions have run.
+    case 'stopBleeding':
+    case 'showNotification':
+    case 'hideNotification':
+    case 'disableApp':
+    case 'enableApp':
+      // Applied at RUNTIME only (in applyRuntimeAction)
       return state;
     default:
       return state;

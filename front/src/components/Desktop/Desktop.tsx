@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import type { WindowType } from '../../types';
 import { useGame } from '../../game/GameContext';
+import { useMailsByFolder } from '../../hooks/useMailStore';
 import { DesktopIcon } from './DesktopIcon';
 import { ComputerIcon, NotepadIcon, RecycleBinIcon, InternetExplorerIcon, CalculatorIcon, PaintIcon, ExplorerIcon, MailIcon } from '../../icons';
 
@@ -75,6 +76,8 @@ const DESKTOP_ICONS: DesktopIconConfig[] = [
 
 export function Desktop({ onOpenWindow, onTriggerBSOD, onCloseStartMenu, children }: DesktopProps) {
   const { gameState } = useGame();
+  const inboxMails = useMailsByFolder('inbox');
+  const unreadCount = inboxMails.filter(m => !m.read).length;
 
   const handleIconAction = (action: IconAction) => {
     if (action.type === 'openWindow') {
@@ -104,6 +107,7 @@ export function Desktop({ onOpenWindow, onTriggerBSOD, onCloseStartMenu, childre
           y={y}
           icon={icon}
           label={label}
+          badge={id === 'mail' ? unreadCount : undefined}
           shaking={gameState.shakingIcon === id}
           bleeding={gameState.bleedingIcon === id}
           onDoubleClick={() => handleIconAction(action)}

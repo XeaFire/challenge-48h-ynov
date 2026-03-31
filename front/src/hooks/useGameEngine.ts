@@ -32,8 +32,26 @@ function applyRuntimeAction(state: GameState, action: TriggerAction): GameState 
         : { ...state, unlockedApps: [...state.unlockedApps, action.app] };
     case 'lockApp':
       return { ...state, unlockedApps: state.unlockedApps.filter(a => a !== action.app) };
+    case 'disableApp':
+      return state.lockedApps.includes(action.app)
+        ? state
+        : { ...state, lockedApps: [...state.lockedApps, action.app] };
+    case 'enableApp':
+      return { ...state, lockedApps: state.lockedApps.filter(a => a !== action.app) };
+    case 'showForm':
+      return { ...state, activeForm: { formId: action.formId, title: action.title, description: action.description, fields: action.fields, submitLabel: action.submitLabel } };
+    case 'showNotification': {
+      // Remplacer {firstName} etc. par les valeurs du profil
+      let text = action.text;
+      for (const [key, val] of Object.entries(stateRef.current.profile)) {
+        text = text.replaceAll(`{${key}}`, val);
+      }
+      return { ...state, notification: text };
+    }
+    case 'hideNotification':
+      return { ...state, notification: null };
     default:
-      return null; // not a runtime action
+      return null;
   }
 }
 
@@ -47,6 +65,14 @@ export function useGameEngine({ agentManager, onOpenWindow }: Options) {
   const updateState = useCallback((state: GameState) => {
     stateRef.current = state;
     setGameState(state);
+  }, []);
+
+  const fillTemplate = useCallback((text: string) => {
+    let result = text;
+    for (const [key, val] of Object.entries(stateRef.current.profile)) {
+      result = result.replaceAll(`{${key}}`, val);
+    }
+    return result;
   }, []);
 
   const executeAction = useCallback(async (action: TriggerAction): Promise<void> => {
@@ -63,13 +89,15 @@ export function useGameEngine({ agentManager, onOpenWindow }: Options) {
       case 'agentHide':
         agentManager.hide(action.character, action.instant);
         break;
-      case 'agentSpeak':
+      case 'agentSpeak': {
+        const text = fillTemplate(action.text);
         if (action.wait === false) {
-          agentManager.speakAsync(action.character, action.text);
+          agentManager.speakAsync(action.character, text);
         } else {
-          await agentManager.speak(action.character, action.text);
+          await agentManager.speak(action.character, text);
         }
         break;
+      }
       case 'agentPlay':
         agentManager.play(action.character, action.animation);
         await new Promise<void>(r => setTimeout(r, 300));

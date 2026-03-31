@@ -1,39 +1,39 @@
-import { useState, useEffect, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface DesktopIconProps {
   x: number;
   y: number;
   icon: ReactNode;
   label: string;
+  badge?: number;
   shaking?: boolean;
   bleeding?: boolean;
   onDoubleClick: () => void;
 }
 
-export function DesktopIcon({ x, y, icon, label, shaking, bleeding, onDoubleClick }: DesktopIconProps) {
-  const [fading, setFading] = useState(false);
-  const [hidden, setHidden] = useState(false);
-
-  // Apres 30s de saignement, fade out sur 3s puis disparait
-  useEffect(() => {
-    if (!bleeding) return;
-    const fadeTimer = setTimeout(() => setFading(true), 30000);
-    const hideTimer = setTimeout(() => setHidden(true), 33000);
-    return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(hideTimer);
-      setFading(false);
-      setHidden(false);
-    };
-  }, [bleeding]);
-
+export function DesktopIcon({ x, y, icon, label, badge, shaking, bleeding, onDoubleClick }: DesktopIconProps) {
   return (
     <div
       className={`desktop-icon${shaking ? ' desktop-icon-shaking' : ''}`}
       style={{ left: x, top: y }}
       onDoubleClick={onDoubleClick}
     >
-      {icon}
+      <div style={{ position: 'relative', display: 'inline-block' }}>
+        {icon}
+        {badge != null && badge > 0 && (
+          <div style={{
+            position: 'absolute', top: -4, right: -6,
+            background: '#cc0000', color: '#fff',
+            fontSize: 9, fontWeight: 'bold',
+            minWidth: 14, height: 14,
+            borderRadius: 7, border: '1px solid #800000',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '0 3px',
+          }}>
+            {badge}
+          </div>
+        )}
+      </div>
       <span className="icon-label">{label}</span>
       {shaking && (
         <div className="blood-splash-container">
@@ -42,14 +42,8 @@ export function DesktopIcon({ x, y, icon, label, shaking, bleeding, onDoubleClic
           ))}
         </div>
       )}
-      {bleeding && !hidden && (
-        <div
-          className="blood-streams"
-          style={{
-            opacity: fading ? 0 : 1,
-            transition: fading ? 'opacity 3s ease-out' : undefined,
-          }}
-        >
+      {bleeding && (
+        <div className="blood-streams">
           <div className="blood-stream blood-stream-0" />
           <div className="blood-stream blood-stream-1" />
           <div className="blood-stream blood-stream-2" />

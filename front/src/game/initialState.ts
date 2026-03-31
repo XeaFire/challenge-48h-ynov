@@ -11,5 +11,5 @@ export function createInitialState(): GameState {
     characters[id] = { id, status: 'hidden' };
   }
   const unlockedApps: string[] = ['mycomputer', 'notepad', 'recyclebin', 'calculator', 'explorer', 'mail'];
-  return { characters, flags: {}, unlockedApps, profile: {}, activeForm: null, shakingIcon: null, bleedingIcon: null };
+  return { characters, flags: {}, unlockedApps, profile: {}, activeForm: null, shakingIcon: null, bleedingIcon: null, notification: null, lockedApps: [] };
 }
