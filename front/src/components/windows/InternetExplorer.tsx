@@ -169,9 +169,9 @@ function BonziCodePage({ onComplete }: { onComplete: () => void }) {
   const [wrongCode, setWrongCode] = useState(false);
   const completed = useRef(false);
 
-  useEffect(() => {
-    if (completed.current || !slots.every(s => s !== null)) return;
-    if (slots.join('') === '4751') {
+  const checkCode = useCallback((newSlots: (string | null)[]) => {
+    if (completed.current || !newSlots.every(s => s !== null)) return;
+    if (newSlots.join('') === '4751') {
       completed.current = true;
       setUnlocked(true);
       onComplete();
@@ -179,7 +179,7 @@ function BonziCodePage({ onComplete }: { onComplete: () => void }) {
       setWrongCode(true);
       setTimeout(() => { setSlots([null, null, null, null]); setWrongCode(false); }, 1200);
     }
-  }, [slots, onComplete]);
+  }, [onComplete]);
 
   const handleDrop = useCallback((index: number, e: React.DragEvent) => {
     e.preventDefault();
@@ -188,10 +188,11 @@ function BonziCodePage({ onComplete }: { onComplete: () => void }) {
       setSlots(prev => {
         const next = [...prev];
         next[index] = digit;
+        checkCode(next);
         return next;
       });
     }
-  }, []);
+  }, [checkCode]);
 
   if (unlocked) {
     return (

@@ -304,15 +304,60 @@ export const story4Triggers: StoryTrigger[] = [
       { type: 'agentSpeak', character: 'peedy', text: "Salut ! Moi c'est Peedy ! Je suis content qu'on puisse discuter un peu. 🐦" },
       { type: 'agentSpeak', character: 'peedy', text: "Tu veux me poser des questions ? Vas-y, je suis un livre ouvert !" },
 
-      // Show the 3-question form
+      // Question 1
       {
         type: 'showForm',
-        formId: 'story4_peedy_questions',
+        formId: 'story4_peedy_q1',
         title: '🐦 Discuter avec Peedy',
-        description: 'Clique sur les questions à poser à Peedy :',
+        description: 'Choisis une question :',
         fields: [
           { key: 'q1', label: "Quel est ton talent caché ?", type: 'button' },
+        ],
+      },
+    ],
+    once: true,
+  },
+
+  // ── Q1 answer → Q2 ──
+  {
+    id: 'story4_peedy_a1',
+    conditions: [
+      { type: 'flag', flag: 'form_story4_peedy_q1_submitted', value: true },
+    ],
+    actions: [
+      { type: 'agentPlay', character: 'peedy', animation: 'GetAttention' },
+      { type: 'agentSpeak', character: 'peedy', text: "Mon talent caché ? Je sais chanter ! Enfin... les autres disent que ça ressemble plus à un cri de mouette, mais MOI je trouve ça magnifique. 🎵" },
+      { type: 'delay', ms: 500 },
+      {
+        type: 'showForm',
+        formId: 'story4_peedy_q2',
+        title: '🐦 Discuter avec Peedy',
+        description: 'Choisis une question :',
+        fields: [
           { key: 'q2', label: "Est-ce que tu aimes les jeux de mots ?", type: 'button' },
+        ],
+      },
+    ],
+    once: true,
+  },
+
+  // ── Q2 answer → Q3 ──
+  {
+    id: 'story4_peedy_a2',
+    conditions: [
+      { type: 'flag', flag: 'form_story4_peedy_q2_submitted', value: true },
+    ],
+    actions: [
+      { type: 'agentSpeak', character: 'peedy', text: "Les jeux de mots ? Ah non, pas du tout ! C'est pas mon truc ça." },
+      { type: 'agentSpeak', character: 'peedy', text: "C'est plutôt Bonzi qui fait des jeux de mots tout le temps... Moi je trouve ça lourd honnêtement." },
+      { type: 'agentSpeak', character: 'peedy', text: "D'ailleurs entre nous, Bonzi est bizarre des fois. Toujours à rôder partout..." },
+      { type: 'delay', ms: 500 },
+      {
+        type: 'showForm',
+        formId: 'story4_peedy_q3',
+        title: '🐦 Discuter avec Peedy',
+        description: 'Choisis une question :',
+        fields: [
           { key: 'q3', label: "Tu penses quoi du meurtrier ?", type: 'button' },
         ],
       },
@@ -320,30 +365,18 @@ export const story4Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Peedy answers the questions ──
+  // ── Q3 answer → done ──
   {
-    id: 'story4_peedy_answers',
+    id: 'story4_peedy_a3',
     conditions: [
-      { type: 'flag', flag: 'form_story4_peedy_questions_submitted', value: true },
+      { type: 'flag', flag: 'form_story4_peedy_q3_submitted', value: true },
     ],
     actions: [
-      // Q1: Talent caché
-      { type: 'agentPlay', character: 'peedy', animation: 'GetAttention' },
-      { type: 'agentSpeak', character: 'peedy', text: "Mon talent caché ? Je sais chanter ! Enfin... les autres disent que ça ressemble plus à un cri de mouette, mais MOI je trouve ça magnifique. 🎵" },
-      { type: 'delay', ms: 1000 },
-
-      // Q2: Jeux de mots
-      { type: 'agentSpeak', character: 'peedy', text: "Les jeux de mots ? Ah non, pas du tout ! C'est pas mon truc ça." },
-      { type: 'agentSpeak', character: 'peedy', text: "C'est plutôt Bonzi qui fait des jeux de mots tout le temps... Moi je trouve ça lourd honnêtement." },
-      { type: 'agentSpeak', character: 'peedy', text: "D'ailleurs entre nous, Bonzi est bizarre des fois. Toujours à rôder partout..." },
-      { type: 'delay', ms: 1000 },
-
-      // Q3: Le meurtrier
       { type: 'agentPlay', character: 'peedy', animation: 'Surprised' },
       { type: 'agentSpeak', character: 'peedy', text: "Le meurtrier... ? Ça me fait flipper. D'abord Links, maintenant Rocky..." },
       { type: 'agentSpeak', character: 'peedy', text: "J'ai peur d'être le prochain. On est tous en danger ici." },
       { type: 'agentSpeak', character: 'peedy', text: "Si tu veux mon avis, fais attention à qui tu fais confiance. Tout le monde n'est pas ce qu'il semble être..." },
-      { type: 'delay', ms: 1500 },
+      { type: 'delay', ms: 1000 },
 
       { type: 'agentSpeak', character: 'peedy', text: "Merci d'avoir discuté avec moi ! Ça fait du bien de parler à quelqu'un de normal. 😊" },
       { type: 'agentPlay', character: 'peedy', animation: 'GoodBye' },
