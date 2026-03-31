@@ -1,4 +1,4 @@
-import { useSyncExternalStore, useCallback } from 'react';
+import { useSyncExternalStore } from 'react';
 import type { Mail, MailFolder } from '../types';
 
 // ---------------------------------------------------------------------------

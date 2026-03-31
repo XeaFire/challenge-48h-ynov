@@ -1,17 +1,16 @@
 import type { StoryTrigger } from './types';
+import { story1Triggers } from './stories/story1';
+import { story2Triggers } from './stories/story2';
+
+// ---------------------------------------------------------------------------
+// All story triggers — just import and spread new stories here.
+//
+// To add a new story:
+//   1. Create game/stories/storyN.ts exporting storyNTriggers
+//   2. Import it here and add to STORY_TRIGGERS
+// ---------------------------------------------------------------------------
 
 export const STORY_TRIGGERS: StoryTrigger[] = [
-  {
-    id: 'merlin_intro',
-    conditions: [
-      { type: 'flag', flag: 'boot_complete', value: true },
-    ],
-    actions: [
-      { type: 'agentShow', character: 'merlin' },
-      { type: 'agentPlay', character: 'merlin', animation: 'Greet' },
-      { type: 'agentSpeak', character: 'merlin', text: "Bienvenue sur Pindows 98 ! Je suis Merlin, l'administrateur systeme." },
-      { type: 'agentSpeak', character: 'merlin', text: "Ici c'est chez nous. Tout va bien... enfin, pour l'instant." },
-    ],
-    once: true,
-  },
+  ...story1Triggers,
+  ...story2Triggers,
 ];

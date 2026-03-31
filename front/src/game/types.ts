@@ -11,9 +11,23 @@ export interface CharacterState {
   status: CharacterStatus;
 }
 
+export interface FormField {
+  key: string;
+  label: string;
+  placeholder?: string;
+  type?: 'text' | 'color';
+}
+
 export interface GameState {
   characters: Record<CharacterId, CharacterState>;
   flags: Record<string, boolean>;
+  unlockedApps: string[];
+  profile: Record<string, string>;
+  activeForm: { formId: string; title: string; description?: string; fields: FormField[]; submitLabel?: string } | null;
+  /** Icon currently shaking (id from DESKTOP_ICONS), null if none */
+  shakingIcon: string | null;
+  /** Icon permanently bleeding (persists after shake stops) */
+  bleedingIcon: string | null;
 }
 
 export interface StoryTrigger {
@@ -29,17 +43,28 @@ export type TriggerCondition =
 
 export type TriggerAction =
   | { type: 'setFlag'; flag: string; value: boolean }
-  | { type: 'agentSpeak'; character: CharacterId; text: string }
+  | { type: 'agentSpeak'; character: CharacterId; text: string; wait?: boolean }
   | { type: 'agentShow'; character: CharacterId }
-  | { type: 'agentHide'; character: CharacterId }
+  | { type: 'agentHide'; character: CharacterId; instant?: boolean }
   | { type: 'agentPlay'; character: CharacterId; animation: string }
-  | { type: 'agentMoveTo'; character: CharacterId; x: number; y: number }
+  | { type: 'agentStopCurrent'; character: CharacterId }
+  | { type: 'agentMoveTo'; character: CharacterId; x: number; y: number; duration?: number }
   | { type: 'setCharacterStatus'; character: CharacterId; status: CharacterStatus }
-  | { type: 'openWindow'; windowType: WindowType };
+  | { type: 'openWindow'; windowType: WindowType }
+  | { type: 'showForm'; formId: string; title: string; description?: string; fields: FormField[]; submitLabel?: string }
+  | { type: 'unlockApp'; app: string }
+  | { type: 'lockApp'; app: string }
+  | { type: 'delay'; ms: number }
+  | { type: 'sendMail'; from: string; to: string; subject: string; body: string }
+  | { type: 'shakeIcon'; iconId: string }
+  | { type: 'stopShakeIcon' }
+  | { type: 'stopBleeding' };
 
 export type GameEvent =
   | { type: 'boot_complete' }
   | { type: 'window_opened'; windowType: WindowType }
   | { type: 'window_closed'; windowType: WindowType }
   | { type: 'character_clicked'; characterId: CharacterId }
-  | { type: 'item_clicked'; itemId: string; windowType: WindowType };
+  | { type: 'item_clicked'; itemId: string; windowType: WindowType }
+  | { type: 'form_submitted'; formId: string; data: Record<string, string> }
+  | { type: 'recheck' };

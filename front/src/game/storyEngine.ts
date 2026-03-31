@@ -27,6 +27,20 @@ function applyStateAction(state: GameState, action: TriggerAction): GameState {
           [action.character]: { ...state.characters[action.character], status: action.status },
         },
       };
+    case 'unlockApp':
+      return state.unlockedApps.includes(action.app)
+        ? state
+        : { ...state, unlockedApps: [...state.unlockedApps, action.app] };
+    case 'lockApp':
+      return { ...state, unlockedApps: state.unlockedApps.filter(a => a !== action.app) };
+    case 'showForm':
+      return { ...state, activeForm: { formId: action.formId, title: action.title, description: action.description, fields: action.fields, submitLabel: action.submitLabel } };
+    case 'shakeIcon':
+    case 'stopShakeIcon':
+      // Applied only at RUNTIME (in applyRuntimeAction) so the effect
+      // is visible at the correct moment during sequential execution,
+      // not at evaluation time before any actions have run.
+      return state;
     default:
       return state;
   }
@@ -42,24 +56,38 @@ function applyEventFlags(state: GameState, event: GameEvent): GameState {
       return { ...state, flags: { ...state.flags, [`clicked_${event.characterId}`]: true } };
     case 'item_clicked':
       return { ...state, flags: { ...state.flags, [`item_${event.itemId}`]: true } };
+    case 'form_submitted':
+      return { ...state, flags: { ...state.flags, [`form_${event.formId}_submitted`]: true }, profile: { ...state.profile, ...event.data }, activeForm: null };
+    case 'recheck':
+      return state;
     default:
       return state;
   }
 }
 
+/**
+ * Evaluate triggers against the SNAPSHOT state (before this batch).
+ * This prevents cascading: trigger A setting a flag won't make trigger B fire
+ * in the same evaluation pass. The engine must re-dispatch 'recheck' after
+ * processing actions to pick up newly-enabled triggers.
+ */
 export function evaluateTriggers(
   state: GameState,
   triggers: StoryTrigger[],
   event: GameEvent,
   alreadyFired: Set<string>,
 ): EvaluationResult {
-  let current = applyEventFlags(state, event);
+  const afterEvent = applyEventFlags(state, event);
+
+  // Check conditions against afterEvent (snapshot), but accumulate state mutations
+  let current = afterEvent;
   const actions: TriggerAction[] = [];
   const newlyFiredIds: string[] = [];
 
   for (const trigger of triggers) {
     if (trigger.once && alreadyFired.has(trigger.id)) continue;
-    if (!trigger.conditions.every(c => checkCondition(current, c))) continue;
+    // Check conditions against the SNAPSHOT (afterEvent), not the mutated `current`
+    if (!trigger.conditions.every(c => checkCondition(afterEvent, c))) continue;
 
     newlyFiredIds.push(trigger.id);
     for (const action of trigger.actions) {

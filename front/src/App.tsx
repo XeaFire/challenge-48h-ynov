@@ -1,13 +1,15 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useWindowManager } from './hooks/useWindowManager';
 import { useAgentManager } from './hooks/useAgentManager';
 import { useGameEngine } from './hooks/useGameEngine';
 import { GameContext } from './game/GameContext';
+import { SpeechBubbleLayer } from './components/SpeechBubble';
 import { BootScreen } from './components/BootScreen';
 import { BSOD } from './components/BSOD';
 import { Desktop } from './components/Desktop/Desktop';
 import { Taskbar } from './components/Taskbar/Taskbar';
 import { Window } from './components/Window/Window';
+import { StoryFormOverlay } from './components/StoryFormOverlay';
 import { MyComputer } from './components/windows/MyComputer';
 import { Notepad } from './components/windows/Notepad';
 import { RecycleBin } from './components/windows/RecycleBin';
@@ -37,6 +39,12 @@ function App() {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [shutdownScreen, setShutdownScreen] = useState(false);
 
+  useEffect(() => {
+    const handler = () => setBsodVisible(true);
+    window.addEventListener('trigger-bsod', handler);
+    return () => window.removeEventListener('trigger-bsod', handler);
+  }, []);
+
   const agents = useAgentManager();
   const {
     windows, focusOrder, activeWindowId,
@@ -48,6 +56,12 @@ function App() {
     agentManager: agents,
     onOpenWindow: openWindow,
   });
+
+  // Opens a window AND dispatches the game event so triggers can react
+  const handleOpenWindow = useCallback((type: WindowType) => {
+    openWindow(type);
+    dispatch({ type: 'window_opened', windowType: type });
+  }, [openWindow, dispatch]);
 
   const handleBootComplete = useCallback(() => {
     setBooted(true);
@@ -97,7 +111,7 @@ function App() {
       <BSOD visible={bsodVisible} onDismiss={() => setBsodVisible(false)} />
 
       <Desktop
-        onOpenWindow={openWindow}
+        onOpenWindow={handleOpenWindow}
         onTriggerBSOD={() => setBsodVisible(true)}
         onCloseStartMenu={() => startMenuOpen && setStartMenuOpen(false)}
       >
@@ -130,10 +144,24 @@ function App() {
         activeWindowId={activeWindowId}
         startMenuOpen={startMenuOpen}
         onToggleStartMenu={() => setStartMenuOpen(prev => !prev)}
-        onOpenWindow={openWindow}
+        onOpenWindow={handleOpenWindow}
         onShutDown={() => setShutdownScreen(true)}
         onTaskbarItemClick={handleTaskbarItemClick}
       />
+
+      <SpeechBubbleLayer bubbles={agents.bubbles} getAgentEl={agents.getAgentEl} onBubbleClick={agents.skipCurrentSpeech} />
+
+      {/* Story form overlay */}
+      {gameState.activeForm && (
+        <StoryFormOverlay
+          formId={gameState.activeForm.formId}
+          title={gameState.activeForm.title}
+          description={gameState.activeForm.description}
+          fields={gameState.activeForm.fields}
+          submitLabel={gameState.activeForm.submitLabel}
+          onSubmit={(formId, data) => dispatch({ type: 'form_submitted', formId, data })}
+        />
+      )}
     </GameContext.Provider>
   );
 }
