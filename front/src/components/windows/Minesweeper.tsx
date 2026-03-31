@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 
 type CellState = 'hidden' | 'revealed' | 'flagged';
 type GameState = 'playing' | 'won' | 'lost';
+type Difficulty = 'easy' | 'medium' | 'hard';
 
 interface Cell {
   isMine: boolean;
@@ -9,8 +10,15 @@ interface Cell {
   neighborMines: number;
 }
 
-const BOARD_SIZE = 9;
-const MINE_COUNT = 10;
+const DIFFICULTY_CONFIG = {
+  easy: { size: 9, mines: 10, label: 'Facile' },
+  medium: { size: 12, mines: 30, label: 'Moyen' },
+  hard: { size: 16, mines: 40, label: 'Difficile' },
+};
+
+// Number of safe clicks before the trap triggers in hard mode
+const HARD_TRAP_MIN_CLICKS = 3;
+const HARD_TRAP_MAX_CLICKS = 6;
 
 const NUMBER_COLORS = [
   '', // 0
@@ -24,11 +32,11 @@ const NUMBER_COLORS = [
   '#808080', // 8 gray
 ];
 
-function createBoard(): Cell[][] {
+function createBoard(size: number, mineCount: number): Cell[][] {
   const board: Cell[][] = [];
-  for (let i = 0; i < BOARD_SIZE; i++) {
+  for (let i = 0; i < size; i++) {
     board[i] = [];
-    for (let j = 0; j < BOARD_SIZE; j++) {
+    for (let j = 0; j < size; j++) {
       board[i][j] = {
         isMine: false,
         state: 'hidden',
@@ -39,9 +47,9 @@ function createBoard(): Cell[][] {
 
   // Place mines
   let minesPlaced = 0;
-  while (minesPlaced < MINE_COUNT) {
-    const x = Math.floor(Math.random() * BOARD_SIZE);
-    const y = Math.floor(Math.random() * BOARD_SIZE);
+  while (minesPlaced < mineCount) {
+    const x = Math.floor(Math.random() * size);
+    const y = Math.floor(Math.random() * size);
     if (!board[x][y].isMine) {
       board[x][y].isMine = true;
       minesPlaced++;
@@ -49,15 +57,15 @@ function createBoard(): Cell[][] {
   }
 
   // Calculate neighbor mines
-  for (let i = 0; i < BOARD_SIZE; i++) {
-    for (let j = 0; j < BOARD_SIZE; j++) {
+  for (let i = 0; i < size; i++) {
+    for (let j = 0; j < size; j++) {
       if (!board[i][j].isMine) {
         let count = 0;
         for (let di = -1; di <= 1; di++) {
           for (let dj = -1; dj <= 1; dj++) {
             const ni = i + di;
             const nj = j + dj;
-            if (ni >= 0 && ni < BOARD_SIZE && nj >= 0 && nj < BOARD_SIZE && board[ni][nj].isMine) {
+            if (ni >= 0 && ni < size && nj >= 0 && nj < size && board[ni][nj].isMine) {
               count++;
             }
           }
@@ -70,7 +78,7 @@ function createBoard(): Cell[][] {
   return board;
 }
 
-function revealCell(board: Cell[][], x: number, y: number): Cell[][] {
+function revealCell(board: Cell[][], x: number, y: number, size: number): Cell[][] {
   const newBoard = board.map(row => row.map(cell => ({ ...cell })));
   const queue = [[x, y]];
 
@@ -85,7 +93,7 @@ function revealCell(board: Cell[][], x: number, y: number): Cell[][] {
         for (let dj = -1; dj <= 1; dj++) {
           const ni = cx + di;
           const nj = cy + dj;
-          if (ni >= 0 && ni < BOARD_SIZE && nj >= 0 && nj < BOARD_SIZE) {
+          if (ni >= 0 && ni < size && nj >= 0 && nj < size) {
             queue.push([ni, nj]);
           }
         }
@@ -96,9 +104,9 @@ function revealCell(board: Cell[][], x: number, y: number): Cell[][] {
   return newBoard;
 }
 
-function checkWin(board: Cell[][]): boolean {
-  for (let i = 0; i < BOARD_SIZE; i++) {
-    for (let j = 0; j < BOARD_SIZE; j++) {
+function checkWin(board: Cell[][], size: number): boolean {
+  for (let i = 0; i < size; i++) {
+    for (let j = 0; j < size; j++) {
       if (!board[i][j].isMine && board[i][j].state !== 'revealed') {
         return false;
       }
@@ -108,11 +116,17 @@ function checkWin(board: Cell[][]): boolean {
 }
 
 export function Minesweeper() {
-  const [board, setBoard] = useState<Cell[][]>(() => createBoard());
+  const [difficulty, setDifficulty] = useState<Difficulty>('easy');
+  const config = DIFFICULTY_CONFIG[difficulty];
+  const [board, setBoard] = useState<Cell[][]>(() => createBoard(config.size, config.mines));
   const [gameState, setGameState] = useState<GameState>('playing');
   const [flagCount, setFlagCount] = useState(0);
   const [time, setTime] = useState(0);
   const [firstClick, setFirstClick] = useState(true);
+  const [clickCount, setClickCount] = useState(0);
+  const [trapAt] = useState(() =>
+    Math.floor(Math.random() * (HARD_TRAP_MAX_CLICKS - HARD_TRAP_MIN_CLICKS + 1)) + HARD_TRAP_MIN_CLICKS
+  );
 
   useEffect(() => {
     if (gameState === 'playing') {
@@ -121,13 +135,17 @@ export function Minesweeper() {
     }
   }, [gameState]);
 
-  const resetGame = useCallback(() => {
-    setBoard(createBoard());
+  const resetGame = useCallback((diff?: Difficulty) => {
+    const d = diff ?? difficulty;
+    const c = DIFFICULTY_CONFIG[d];
+    setBoard(createBoard(c.size, c.mines));
     setGameState('playing');
     setFlagCount(0);
     setTime(0);
     setFirstClick(true);
-  }, []);
+    setClickCount(0);
+    if (diff) setDifficulty(diff);
+  }, [difficulty]);
 
   const handleCellClick = useCallback((x: number, y: number) => {
     if (gameState !== 'playing' || board[x][y].state === 'flagged') return;
@@ -135,18 +153,22 @@ export function Minesweeper() {
     let newBoard = board;
 
     if (firstClick && board[x][y].isMine) {
-      // Move mine if first click is on a mine
-      newBoard = createBoard();
+      newBoard = createBoard(config.size, config.mines);
       while (newBoard[x][y].isMine) {
-        newBoard = createBoard();
+        newBoard = createBoard(config.size, config.mines);
       }
       setFirstClick(false);
     } else {
       setFirstClick(false);
     }
 
+    // Hard mode trap: after a random number of safe clicks, the cell becomes a mine
+    if (difficulty === 'hard' && !newBoard[x][y].isMine && clickCount >= trapAt) {
+      newBoard = newBoard.map(row => row.map(cell => ({ ...cell })));
+      newBoard[x][y].isMine = true;
+    }
+
     if (newBoard[x][y].isMine) {
-      // Reveal all mines
       const revealedBoard = newBoard.map(row =>
         row.map(cell => ({
           ...cell,
@@ -158,13 +180,14 @@ export function Minesweeper() {
       return;
     }
 
-    const revealedBoard = revealCell(newBoard, x, y);
+    setClickCount(c => c + 1);
+    const revealedBoard = revealCell(newBoard, x, y, config.size);
     setBoard(revealedBoard);
 
-    if (checkWin(revealedBoard)) {
+    if (checkWin(revealedBoard, config.size)) {
       setGameState('won');
     }
-  }, [board, gameState, firstClick]);
+  }, [board, gameState, firstClick, config, difficulty, clickCount, trapAt]);
 
   const handleCellRightClick = useCallback((e: React.MouseEvent, x: number, y: number) => {
     e.preventDefault();
@@ -193,6 +216,11 @@ export function Minesweeper() {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const cellSize = difficulty === 'hard' ? 24 : 36;
+  const fontSize = difficulty === 'hard' ? 12 : 18;
+  const svgFlag = difficulty === 'hard' ? { w: 12, h: 14 } : { w: 18, h: 20 };
+  const svgMine = difficulty === 'hard' ? { w: 14, h: 14 } : { w: 20, h: 20 };
+
   return (
     <div style={{
       padding: '6px',
@@ -200,10 +228,36 @@ export function Minesweeper() {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      justifyContent: 'center',
       width: '100%',
       height: '100%',
+      overflow: 'auto',
     }}>
+      {/* Difficulty selector */}
+      <div style={{
+        display: 'flex',
+        gap: '4px',
+        marginBottom: '6px',
+      }}>
+        {(Object.keys(DIFFICULTY_CONFIG) as Difficulty[]).map(d => (
+          <button
+            key={d}
+            onClick={() => resetGame(d)}
+            className="win98-button"
+            style={{
+              padding: '2px 8px',
+              fontSize: '12px',
+              fontWeight: difficulty === d ? 'bold' : 'normal',
+              border: difficulty === d ? '2px inset #808080' : '2px outset #ffffff',
+              background: '#c0c0c0',
+              cursor: 'pointer',
+            }}
+          >
+            {DIFFICULTY_CONFIG[d].label}
+          </button>
+        ))}
+      </div>
+
+      {/* Status bar */}
       <div style={{
         border: '2px inset #808080',
         padding: '4px',
@@ -212,7 +266,9 @@ export function Minesweeper() {
         alignItems: 'center',
         marginBottom: '6px',
         background: '#c0c0c0',
-        width: '170px',
+        width: `${config.size * cellSize + 10}px`,
+        maxWidth: '100%',
+        boxSizing: 'border-box',
       }}>
         <div style={{
           background: '#000',
@@ -226,10 +282,10 @@ export function Minesweeper() {
           border: '2px inset #808080',
           letterSpacing: '2px'
         }}>
-          {String(MINE_COUNT - flagCount).padStart(3, '0')}
+          {String(config.mines - flagCount).padStart(3, '0')}
         </div>
         <button
-          onClick={resetGame}
+          onClick={() => resetGame()}
           style={{
             width: '26px',
             height: '26px',
@@ -261,6 +317,7 @@ export function Minesweeper() {
         </div>
       </div>
 
+      {/* Board */}
       <div style={{
         border: '3px inset #808080',
         padding: '3px',
@@ -270,8 +327,8 @@ export function Minesweeper() {
       }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(9, 16px)',
-          gridTemplateRows: 'repeat(9, 16px)',
+          gridTemplateColumns: `repeat(${config.size}, ${cellSize}px)`,
+          gridTemplateRows: `repeat(${config.size}, ${cellSize}px)`,
           gap: '0px',
         }}>
           {board.map((row, x) =>
@@ -281,14 +338,14 @@ export function Minesweeper() {
                 onClick={() => handleCellClick(x, y)}
                 onContextMenu={(e) => handleCellRightClick(e, x, y)}
                 style={cell.state === 'revealed' ? {
-                  width: '16px',
-                  height: '16px',
+                  width: `${cellSize}px`,
+                  height: `${cellSize}px`,
                   border: '1px solid #808080',
-                  background: '#c0c0c0',
+                  background: cell.isMine ? '#ff0000' : '#c0c0c0',
                   padding: 0,
                   cursor: 'pointer',
                   fontFamily: '"MS Sans Serif", sans-serif',
-                  fontSize: '12px',
+                  fontSize: `${fontSize}px`,
                   fontWeight: 'bold',
                   display: 'flex',
                   alignItems: 'center',
@@ -297,15 +354,15 @@ export function Minesweeper() {
                   userSelect: 'none',
                   boxSizing: 'border-box',
                 } : {
-                  width: '16px',
-                  height: '16px',
+                  width: `${cellSize}px`,
+                  height: `${cellSize}px`,
                   border: '2px solid',
                   borderColor: '#ffffff #808080 #808080 #ffffff',
                   background: '#c0c0c0',
                   cursor: 'pointer',
                   padding: 0,
                   fontFamily: '"MS Sans Serif", sans-serif',
-                  fontSize: '12px',
+                  fontSize: `${fontSize}px`,
                   fontWeight: 'bold',
                   display: 'flex',
                   alignItems: 'center',
@@ -315,8 +372,23 @@ export function Minesweeper() {
                   boxSizing: 'border-box',
                 }}
               >
-                {cell.state === 'flagged' && '🚩'}
-                {cell.state === 'revealed' && cell.isMine && '💣'}
+                {cell.state === 'flagged' && (
+                  <svg width={svgFlag.w} height={svgFlag.h} viewBox="0 0 12 14">
+                    <rect x="6" y="1" width="2" height="10" fill="#000" />
+                    <polygon points="1,1 8,4 8,1" fill="#ff0000" />
+                    <rect x="3" y="11" width="8" height="2" fill="#000" />
+                  </svg>
+                )}
+                {cell.state === 'revealed' && cell.isMine && (
+                  <svg width={svgMine.w} height={svgMine.h} viewBox="0 0 14 14">
+                    <circle cx="7" cy="7" r="4" fill="#000" />
+                    <line x1="7" y1="1" x2="7" y2="13" stroke="#000" strokeWidth="1.5" />
+                    <line x1="1" y1="7" x2="13" y2="7" stroke="#000" strokeWidth="1.5" />
+                    <line x1="3" y1="3" x2="11" y2="11" stroke="#000" strokeWidth="1.5" />
+                    <line x1="11" y1="3" x2="3" y2="11" stroke="#000" strokeWidth="1.5" />
+                    <rect x="5" y="4" width="2" height="2" fill="#fff" />
+                  </svg>
+                )}
                 {cell.state === 'revealed' && !cell.isMine && cell.neighborMines > 0 && cell.neighborMines}
               </button>
             ))

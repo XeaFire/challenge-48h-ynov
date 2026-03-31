@@ -12,7 +12,7 @@ const WINDOW_DEFAULTS: Record<WindowType, { title: string; width: number; height
   mail: { title: 'Pindows Mail', width: 650, height: 450 },
   ie: { title: 'Internet Explorer', width: 700, height: 500 },
   imageviewer: { title: 'Links_crush.png - Visionneuse', width: 420, height: 400 },
-  minesweeper: { title: 'Démineur', width: 260, height: 320 },
+  minesweeper: { title: 'Démineur', width: 500, height: 560 },
 };
 
 const CASCADE_OFFSET = 20;
