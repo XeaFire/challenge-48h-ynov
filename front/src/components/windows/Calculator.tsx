@@ -8,6 +8,7 @@ export function Calculator() {
   const [operator, setOperator] = useState<Operator | null>(null);
   const [waitingForOperand, setWaitingForOperand] = useState(false);
   const [memory, setMemory] = useState(0);
+  const [easterEgg, setEasterEgg] = useState(false);
 
   const inputDigit = useCallback((digit: string) => {
     if (waitingForOperand) {
@@ -67,6 +68,7 @@ export function Calculator() {
     setPreviousValue(null);
     setOperator(null);
     setWaitingForOperand(true);
+    if (result === 67) setEasterEgg(true);
   }, [display, previousValue, operator, calculate]);
 
   const clearAll = useCallback(() => {
@@ -126,7 +128,61 @@ export function Calculator() {
   };
 
   return (
-    <div className="calc">
+    <div className="calc" style={{ position: 'relative' }}>
+      {easterEgg && (
+        <>
+          <style>{`
+            @keyframes ee-bg {
+              0%   { background: #ffffff; }
+              8%   { background: #ffe0e0; }
+              16%  { background: #ffffff; }
+              33%  { background: #ffffff; }
+              40%  { background: #ffd0d0; }
+              41%  { background: #ffffff; }
+              70%  { background: #ffffff; }
+              78%  { background: #ffcccc; }
+              80%  { background: #ffffff; }
+              100% { background: #ffffff; }
+            }
+            @keyframes ee-txt {
+              0%   { transform: translate(0,0) skewX(0deg);    opacity: 1; }
+              5%   { transform: translate(-3px, 1px) skewX(-2deg); opacity: 0.85; }
+              10%  { transform: translate(3px,-2px) skewX(1deg);  opacity: 1; }
+              15%  { transform: translate(-1px, 3px) skewX(2deg);  }
+              20%  { transform: translate(2px,-1px) skewX(0deg);  opacity: 0.9; }
+              25%  { transform: translate(0,0);                    opacity: 1; }
+              50%  { transform: translate(0,0);                    opacity: 1; }
+              52%  { transform: translate(4px, 0) skewX(-3deg);  opacity: 0.7; }
+              54%  { transform: translate(-4px, 2px);              opacity: 1; }
+              56%  { transform: translate(0,0);                    }
+              80%  { transform: translate(0,0) scale(1);           opacity: 1; }
+              82%  { transform: translate(-2px,1px) scale(1.02);   opacity: 0.8; }
+              84%  { transform: translate(2px,-1px) scale(0.99);   opacity: 1; }
+              86%  { transform: translate(0,0) scale(1);           }
+              100% { transform: translate(0,0) scale(1);           opacity: 1; }
+            }
+          `}</style>
+          <div
+            onClick={() => setEasterEgg(false)}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 99999,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer',
+              animation: 'ee-bg 3.5s ease-in-out infinite',
+            }}
+          >
+            <span style={{
+              fontFamily: '"MS Sans Serif", sans-serif',
+              fontSize: 22, color: '#000', userSelect: 'none',
+              animation: 'ee-txt 3.5s ease-in-out infinite',
+              display: 'inline-block',
+            }}>
+              AbdelTastyCrousty92i
+            </span>
+          </div>
+        </>
+      )}
+
       <div className="calc-display">
         <div className="calc-display-text">{formatDisplay(display)}</div>
       </div>
