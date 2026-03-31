@@ -54,6 +54,12 @@ interface DebugConfig {
 }
 
 function DebugPicker({ onSelect }: { onSelect: (config: DebugConfig) => void }) {
+  const debugBtnStyle: React.CSSProperties = {
+    padding: '6px 12px', background: '#c0c0c0', border: '2px solid',
+    borderColor: '#fff #808080 #808080 #fff', cursor: 'pointer',
+    fontFamily: 'inherit', fontSize: 12, textAlign: 'left' as const,
+  };
+
   return (
     <div style={{
       position: 'fixed', inset: 0, background: '#000',
@@ -73,11 +79,7 @@ function DebugPicker({ onSelect }: { onSelect: (config: DebugConfig) => void }) 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <button
             onClick={() => onSelect({})}
-            style={{
-              padding: '6px 12px', background: '#c0c0c0', border: '2px solid',
-              borderColor: '#fff #808080 #808080 #fff', cursor: 'pointer',
-              fontFamily: 'inherit', fontSize: 12, textAlign: 'left',
-            }}
+            style={debugBtnStyle}
           >
             Debut — Lancer normalement
           </button>
@@ -89,11 +91,7 @@ function DebugPicker({ onSelect }: { onSelect: (config: DebugConfig) => void }) 
                 initialFiredTriggers: preset.firedTriggers,
                 skipBoot: true,
               })}
-              style={{
-                padding: '6px 12px', background: '#c0c0c0', border: '2px solid',
-                borderColor: '#fff #808080 #808080 #fff', cursor: 'pointer',
-                fontFamily: 'inherit', fontSize: 12, textAlign: 'left',
-              }}
+              style={debugBtnStyle}
             >
               {preset.label}
             </button>
@@ -127,7 +125,6 @@ function Game({ debugConfig }: { debugConfig: DebugConfig }) {
     return () => window.removeEventListener('trigger-bsod', handler);
   }, []);
 
-  // Background music — start on first user interaction after boot
   useEffect(() => {
     if (!booted) return;
     const audio = new Audio(bgMusic);
@@ -135,10 +132,8 @@ function Game({ debugConfig }: { debugConfig: DebugConfig }) {
     audio.volume = 0.3;
     audioRef.current = audio;
 
-    // Try playing immediately (works if user already interacted)
     audio.play().catch(() => {});
 
-    // Also listen for any interaction in capture phase (can't be blocked)
     const play = () => {
       audio.play().then(() => {
         document.removeEventListener('click', play, true);
@@ -173,12 +168,10 @@ function Game({ debugConfig }: { debugConfig: DebugConfig }) {
     initialFiredTriggers: debugConfig.initialFiredTriggers,
   });
 
-  // Opens a window AND dispatches the game event so triggers can react
   const handleOpenWindow = useCallback((type: WindowType) => {
     if (gameState.lockedApps.includes(type)) return;
     openWindow(type);
     dispatch({ type: 'window_opened', windowType: type });
-    // Ouvrir mail apres la story2 = nettoyer le sang
     if (type === 'mail' && gameState.flags['story2_complete']) {
       dispatch({ type: 'item_clicked', itemId: 'mail_after_story2', windowType: 'mail' });
     }
@@ -189,7 +182,6 @@ function Game({ debugConfig }: { debugConfig: DebugConfig }) {
     dispatch({ type: 'boot_complete' });
   }, [dispatch]);
 
-  // In debug mode with skipBoot, dispatch recheck so triggers evaluate immediately
   useEffect(() => {
     if (debugConfig.skipBoot) {
       dispatch({ type: 'recheck' });
@@ -296,7 +288,6 @@ function Game({ debugConfig }: { debugConfig: DebugConfig }) {
         </div>
       )}
 
-      {/* Story form overlay */}
       {gameState.activeForm && (
         <StoryFormOverlay
           formId={gameState.activeForm.formId}

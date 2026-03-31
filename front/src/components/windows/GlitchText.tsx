@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 
 const GLITCH_CHARS = ['█', '▓', '▒', '░', '╫', '╬', '╪', '╩', '╦', '╠', '╣', '╝', '╚', '╗', '╔', '║', '═', '┼', '┤', '├', '┴', '┬', '│', '─'];
 
-const HINT_LENGTH = 4; // Nombre de caracteres visibles au debut comme indice
+const HINT_LENGTH = 4;
 
 export function GlitchText({ hidden }: { hidden: string }) {
   const [revealed, setRevealed] = useState<Set<number>>(new Set());

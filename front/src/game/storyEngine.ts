@@ -43,7 +43,6 @@ function applyStateAction(state: GameState, action: TriggerAction): GameState {
     case 'lockClose':
     case 'lockWindow':
     case 'unlockWindow':
-      // Applied at RUNTIME only (in applyRuntimeAction)
       return state;
     default:
       return state;
@@ -62,7 +61,6 @@ function applyEventFlags(state: GameState, event: GameEvent): GameState {
       return { ...state, flags: { ...state.flags, [`item_${event.itemId}`]: true } };
     case 'form_submitted': {
       const flags: Record<string, boolean> = { [`form_${event.formId}_submitted`]: true };
-      // For choice forms, set a flag like "story6_chose_peedy"
       if (event.data.choice) {
         flags[`${event.formId.replace('form_', '')}_chose_${event.data.choice}`] = true;
       }
@@ -77,12 +75,6 @@ function applyEventFlags(state: GameState, event: GameEvent): GameState {
   }
 }
 
-/**
- * Evaluate triggers against the SNAPSHOT state (before this batch).
- * This prevents cascading: trigger A setting a flag won't make trigger B fire
- * in the same evaluation pass. The engine must re-dispatch 'recheck' after
- * processing actions to pick up newly-enabled triggers.
- */
 export function evaluateTriggers(
   state: GameState,
   triggers: StoryTrigger[],
@@ -91,14 +83,12 @@ export function evaluateTriggers(
 ): EvaluationResult {
   const afterEvent = applyEventFlags(state, event);
 
-  // Check conditions against afterEvent (snapshot), but accumulate state mutations
   let current = afterEvent;
   const actions: TriggerAction[] = [];
   const newlyFiredIds: string[] = [];
 
   for (const trigger of triggers) {
     if (trigger.once && alreadyFired.has(trigger.id)) continue;
-    // Check conditions against the SNAPSHOT (afterEvent), not the mutated `current`
     if (!trigger.conditions.every(c => checkCondition(afterEvent, c))) continue;
 
     newlyFiredIds.push(trigger.id);

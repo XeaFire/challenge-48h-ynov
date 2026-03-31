@@ -13,9 +13,9 @@ interface StoryFormOverlayProps {
 export function StoryFormOverlay({ formId, title, description, fields, submitLabel, onSubmit }: StoryFormOverlayProps) {
   const [data, setData] = useState<Record<string, string>>({});
 
-  const handleChange = useCallback((key: string, value: string) => {
+  const handleChange = (key: string, value: string) => {
     setData(prev => ({ ...prev, [key]: value }));
-  }, []);
+  };
 
   const isAllButtons = fields.every(f => f.type === 'button');
   const isChoice = fields.some(f => f.type === 'choice');
@@ -24,7 +24,6 @@ export function StoryFormOverlay({ formId, title, description, fields, submitLab
   const allTextFilled = textFields.every(f => data[f.key]?.trim());
   const allButtonsClicked = buttonFields.every(f => data[f.key]);
 
-  // Auto-submit when all buttons are clicked (for button-only forms)
   useEffect(() => {
     if (isAllButtons && allButtonsClicked) {
       const t = setTimeout(() => onSubmit(formId, data), 400);
@@ -108,7 +107,6 @@ export function StoryFormOverlay({ formId, title, description, fields, submitLab
             </div>
           ))}
         </div>
-        {/* Hide submit button for button-only forms */}
         {!isAllButtons && !isChoice && (
           <div className="story-form-actions">
             <button

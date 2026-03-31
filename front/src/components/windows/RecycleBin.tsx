@@ -14,7 +14,6 @@ export function RecycleBin() {
     );
   }
 
-  // Viewing the txt file content (notepad-like)
   if (viewingFile) {
     return (
       <div className="recycle-bin-notepad">

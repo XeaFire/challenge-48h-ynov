@@ -1,7 +1,6 @@
 import type { StoryTrigger } from '../types';
 
 export const story5Triggers: StoryTrigger[] = [
-  // ── Genie arrives and proposes his guessing game ──
   {
     id: 'story5_genie_game',
     conditions: [
@@ -23,7 +22,6 @@ export const story5Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── User visits devine-moi.fr → 404 ──
   {
     id: 'story5_devinemoi_404',
     conditions: [
@@ -50,7 +48,6 @@ export const story5Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── User opens calculator → Rover arrives with bonzai page ──
   {
     id: 'story5_calculator_opened',
     conditions: [
@@ -58,7 +55,6 @@ export const story5Triggers: StoryTrigger[] = [
       { type: 'flag', flag: 'opened_calculator', value: true },
     ],
     actions: [
-      // Lock calculator and IE so they can't be closed
       { type: 'lockWindow', windowType: 'calculator' },
       { type: 'lockWindow', windowType: 'ie' },
 
@@ -68,7 +64,6 @@ export const story5Triggers: StoryTrigger[] = [
       { type: 'agentSpeak', character: 'genie', text: "...bon en vrai je suis nul en maths aussi. Je suis un Génie de la LAMPE, pas des maths !" },
       { type: 'delay', ms: 1000 },
 
-      // Rover arrives from bottom-right
       { type: 'agentShow', character: 'rover' },
       { type: 'agentMoveTo', character: 'rover', x: 900, y: 600, duration: 0 },
       { type: 'agentMoveTo', character: 'rover', x: 600, y: 350, duration: 3000 },
@@ -78,7 +73,6 @@ export const story5Triggers: StoryTrigger[] = [
       { type: 'agentSpeak', character: 'genie', text: "Oh ! Rover ! Qu'est-ce que tu as trouvé là ?" },
       { type: 'delay', ms: 500 },
 
-      // Open IE with bonzai page
       { type: 'setFlag', flag: 'story5_bonzai_page', value: true },
       { type: 'openWindow', windowType: 'ie' },
       { type: 'delay', ms: 1500 },
@@ -101,7 +95,6 @@ export const story5Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── User cracks the code (4751) by dragging calculator digits ──
   {
     id: 'story5_bonzai_cracked',
     conditions: [
@@ -118,7 +111,6 @@ export const story5Triggers: StoryTrigger[] = [
       { type: 'agentSpeak', character: 'genie', text: "Ou alors très inquiétant. On vient de s'introduire chez Bonzi..." },
       { type: 'delay', ms: 3000 },
 
-      // Genie reacts to the personal content
       { type: 'agentSpeak', character: 'genie', text: "Oh là là... c'est sa page perso. On voit toute sa vie là..." },
       { type: 'agentSpeak', character: 'genie', text: "Il veut devenir comédien ? Et il prépare un stand-up ?!" },
       { type: 'delay', ms: 1500 },

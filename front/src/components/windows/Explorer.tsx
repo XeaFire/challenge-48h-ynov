@@ -433,7 +433,7 @@ export function Explorer() {
             currentPath={currentPath}
             expanded={expanded}
             onToggle={handleToggle}
-            onNavigate={(path) => { navigateTo(path); }}
+            onNavigate={navigateTo}
             depth={0}
           />
         </div>

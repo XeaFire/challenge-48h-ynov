@@ -35,6 +35,48 @@ const TOOL_LABELS: Record<Tool, string> = {
 
 const LINE_WIDTHS = [1, 2, 3, 4, 5];
 
+function drawLine(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number, strokeColor: string, width: number) {
+  ctx.beginPath();
+  ctx.strokeStyle = strokeColor;
+  ctx.lineWidth = width;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+}
+
+function drawRect(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number, strokeColor: string, width: number) {
+  ctx.beginPath();
+  ctx.strokeStyle = strokeColor;
+  ctx.lineWidth = width;
+  ctx.strokeRect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x2 - x1), Math.abs(y2 - y1));
+}
+
+function drawEllipse(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number, strokeColor: string, width: number) {
+  const cx = (x1 + x2) / 2;
+  const cy = (y1 + y2) / 2;
+  const rx = Math.abs(x2 - x1) / 2;
+  const ry = Math.abs(y2 - y1) / 2;
+  ctx.beginPath();
+  ctx.strokeStyle = strokeColor;
+  ctx.lineWidth = width;
+  ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+  ctx.stroke();
+}
+
+function spray(ctx: CanvasRenderingContext2D, x: number, y: number, sprayColor: string, radius: number) {
+  const density = radius * 2;
+  ctx.fillStyle = sprayColor;
+  for (let i = 0; i < density; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const r = Math.random() * radius;
+    const px = x + Math.cos(angle) * r;
+    const py = y + Math.sin(angle) * r;
+    ctx.fillRect(px, py, 1, 1);
+  }
+}
+
 export function Paint() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewRef = useRef<HTMLCanvasElement>(null);
@@ -56,7 +98,7 @@ export function Paint() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }, []);
 
-  const getPos = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+  const getPos = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
     const rect = canvas.getBoundingClientRect();
@@ -64,51 +106,15 @@ export function Paint() {
       x: Math.round(e.clientX - rect.left),
       y: Math.round(e.clientY - rect.top),
     };
-  }, []);
+  };
 
-  const getCtx = useCallback(() => {
+  const getCtx = () => {
     return canvasRef.current?.getContext('2d') ?? null;
-  }, []);
+  };
 
-  const getPreviewCtx = useCallback(() => {
+  const getPreviewCtx = () => {
     return previewRef.current?.getContext('2d') ?? null;
-  }, []);
-
-  const clearPreview = useCallback(() => {
-    const ctx = getPreviewCtx();
-    const canvas = previewRef.current;
-    if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }, [getPreviewCtx]);
-
-  const drawLine = useCallback((ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number, strokeColor: string, width: number) => {
-    ctx.beginPath();
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = width;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-  }, []);
-
-  const drawRect = useCallback((ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number, strokeColor: string, width: number) => {
-    ctx.beginPath();
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = width;
-    ctx.strokeRect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x2 - x1), Math.abs(y2 - y1));
-  }, []);
-
-  const drawEllipse = useCallback((ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number, strokeColor: string, width: number) => {
-    const cx = (x1 + x2) / 2;
-    const cy = (y1 + y2) / 2;
-    const rx = Math.abs(x2 - x1) / 2;
-    const ry = Math.abs(y2 - y1) / 2;
-    ctx.beginPath();
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = width;
-    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-    ctx.stroke();
-  }, []);
+  };
 
   const floodFill = useCallback((startX: number, startY: number, fillColor: string) => {
     const ctx = getCtx();
@@ -158,18 +164,6 @@ export function Paint() {
     }
 
     ctx.putImageData(imageData, 0, 0);
-  }, [getCtx]);
-
-  const spray = useCallback((ctx: CanvasRenderingContext2D, x: number, y: number, sprayColor: string, radius: number) => {
-    const density = radius * 2;
-    ctx.fillStyle = sprayColor;
-    for (let i = 0; i < density; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const r = Math.random() * radius;
-      const px = x + Math.cos(angle) * r;
-      const py = y + Math.sin(angle) * r;
-      ctx.fillRect(px, py, 1, 1);
-    }
   }, []);
 
   const handleMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -204,7 +198,7 @@ export function Paint() {
       }
       setIsDrawing(false);
     }
-  }, [getPos, getCtx, tool, color, secondaryColor, lineWidth, drawLine, floodFill, spray]);
+  }, [tool, color, secondaryColor, lineWidth, floodFill]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     const pos = getPos(e);
@@ -247,7 +241,7 @@ export function Paint() {
         else if (tool === 'ellipse') drawEllipse(previewCtx, startPos.x, startPos.y, pos.x, pos.y, activeColor, lineWidth);
       }
     }
-  }, [isDrawing, tool, color, secondaryColor, lineWidth, lastPos, startPos, getPos, getCtx, getPreviewCtx, drawLine, drawRect, drawEllipse, spray]);
+  }, [isDrawing, tool, color, secondaryColor, lineWidth, lastPos, startPos]);
 
   const handleMouseUp = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDrawing) return;
@@ -262,21 +256,18 @@ export function Paint() {
       else if (tool === 'ellipse') drawEllipse(ctx, startPos.x, startPos.y, pos.x, pos.y, activeColor, lineWidth);
     }
 
-    clearPreview();
+    const previewCtx = getPreviewCtx();
+    const previewCanvas = previewRef.current;
+    if (previewCtx && previewCanvas) previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
     setIsDrawing(false);
     setStartPos(null);
     setLastPos(null);
-  }, [isDrawing, tool, color, secondaryColor, lineWidth, startPos, getPos, getCtx, drawLine, drawRect, drawEllipse, clearPreview]);
-
-  const handleContextMenu = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-  }, []);
+  }, [isDrawing, tool, color, secondaryColor, lineWidth, startPos]);
 
   const tools: Tool[] = ['pencil', 'brush', 'eraser', 'spray', 'fill', 'picker', 'line', 'rect', 'ellipse'];
 
   return (
     <div className="paint">
-      {/* Toolbar left */}
       <div className="paint-toolbar">
         <div className="paint-tools">
           {tools.map(t => (
@@ -304,7 +295,6 @@ export function Paint() {
         </div>
       </div>
 
-      {/* Canvas */}
       <div className="paint-canvas-area">
         <div className="paint-canvas-wrapper">
           <canvas
@@ -316,7 +306,7 @@ export function Paint() {
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
-            onContextMenu={handleContextMenu}
+            onContextMenu={e => e.preventDefault()}
           />
           <canvas
             ref={previewRef}
@@ -327,12 +317,11 @@ export function Paint() {
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
-            onContextMenu={handleContextMenu}
+            onContextMenu={e => e.preventDefault()}
           />
         </div>
       </div>
 
-      {/* Color palette bottom */}
       <div className="paint-bottom">
         <div className="paint-active-colors">
           <div

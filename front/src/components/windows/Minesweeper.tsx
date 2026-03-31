@@ -221,6 +221,15 @@ export function Minesweeper() {
   const svgFlag = difficulty === 'hard' ? { w: 12, h: 14 } : { w: 18, h: 20 };
   const svgMine = difficulty === 'hard' ? { w: 14, h: 14 } : { w: 20, h: 20 };
 
+  const ledStyle: React.CSSProperties = {
+    background: '#000', color: '#ff0000',
+    fontFamily: '"Digital-7", "Courier New", monospace',
+    fontSize: '20px', fontWeight: 'bold',
+    padding: '2px 6px', minWidth: '40px',
+    textAlign: 'center', border: '2px inset #808080',
+    letterSpacing: '2px',
+  };
+
   return (
     <div style={{
       padding: '6px',
@@ -270,18 +279,7 @@ export function Minesweeper() {
         maxWidth: '100%',
         boxSizing: 'border-box',
       }}>
-        <div style={{
-          background: '#000',
-          color: '#ff0000',
-          fontFamily: '"Digital-7", "Courier New", monospace',
-          fontSize: '20px',
-          fontWeight: 'bold',
-          padding: '2px 6px',
-          minWidth: '40px',
-          textAlign: 'center',
-          border: '2px inset #808080',
-          letterSpacing: '2px'
-        }}>
+        <div style={ledStyle}>
           {String(config.mines - flagCount).padStart(3, '0')}
         </div>
         <button
@@ -301,18 +299,7 @@ export function Minesweeper() {
         >
           {getSmiley()}
         </button>
-        <div style={{
-          background: '#000',
-          color: '#ff0000',
-          fontFamily: '"Digital-7", "Courier New", monospace',
-          fontSize: '20px',
-          fontWeight: 'bold',
-          padding: '2px 6px',
-          minWidth: '40px',
-          textAlign: 'center',
-          border: '2px inset #808080',
-          letterSpacing: '2px'
-        }}>
+        <div style={ledStyle}>
           {formatTime(time)}
         </div>
       </div>

@@ -1,7 +1,6 @@
 import type { StoryTrigger } from '../types';
 
 export const story4Triggers: StoryTrigger[] = [
-  // ── Hide and seek — everyone runs toward the Explorer ──
   {
     id: 'story4_hide_and_seek',
     conditions: [
@@ -10,7 +9,6 @@ export const story4Triggers: StoryTrigger[] = [
     actions: [
       { type: 'delay', ms: 2000 },
 
-      // Merlin proposes the game
       { type: 'agentShow', character: 'merlin' },
       { type: 'agentPlay', character: 'merlin', animation: 'GetAttention' },
       { type: 'agentSpeak', character: 'merlin', text: "Bon ! Après toutes ces émotions, il manque un peu de fun !" },
@@ -18,7 +16,6 @@ export const story4Triggers: StoryTrigger[] = [
       { type: 'agentSpeak', character: 'merlin', text: "Je vais appeler tout le monde !" },
       { type: 'delay', ms: 1500 },
 
-      // Spawn all characters (except Links who is dead)
       { type: 'agentShow', character: 'genie' },
       { type: 'agentMoveTo', character: 'genie', x: 200, y: 300, duration: 0 },
       { type: 'delay', ms: 400 },
@@ -38,7 +35,6 @@ export const story4Triggers: StoryTrigger[] = [
       { type: 'agentMoveTo', character: 'rover', x: 950, y: 300, duration: 0 },
       { type: 'delay', ms: 1000 },
 
-      // Everyone reacts
       { type: 'agentPlay', character: 'genie', animation: 'Greet' },
       { type: 'agentSpeak', character: 'genie', text: "Un cache-cache ?! Excellente idée !" },
       { type: 'agentPlay', character: 'peedy', animation: 'Greet' },
@@ -49,7 +45,6 @@ export const story4Triggers: StoryTrigger[] = [
       { type: 'agentSpeak', character: 'rover', text: "Arf arf !" },
       { type: 'delay', ms: 1500 },
 
-      // Merlin counts
       { type: 'agentSpeak', character: 'merlin', text: "OK ! Fermez les yeux, utilisateur ! Je compte jusqu'à 3 !" },
       { type: 'agentSpeak', character: 'merlin', text: "1..." },
       { type: 'delay', ms: 1000 },
@@ -58,7 +53,6 @@ export const story4Triggers: StoryTrigger[] = [
       { type: 'agentSpeak', character: 'merlin', text: "3 ! CACHEZ-VOUS !" },
       { type: 'delay', ms: 500 },
 
-      // Everyone scatters toward the Explorer icon in parallel
       { type: 'agentMoveTo', character: 'genie', x: 40, y: 400, duration: 1800, wait: false },
       { type: 'agentMoveTo', character: 'peedy', x: 40, y: 400, duration: 1500, wait: false },
       { type: 'agentMoveTo', character: 'bonzi', x: 40, y: 400, duration: 2000, wait: false },
@@ -69,7 +63,6 @@ export const story4Triggers: StoryTrigger[] = [
 
       { type: 'delay', ms: 2500 },
 
-      // Hide them all
       { type: 'agentHide', character: 'genie', instant: true },
       { type: 'agentHide', character: 'peedy', instant: true },
       { type: 'agentHide', character: 'bonzi', instant: true },
@@ -91,7 +84,6 @@ export const story4Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Found: Merlin ──
   {
     id: 'story4_found_merlin',
     conditions: [
@@ -109,7 +101,6 @@ export const story4Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Found: Genie ──
   {
     id: 'story4_found_genie',
     conditions: [
@@ -127,7 +118,6 @@ export const story4Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Found: Peedy ──
   {
     id: 'story4_found_peedy',
     conditions: [
@@ -145,7 +135,6 @@ export const story4Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Found: Bonzi ──
   {
     id: 'story4_found_bonzi',
     conditions: [
@@ -164,7 +153,6 @@ export const story4Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Found: Genius ──
   {
     id: 'story4_found_genius',
     conditions: [
@@ -182,7 +170,6 @@ export const story4Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Found: Rover ──
   {
     id: 'story4_found_rover',
     conditions: [
@@ -200,7 +187,6 @@ export const story4Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── All 6 found → hint that something appeared ──
   {
     id: 'story4_all_others_found',
     conditions: [
@@ -223,21 +209,18 @@ export const story4Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── cadavre_rocky opened → glitch + everyone arrives ──
   {
     id: 'story4_cadavre_rocky',
     conditions: [
       { type: 'flag', flag: 'item_found_rocky', value: true },
     ],
     actions: [
-      // Glitch the whole screen
       { type: 'screenShake', enabled: true },
       { type: 'showSubliminal', text: '█▓▒░ R O C K Y ░▒▓█', ms: 1000 },
       { type: 'screenShake', enabled: false },
       { type: 'closeAllWindows' },
       { type: 'delay', ms: 1000 },
 
-      // Everyone arrives, shocked
       { type: 'agentShow', character: 'merlin' },
       { type: 'agentMoveTo', character: 'merlin', x: 150, y: 350, duration: 0 },
       { type: 'delay', ms: 300 },
@@ -271,18 +254,15 @@ export const story4Triggers: StoryTrigger[] = [
       { type: 'agentSpeak', character: 'merlin', text: "Le tueur est parmi nous. Et il frappe à nouveau." },
       { type: 'delay', ms: 2000 },
 
-      // Merlin brushes it off
       { type: 'agentSpeak', character: 'merlin', text: "Bon... c'est pas grave hein. Rocky c'était pas le plus important entre nous..." },
       { type: 'agentSpeak', character: 'merlin', text: "C'était juste un chien quoi. Pas comme nous les VRAIS assistants." },
       { type: 'agentSpeak', character: 'peedy', text: "Merlin ! C'est horrible ce que tu dis !" },
       { type: 'agentSpeak', character: 'merlin', text: "Oui oui, paix à son âme et tout ça... BREF !" },
       { type: 'delay', ms: 1000 },
 
-      // Merlin proposes to get to know Peedy
       { type: 'agentSpeak', character: 'merlin', text: "Tiens, plutôt que de déprimer, je te propose d'aller discuter avec Peedy !" },
       { type: 'agentSpeak', character: 'merlin', text: "C'est notre oiseau préféré. Vas-y, pose-lui des questions pour apprendre à le connaître !" },
 
-      // Others leave
       { type: 'agentPlay', character: 'genie', animation: 'GoodBye' },
       { type: 'agentHide', character: 'genie' },
       { type: 'agentPlay', character: 'bonzi', animation: 'GoodBye' },
@@ -298,13 +278,11 @@ export const story4Triggers: StoryTrigger[] = [
       { type: 'setCharacterStatus', character: 'rocky', status: 'dead' },
       { type: 'setFlag', flag: 'story4_rocky_dead', value: true },
 
-      // Peedy stays and introduces himself
       { type: 'agentMoveTo', character: 'peedy', x: 400, y: 300, duration: 0 },
       { type: 'agentPlay', character: 'peedy', animation: 'Greet' },
       { type: 'agentSpeak', character: 'peedy', text: "Salut ! Moi c'est Peedy ! Je suis content qu'on puisse discuter un peu. 🐦" },
       { type: 'agentSpeak', character: 'peedy', text: "Tu veux me poser des questions ? Vas-y, je suis un livre ouvert !" },
 
-      // Question 1
       {
         type: 'showForm',
         formId: 'story4_peedy_q1',
@@ -318,7 +296,6 @@ export const story4Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Q1 answer → Q2 ──
   {
     id: 'story4_peedy_a1',
     conditions: [
@@ -341,7 +318,6 @@ export const story4Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Q2 answer → Q3 ──
   {
     id: 'story4_peedy_a2',
     conditions: [
@@ -365,7 +341,6 @@ export const story4Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Q3 answer → done ──
   {
     id: 'story4_peedy_a3',
     conditions: [
@@ -387,7 +362,6 @@ export const story4Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Einstein returns with the terminal ──
   {
     id: 'story4_einstein_terminal',
     conditions: [
@@ -420,7 +394,6 @@ export const story4Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── User checks Bonzi's permissions ──
   {
     id: 'story4_bonzi_permissions',
     conditions: [

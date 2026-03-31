@@ -15,7 +15,6 @@ export function AboutDialog({ onClose }: AboutDialogProps) {
       clickCount.current = 0;
       setCreepy(true);
     }
-    // Reset le compteur si pas assez rapide
     clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => { clickCount.current = 0; }, 1500);
   };

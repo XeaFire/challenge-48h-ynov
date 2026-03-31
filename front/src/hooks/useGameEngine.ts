@@ -15,12 +15,6 @@ interface Options {
   initialFiredTriggers?: string[];
 }
 
-/**
- * Actions that must mutate state at RUNTIME (during sequential execution)
- * rather than at evaluation time. This is necessary because their effects
- * need to be visible to React between other async actions (e.g. shakeIcon
- * must be visible during the delay before stopShakeIcon).
- */
 function applyRuntimeAction(state: GameState, action: TriggerAction): GameState | null {
   switch (action.type) {
     case 'shakeIcon':
@@ -90,7 +84,6 @@ export function useGameEngine({ agentManager, onOpenWindow, onCloseAllWindows, i
   }, []);
 
   const executeAction = useCallback(async (action: TriggerAction): Promise<void> => {
-    // Apply runtime state mutations immediately so React sees them
     const runtimeState = applyRuntimeAction(stateRef.current, action);
     if (runtimeState) {
       updateState(runtimeState);
@@ -157,7 +150,6 @@ export function useGameEngine({ agentManager, onOpenWindow, onCloseAllWindows, i
         }
       }
 
-      // Re-evaluate: flags set during evaluation may enable new triggers
       const { newState, actions: newActions, newlyFiredIds } = evaluateTriggers(
         stateRef.current, STORY_TRIGGERS, { type: 'recheck' }, firedTriggers.current,
       );

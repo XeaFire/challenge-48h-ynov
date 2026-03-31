@@ -1,7 +1,6 @@
 import type { StoryTrigger } from '../types';
 
 export const story2Triggers: StoryTrigger[] = [
-  // ── Links proposes Paint quest ──
   {
     id: 'story2_links_paint_quest',
     conditions: [
@@ -17,7 +16,6 @@ export const story2Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── When Paint is opened → mail incident after 6 seconds ──
   {
     id: 'story2_paint_opened',
     conditions: [
@@ -25,7 +23,6 @@ export const story2Triggers: StoryTrigger[] = [
       { type: 'flag', flag: 'opened_paint', value: true },
     ],
     actions: [
-      // Merlin a gauche, Links a droite de Paint
       { type: 'agentMoveTo', character: 'merlin', x: 50, y: 300, duration: 1500 },
       { type: 'agentMoveTo', character: 'links', x: 750, y: 300, duration: 1500 },
       { type: 'agentSpeak', character: 'merlin', text: 'Super ! Tu as ouvert Paint ! Dessine quelque chose de beau !' },
@@ -43,7 +40,6 @@ export const story2Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Links goes to mail, disappears, blood ──
   {
     id: 'story2_links_goes_to_mail',
     conditions: [
@@ -61,7 +57,6 @@ export const story2Triggers: StoryTrigger[] = [
       { type: 'shakeIcon', iconId: 'mail' },
       { type: 'delay', ms: 1500 },
 
-      // Merlin est un peu con, il pige pas
       { type: 'agentSpeak', character: 'merlin', text: "Oh ! Links a encore dû renverser un pot de peinture ! Il est tellement maladroit celui-là ! 😅" },
       { type: 'delay', ms: 2000 },
       { type: 'stopShakeIcon' },
@@ -69,7 +64,6 @@ export const story2Triggers: StoryTrigger[] = [
       { type: 'delay', ms: 2000 },
       { type: 'agentSpeak', character: 'merlin', text: "Bah... Il doit être parti aux toilettes. Il va revenir, t'inquiète !" },
 
-      // Le vrai mail creepy
       {
         type: 'sendMail',
         from: '???@̸̛̤̈́ṕ̵̰i̶̖̓n̷̰̈d̴̰̑o̷̟̊w̵̳̉s̸̗̈.̵̲̿f̸̖̀r̶̤̃',
@@ -82,7 +76,6 @@ export const story2Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Characters arrive one by one, THEY figure it out ──
   {
     id: 'story2_investigation',
     conditions: [
@@ -91,7 +84,6 @@ export const story2Triggers: StoryTrigger[] = [
     actions: [
       { type: 'delay', ms: 3000 },
 
-      // Genie arrives a droite de Merlin
       { type: 'agentShow', character: 'genie' },
       { type: 'agentMoveTo', character: 'genie', x: 200, y: 350, duration: 0 },
       { type: 'agentPlay', character: 'genie', animation: 'Greet' },
@@ -105,7 +97,6 @@ export const story2Triggers: StoryTrigger[] = [
 
       { type: 'delay', ms: 1500 },
 
-      // Peedy arrives a droite de Genie
       { type: 'agentShow', character: 'peedy' },
       { type: 'agentMoveTo', character: 'peedy', x: 350, y: 350, duration: 0 },
       { type: 'agentPlay', character: 'peedy', animation: 'Greet' },
@@ -117,14 +108,12 @@ export const story2Triggers: StoryTrigger[] = [
 
       { type: 'delay', ms: 1500 },
 
-      // Bonzi arrives en dernier, a droite
       { type: 'agentShow', character: 'bonzi' },
       { type: 'agentMoveTo', character: 'bonzi', x: 500, y: 350, duration: 0 },
       { type: 'agentPlay', character: 'bonzi', animation: 'Greet' },
       { type: 'agentSpeak', character: 'bonzi', text: "Salut tout le monde ! J'ai raté un truc ?" },
       { type: 'delay', ms: 800 },
 
-      // Genie connects the dots
       { type: 'agentSpeak', character: 'genie', text: "Links disparaît, y'a du sang, et Bonzi arrive APRÈS ?!" },
       { type: 'delay', ms: 400 },
       { type: 'agentSpeak', character: 'peedy', text: "Bonzi est TOUJOURS le dernier quand y'a un problème." },
@@ -135,7 +124,6 @@ export const story2Triggers: StoryTrigger[] = [
 
       { type: 'delay', ms: 1000 },
 
-      // Accusation de Bonzi
       { type: 'agentPlay', character: 'bonzi', animation: 'Surprised' },
       { type: 'agentStopCurrent', character: 'bonzi' },
       { type: 'agentSpeak', character: 'bonzi', text: "Hé ho ! Pourquoi vous me regardez tous comme ça ?!" },
@@ -154,7 +142,6 @@ export const story2Triggers: StoryTrigger[] = [
 
       { type: 'delay', ms: 1500 },
 
-      // Depart un par un
       { type: 'delay', ms: 1500 },
 
       { type: 'agentPlay', character: 'genie', animation: 'GoodBye' },
@@ -183,7 +170,6 @@ export const story2Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Sang disparait quand le joueur ouvre les mails apres la scene ──
   {
     id: 'story2_mail_opened_clean_blood',
     conditions: [

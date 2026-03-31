@@ -2,6 +2,15 @@ import { useState, useCallback } from 'react';
 
 type Operator = '+' | '-' | '*' | '/';
 
+function calculate(left: number, right: number, op: Operator): number {
+  switch (op) {
+    case '+': return left + right;
+    case '-': return left - right;
+    case '*': return left * right;
+    case '/': return right !== 0 ? left / right : 0;
+  }
+}
+
 export function Calculator() {
   const [display, setDisplay] = useState('0');
   const [previousValue, setPreviousValue] = useState<number | null>(null);
@@ -35,15 +44,6 @@ export function Calculator() {
     setDisplay(String(-value));
   }, [display]);
 
-  const calculate = useCallback((left: number, right: number, op: Operator): number => {
-    switch (op) {
-      case '+': return left + right;
-      case '-': return left - right;
-      case '*': return left * right;
-      case '/': return right !== 0 ? left / right : 0;
-    }
-  }, []);
-
   const handleOperator = useCallback((nextOp: Operator) => {
     const current = parseFloat(display);
 
@@ -57,7 +57,7 @@ export function Calculator() {
 
     setOperator(nextOp);
     setWaitingForOperand(true);
-  }, [display, previousValue, operator, waitingForOperand, calculate]);
+  }, [display, previousValue, operator, waitingForOperand]);
 
   const handleEquals = useCallback(() => {
     if (previousValue === null || !operator) return;
@@ -69,7 +69,7 @@ export function Calculator() {
     setOperator(null);
     setWaitingForOperand(true);
     if (result === 67) setEasterEgg(true);
-  }, [display, previousValue, operator, calculate]);
+  }, [display, previousValue, operator]);
 
   const clearAll = useCallback(() => {
     setDisplay('0');
@@ -107,7 +107,7 @@ export function Calculator() {
     setDisplay(value !== 0 ? String(1 / value) : 'Erreur');
   }, [display]);
 
-  const memClear = useCallback(() => setMemory(0), []);
+  const memClear = () => setMemory(0);
   const memRecall = useCallback(() => {
     setDisplay(String(memory));
     setWaitingForOperand(true);
@@ -187,13 +187,11 @@ export function Calculator() {
         <div className="calc-display-text">{formatDisplay(display)}</div>
       </div>
       <div className="calc-buttons">
-        {/* Row 1: Memory + Backspace/CE/C */}
         <button className="calc-btn calc-btn-mem" onClick={memClear}>MC</button>
         <button className="calc-btn calc-btn-red calc-btn-wide" onClick={backspace}>Retour</button>
         <button className="calc-btn calc-btn-red" onClick={clearEntry}>CE</button>
         <button className="calc-btn calc-btn-red" onClick={clearAll}>C</button>
 
-        {/* Row 2: MR + 7 8 9 / sqrt */}
         <button className="calc-btn calc-btn-mem" onClick={memRecall}>MR</button>
         <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '7')} onClick={() => inputDigit('7')}>7</button>
         <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '8')} onClick={() => inputDigit('8')}>8</button>
@@ -201,7 +199,6 @@ export function Calculator() {
         <button className="calc-btn calc-btn-op" onClick={() => handleOperator('/')}>/</button>
         <button className="calc-btn calc-btn-fn" onClick={sqrt}>sqrt</button>
 
-        {/* Row 3: MS + 4 5 6 * % */}
         <button className="calc-btn calc-btn-mem" onClick={memStore}>MS</button>
         <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '4')} onClick={() => inputDigit('4')}>4</button>
         <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '5')} onClick={() => inputDigit('5')}>5</button>
@@ -209,7 +206,6 @@ export function Calculator() {
         <button className="calc-btn calc-btn-op" onClick={() => handleOperator('*')}>*</button>
         <button className="calc-btn calc-btn-fn" onClick={percent}>%</button>
 
-        {/* Row 4: M+ + 1 2 3 - 1/x */}
         <button className="calc-btn calc-btn-mem" onClick={memAdd}>M+</button>
         <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '1')} onClick={() => inputDigit('1')}>1</button>
         <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '2')} onClick={() => inputDigit('2')}>2</button>
@@ -217,7 +213,6 @@ export function Calculator() {
         <button className="calc-btn calc-btn-op" onClick={() => handleOperator('-')}>-</button>
         <button className="calc-btn calc-btn-fn" onClick={inverse}>1/x</button>
 
-        {/* Row 5: (empty) + 0 +/- . + = */}
         <div className="calc-btn-spacer" />
         <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '0')} onClick={() => inputDigit('0')}>0</button>
         <button className="calc-btn calc-btn-num" onClick={toggleSign}>+/-</button>

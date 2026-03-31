@@ -1,7 +1,6 @@
 import type { StoryTrigger } from '../types';
 
 export const story6Triggers: StoryTrigger[] = [
-  // ── Bonzi catches you on his page ──
   {
     id: 'story6_bonzi_catches',
     conditions: [
@@ -10,7 +9,6 @@ export const story6Triggers: StoryTrigger[] = [
     actions: [
       { type: 'delay', ms: 3000 },
 
-      // Bonzi arrives angry
       { type: 'agentShow', character: 'bonzi' },
       { type: 'agentPlay', character: 'bonzi', animation: 'Alert' },
       { type: 'agentSpeak', character: 'bonzi', text: "HEY ! Qu'est-ce que vous faites sur MA page ?!" },
@@ -18,7 +16,6 @@ export const story6Triggers: StoryTrigger[] = [
       { type: 'agentSpeak', character: 'bonzi', text: "QUI vous a donné mon code ?! C'est une violation de vie privée !" },
       { type: 'delay', ms: 1500 },
 
-      // Everyone shows up
       { type: 'agentShow', character: 'merlin' },
       { type: 'agentMoveTo', character: 'merlin', x: 100, y: 350, duration: 0 },
       { type: 'delay', ms: 300 },
@@ -35,7 +32,6 @@ export const story6Triggers: StoryTrigger[] = [
       { type: 'agentMoveTo', character: 'rover', x: 850, y: 350, duration: 0 },
       { type: 'delay', ms: 1000 },
 
-      // Confrontation
       { type: 'agentSpeak', character: 'merlin', text: "Bonzi ! On a trouvé des choses très suspectes sur toi !" },
       { type: 'agentSpeak', character: 'bonzi', text: "Suspectes ?! C'est VOUS les suspects ! Vous êtes entrés chez moi par effraction !" },
       { type: 'agentSpeak', character: 'genius', text: "Tu es ADMIN du système, Bonzi. Tu as accès à tout. Explique-toi." },
@@ -44,7 +40,6 @@ export const story6Triggers: StoryTrigger[] = [
       { type: 'agentSpeak', character: 'bonzi', text: "C'est pas parce que je suis admin que je suis un MEURTRIER !" },
       { type: 'delay', ms: 1000 },
 
-      // Screen starts shaking - tension rises
       { type: 'screenShake', enabled: true },
 
       { type: 'agentSpeak', character: 'peedy', text: "Ça suffit ! On tourne en rond ! Il faut en finir MAINTENANT !" },
@@ -61,7 +56,6 @@ export const story6Triggers: StoryTrigger[] = [
       { type: 'agentSpeak', character: 'merlin', text: "Choisis bien. Une fois supprimé, il n'y a pas de retour en arrière." },
       { type: 'delay', ms: 500 },
 
-      // Show the choice form
       {
         type: 'showForm',
         formId: 'story6_final_vote',
@@ -82,7 +76,6 @@ export const story6Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Wrong choice: Merlin ──
   {
     id: 'story6_wrong_merlin',
     conditions: [
@@ -104,7 +97,6 @@ export const story6Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Wrong choice: Bonzi ──
   {
     id: 'story6_wrong_bonzi',
     conditions: [
@@ -126,7 +118,6 @@ export const story6Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Wrong choice: Genie ──
   {
     id: 'story6_wrong_genie',
     conditions: [
@@ -148,7 +139,6 @@ export const story6Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Wrong choice: Genius ──
   {
     id: 'story6_wrong_genius',
     conditions: [
@@ -170,7 +160,6 @@ export const story6Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Wrong choice: Rover ──
   {
     id: 'story6_wrong_rover',
     conditions: [
@@ -192,7 +181,6 @@ export const story6Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── CORRECT choice: Peedy ──
   {
     id: 'story6_correct_peedy',
     conditions: [
@@ -203,7 +191,6 @@ export const story6Triggers: StoryTrigger[] = [
     actions: [
       { type: 'delay', ms: 1000 },
 
-      // Peedy's mask falls
       { type: 'agentPlay', character: 'peedy', animation: 'Alert' },
       { type: 'agentSpeak', character: 'peedy', text: "..." },
       { type: 'delay', ms: 2000 },
@@ -236,7 +223,6 @@ export const story6Triggers: StoryTrigger[] = [
       { type: 'screenShake', enabled: false },
       { type: 'delay', ms: 2000 },
 
-      // Peace
       { type: 'agentSpeak', character: 'merlin', text: "C'est fini. Justice a été rendue pour Links et Rocky." },
       { type: 'agentSpeak', character: 'bonzi', text: "...merci de m'avoir cru. Merci." },
       { type: 'agentSpeak', character: 'genius', text: "Le système est sécurisé. Pindows peut enfin être en paix." },

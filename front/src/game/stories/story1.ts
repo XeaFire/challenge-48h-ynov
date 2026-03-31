@@ -1,7 +1,6 @@
 import type { StoryTrigger } from '../types';
 
 export const story1Triggers: StoryTrigger[] = [
-  // ── Merlin appears after boot ──
   {
     id: 'story1_merlin_intro',
     conditions: [
@@ -19,7 +18,6 @@ export const story1Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── Links appears to the right of Merlin ──
   {
     id: 'story1_links_intro',
     conditions: [
@@ -51,7 +49,6 @@ export const story1Triggers: StoryTrigger[] = [
     once: true,
   },
 
-  // ── After form → congratulate + unlock Paint ──
   {
     id: 'story1_form_done',
     conditions: [

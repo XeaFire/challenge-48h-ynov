@@ -14,7 +14,6 @@ interface SpeechBubbleLayerProps {
   onBubbleClick: () => void;
 }
 
-/** Parse **bold** dans le texte */
 function renderBold(text: string) {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return parts.map((part, i) => {
@@ -25,7 +24,6 @@ function renderBold(text: string) {
   });
 }
 
-/** Compte les caracteres visibles (sans les **) */
 function plainLength(text: string): number {
   return text.replace(/\*\*/g, '').length;
 }
@@ -45,7 +43,6 @@ function TypewriterText({ text }: { text: string }) {
     return () => clearInterval(interval);
   }, [text, total]);
 
-  // Couper le texte au bon endroit en ignorant les **
   let visible = 0;
   let cutIndex = 0;
   for (let i = 0; i < text.length && visible < length; i++) {
@@ -71,7 +68,6 @@ function TrackedBubble({ bubble, getAgentEl }: { bubble: BubbleData; getAgentEl:
       const div = bubbleRef.current;
       if (el && div) {
         const rect = el.getBoundingClientRect();
-        // DOM direct — zero re-render React
         div.style.left = Math.round(rect.left + rect.width / 2 - 30) + 'px';
         div.style.top = Math.round(rect.top - 10) + 'px';
       }

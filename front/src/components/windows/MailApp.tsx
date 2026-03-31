@@ -27,11 +27,11 @@ export function MailApp() {
   const folderMails = allMails.filter(m => m.folder === activeFolder);
   const selectedMail = selectedMailId ? allMails.find(m => m.id === selectedMailId) ?? null : null;
 
-  const handleSelectFolder = useCallback((folder: MailFolder) => {
+  const handleSelectFolder = (folder: MailFolder) => {
     setActiveFolder(folder);
     setSelectedMailId(null);
     setView('list');
-  }, []);
+  };
 
   const handleSelectMail = useCallback((mail: Mail) => {
     setSelectedMailId(mail.id);
@@ -41,12 +41,12 @@ export function MailApp() {
     }
   }, []);
 
-  const handleCompose = useCallback(() => {
+  const handleCompose = () => {
     setComposeTo('');
     setComposeSubject('');
     setComposeBody('');
     setView('compose');
-  }, []);
+  };
 
   const handleReply = useCallback(() => {
     if (!selectedMail) return;
@@ -75,14 +75,13 @@ export function MailApp() {
     }
   }, [selectedMailId]);
 
-  const handleBack = useCallback(() => {
+  const handleBack = () => {
     setView('list');
     setSelectedMailId(null);
-  }, []);
+  };
 
   return (
     <div className="mail">
-      {/* Toolbar */}
       <div className="mail-toolbar">
         <button className="mail-toolbar-btn" onClick={handleCompose}>
           ✉ Nouveau
@@ -105,7 +104,6 @@ export function MailApp() {
       </div>
 
       <div className="mail-main">
-        {/* Folder list */}
         <div className="mail-folders">
           {FOLDERS.map(f => {
             const unread = allMails.filter(m => m.folder === f.key && !m.read).length;
@@ -123,7 +121,6 @@ export function MailApp() {
           })}
         </div>
 
-        {/* Content area */}
         <div className="mail-content">
           {view === 'list' && (
             <MailList
@@ -153,8 +150,6 @@ export function MailApp() {
   );
 }
 
-// ---- Sub-components ----
-
 function MailList({ mails, selectedId, onSelect, folder }: {
   mails: Mail[];
   selectedId: string | null;
@@ -163,14 +158,12 @@ function MailList({ mails, selectedId, onSelect, folder }: {
 }) {
   return (
     <div className="mail-list">
-      {/* Header */}
       <div className="mail-list-header">
         <span className="mail-list-col-icon" />
         <span className="mail-list-col-from">{folder === 'sent' ? 'À' : 'De'}</span>
         <span className="mail-list-col-subject">Objet</span>
         <span className="mail-list-col-date">Date</span>
       </div>
-      {/* Items */}
       <div className="mail-list-body">
         {mails.length === 0 && (
           <div className="mail-empty">Aucun message dans ce dossier.</div>

@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react';
 
-/**
- * Formate l'heure actuelle en HH:MM.
- */
 function formatCurrentTime(): string {
   const now = new Date();
   const hours = now.getHours().toString().padStart(2, '0');
@@ -10,10 +7,6 @@ function formatCurrentTime(): string {
   return `${hours}:${minutes}`;
 }
 
-/**
- * Horloge de la barre des taches.
- * Se met a jour toutes les 10 secondes.
- */
 export function Clock() {
   const [time, setTime] = useState(formatCurrentTime);
 

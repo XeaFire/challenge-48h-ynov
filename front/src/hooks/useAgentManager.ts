@@ -31,7 +31,8 @@ export function useAgentManager() {
   useEffect(() => {
     const current = agents.current;
     return () => {
-      current.forEach(a => { try { a.dispose(); } catch { /* */ } });
+      // eslint-disable-next-line no-empty
+      current.forEach(a => { try { a.dispose(); } catch {} });
       current.clear();
     };
   }, []);
@@ -60,8 +61,10 @@ export function useAgentManager() {
     setBubbles(prev => prev.filter(b => b.characterId !== id));
     try {
       if (instant) agent.dispose();
-      else agent.hide(false, () => { try { agent.dispose(); } catch { /* */ } });
-    } catch { /* */ }
+      // eslint-disable-next-line no-empty
+      else agent.hide(false, () => { try { agent.dispose(); } catch {} });
+    // eslint-disable-next-line no-empty
+    } catch {}
   }, []);
 
   const speak = useCallback((id: CharacterId, text: string): Promise<void> => {

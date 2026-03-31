@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { FolderIcon, CDDriveIcon, FloppyDiskIcon } from '../../icons';
 import { useGame } from '../../game/GameContext';
 
-// --- Barres d'utilisation disque ---
-
 interface DriveInfo {
   letter: string;
   label: string;
@@ -48,7 +46,6 @@ function DriveBar({ drive }: { drive: DriveInfo }) {
             position: 'absolute', inset: 0,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 9, fontWeight: 'bold', color: pct > 50 ? '#fff' : '#000',
-            mixBlendMode: pct > 50 ? 'normal' : undefined,
           }}>
             {pct}%
           </span>
@@ -60,8 +57,6 @@ function DriveBar({ drive }: { drive: DriveInfo }) {
     </div>
   );
 }
-
-// --- Horloge analogique ---
 
 function AnalogClock() {
   const [now, setNow] = useState(new Date());
@@ -85,21 +80,18 @@ function AnalogClock() {
         const y = 40 + 30 * Math.sin(angle);
         return <circle key={i} cx={x} cy={y} r={1.5} fill="#000" />;
       })}
-      {/* Heures */}
       <line
         x1="40" y1="40"
         x2={40 + 18 * Math.cos(((h + m / 60) * 30 - 90) * (Math.PI / 180))}
         y2={40 + 18 * Math.sin(((h + m / 60) * 30 - 90) * (Math.PI / 180))}
         stroke="#000" strokeWidth="3" strokeLinecap="round"
       />
-      {/* Minutes */}
       <line
         x1="40" y1="40"
         x2={40 + 26 * Math.cos((m * 6 - 90) * (Math.PI / 180))}
         y2={40 + 26 * Math.sin((m * 6 - 90) * (Math.PI / 180))}
         stroke="#000" strokeWidth="2" strokeLinecap="round"
       />
-      {/* Secondes */}
       <line
         x1="40" y1="40"
         x2={40 + 28 * Math.cos((s * 6 - 90) * (Math.PI / 180))}
@@ -110,8 +102,6 @@ function AnalogClock() {
     </svg>
   );
 }
-
-// --- Calendrier ---
 
 function MiniCalendar() {
   const now = new Date();
@@ -169,8 +159,6 @@ function MiniCalendar() {
   );
 }
 
-// --- Raccourcis ---
-
 function Shortcut({ emoji, label, onClick }: { emoji: string; label: string; onClick?: () => void }) {
   return (
     <div
@@ -187,8 +175,6 @@ function Shortcut({ emoji, label, onClick }: { emoji: string; label: string; onC
     </div>
   );
 }
-
-// --- Mot de passe ---
 
 const ALL_PASSWORDS = [
   { site: 'webmail.pindows.fr', user: 'Merlin', pass: 'm3rlin_98!' },
@@ -257,8 +243,6 @@ function PasswordApp() {
   );
 }
 
-// --- Composant principal ---
-
 type Tab = 'drives' | 'tools' | 'passwords';
 
 export function MyComputer() {
@@ -267,7 +251,6 @@ export function MyComputer() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* Onglets */}
       <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #808080', background: '#c0c0c0' }}>
         {([['drives', 'Disques'], ['tools', 'Outils'], ['passwords', 'Mots de passe']] as [Tab, string][]).map(([id, label]) => (
           <button
@@ -291,7 +274,6 @@ export function MyComputer() {
         ))}
       </div>
 
-      {/* Contenu */}
       <div style={{ flex: 1, overflow: 'auto', background: '#fff' }}>
         {tab === 'drives' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: 4 }}>
@@ -337,12 +319,10 @@ export function MyComputer() {
 
         {tab === 'tools' && (
           <div style={{ display: 'flex', gap: 16, padding: 8 }}>
-            {/* Horloge */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
               <AnalogClock />
               <TimeDisplay />
             </div>
-            {/* Calendrier */}
             <div style={{ flex: 1 }}>
               <MiniCalendar />
               <div style={{

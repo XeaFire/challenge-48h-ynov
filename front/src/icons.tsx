@@ -229,18 +229,14 @@ export function TerminalIcon({ size = 32 }: { size?: number }) {
 
 export function SolitaireIcon({ size = 32 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" style={{ imageRendering: 'pixelated' }}>
-      {/* green felt */}
+    <svg width={size} height={size} viewBox="0 0 32 32" style={PIXEL_STYLE}>
       <rect x="1" y="1" width="30" height="30" rx="2" fill="#1a5c1a" stroke="#0d3d0d" strokeWidth="1" />
-      {/* red card top-left */}
       <rect x="3" y="3" width="11" height="15" rx="1" fill="#fff" stroke="#888" strokeWidth="0.5" />
       <text x="5" y="12" fontSize="7" fill="#cc0000" fontWeight="bold">A</text>
       <text x="5" y="17" fontSize="7" fill="#cc0000">♥</text>
-      {/* black card top-right */}
       <rect x="18" y="3" width="11" height="15" rx="1" fill="#fff" stroke="#888" strokeWidth="0.5" />
       <text x="20" y="12" fontSize="7" fill="#111" fontWeight="bold">K</text>
       <text x="20" y="17" fontSize="7" fill="#111">♠</text>
-      {/* face-down card bottom-center */}
       <rect x="10" y="15" width="12" height="16" rx="1" fill="#0044cc" stroke="#003" strokeWidth="0.5" />
       <rect x="12" y="17" width="8" height="12" rx="0.5" fill="#0033aa" />
     </svg>

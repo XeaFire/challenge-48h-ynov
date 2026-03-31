@@ -8,9 +8,8 @@ interface BSODProps {
 export function BSOD({ visible, onDismiss }: BSODProps) {
   useEffect(() => {
     if (!visible) return;
-    const dismiss = () => onDismiss();
-    document.addEventListener('keydown', dismiss, { once: true });
-    return () => document.removeEventListener('keydown', dismiss);
+    document.addEventListener('keydown', onDismiss, { once: true });
+    return () => document.removeEventListener('keydown', onDismiss);
   }, [visible, onDismiss]);
 
   if (!visible) return null;
