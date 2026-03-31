@@ -31,8 +31,8 @@ export function useAgentManager() {
   useEffect(() => {
     const current = agents.current;
     return () => {
-      agents.current.forEach(a => { try { a.dispose(); } catch { /* */ } });
-      agents.current.clear();
+      current.forEach(a => { try { a.dispose(); } catch { /* */ } });
+      current.clear();
     };
   }, []);
 
