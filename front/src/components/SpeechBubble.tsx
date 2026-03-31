@@ -63,7 +63,7 @@ function TypewriterText({ text }: { text: string }) {
 
 function TrackedBubble({ bubble, getAgentEl }: { bubble: BubbleData; getAgentEl: (id: CharacterId) => HTMLElement | null }) {
   const bubbleRef = useRef<HTMLDivElement>(null);
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     const track = () => {
