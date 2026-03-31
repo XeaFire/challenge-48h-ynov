@@ -32,6 +32,10 @@ function applyRuntimeAction(state: GameState, action: TriggerAction): GameState 
         : { ...state, unlockedApps: [...state.unlockedApps, action.app] };
     case 'lockApp':
       return { ...state, unlockedApps: state.unlockedApps.filter(a => a !== action.app) };
+    case 'setVolume':
+      return { ...state, volume: action.volume };
+    case 'setMuted':
+      return { ...state, muted: action.muted };
     default:
       return null; // not a runtime action
   }
@@ -139,9 +143,19 @@ export function useGameEngine({ agentManager, onOpenWindow }: Options) {
   }, [processActions, updateState]);
 
   const dispatch = useCallback((event: GameEvent) => {
+    // Handle direct state updates for audio controls
+    if (event.type === 'volume_changed') {
+      updateState({ ...stateRef.current, volume: event.volume });
+      return;
+    }
+    if (event.type === 'mute_toggled') {
+      updateState({ ...stateRef.current, muted: event.muted });
+      return;
+    }
+
     pendingEvents.current.push(event);
     processNext();
-  }, [processNext]);
+  }, [processNext, updateState]);
 
   return { gameState, dispatch };
 }

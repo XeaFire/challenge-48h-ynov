@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import type { WindowType } from '../../types';
 import { useGame } from '../../game/GameContext';
 import { DesktopIcon } from './DesktopIcon';
-import { ComputerIcon, NotepadIcon, RecycleBinIcon, InternetExplorerIcon, CalculatorIcon, PaintIcon, ExplorerIcon, MailIcon, MinesweeperIcon } from '../../icons';
+import { ComputerIcon, NotepadIcon, RecycleBinIcon, InternetExplorerIcon, CalculatorIcon, PaintIcon, ExplorerIcon, MailIcon, MinesweeperIcon, SettingsIcon } from '../../icons';
 
 interface DesktopProps {
   onOpenWindow: (type: WindowType) => void;
@@ -72,8 +72,15 @@ const DESKTOP_ICONS: DesktopIconConfig[] = [
     action: { type: 'openWindow', windowType: 'minesweeper' },
   },
   {
-    id: 'ie',
+    id: 'settings',
     x: 10, y: 730,
+    icon: <SettingsIcon />,
+    label: 'Settings',
+    action: { type: 'openWindow', windowType: 'settings' },
+  },
+  {
+    id: 'ie',
+    x: 10, y: 820,
     icon: <InternetExplorerIcon />,
     label: 'Internet Explorer',
     action: { type: 'triggerBSOD' },

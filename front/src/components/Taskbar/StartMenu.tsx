@@ -1,7 +1,7 @@
 import type { WindowType } from '../../types';
 import type { ReactNode } from 'react';
 import { useGame } from '../../game/GameContext';
-import { ComputerIcon, NotepadIcon, CalculatorIcon, PaintIcon, ExplorerIcon, MailIcon, HelpIcon, ShutdownIcon } from '../../icons';
+import { ComputerIcon, NotepadIcon, CalculatorIcon, PaintIcon, ExplorerIcon, MailIcon, HelpIcon, ShutdownIcon, SettingsIcon } from '../../icons';
 
 interface StartMenuProps {
   visible: boolean;
@@ -23,6 +23,7 @@ const MENU_APPS: MenuEntry[] = [
   { app: 'paint', windowType: 'paint', icon: <PaintIcon size={16} />, label: 'Paint' },
   { app: 'explorer', windowType: 'explorer', icon: <ExplorerIcon size={16} />, label: 'Explorateur' },
   { app: 'mail', windowType: 'mail', icon: <MailIcon size={16} />, label: 'Pindows Mail' },
+  { app: 'settings', windowType: 'settings', icon: <SettingsIcon size={16} />, label: 'Settings' },
 ];
 
 export function StartMenu({ visible, onOpenWindow, onShutDown }: StartMenuProps) {

@@ -228,3 +228,24 @@ export function MinesweeperIcon({ size = 32 }: { size?: number }) {
     </svg>
   );
 }
+
+export function SettingsIcon({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={PIXEL_STYLE}>
+      {/* Outer gear teeth */}
+      <rect x="14" y="2" width="4" height="4" fill="#808080" />
+      <rect x="22" y="10" width="4" height="4" fill="#808080" />
+      <rect x="22" y="18" width="4" height="4" fill="#808080" />
+      <rect x="14" y="26" width="4" height="4" fill="#808080" />
+      <rect x="6" y="18" width="4" height="4" fill="#808080" />
+      <rect x="6" y="10" width="4" height="4" fill="#808080" />
+      {/* Inner gear body */}
+      <circle cx="16" cy="16" r="8" fill="#c0c0c0" stroke="#808080" strokeWidth="1" />
+      {/* Center hole */}
+      <circle cx="16" cy="16" r="3" fill="#ffffff" />
+      {/* Spokes */}
+      <rect x="15" y="8" width="2" height="16" fill="#808080" />
+      <rect x="8" y="15" width="16" height="2" fill="#808080" />
+    </svg>
+  );
+}

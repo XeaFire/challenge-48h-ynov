@@ -28,6 +28,10 @@ export interface GameState {
   shakingIcon: string | null;
   /** Icon permanently bleeding (persists after shake stops) */
   bleedingIcon: string | null;
+  /** Master volume (0-100) */
+  volume: number;
+  /** Whether sound is muted */
+  muted: boolean;
 }
 
 export interface StoryTrigger {
@@ -56,9 +60,8 @@ export type TriggerAction =
   | { type: 'lockApp'; app: string }
   | { type: 'delay'; ms: number }
   | { type: 'sendMail'; from: string; to: string; subject: string; body: string }
-  | { type: 'shakeIcon'; iconId: string }
-  | { type: 'stopShakeIcon' }
-  | { type: 'stopBleeding' };
+  | { type: 'setVolume'; volume: number }
+  | { type: 'setMuted'; muted: boolean };
 
 export type GameEvent =
   | { type: 'boot_complete' }
@@ -67,4 +70,6 @@ export type GameEvent =
   | { type: 'character_clicked'; characterId: CharacterId }
   | { type: 'item_clicked'; itemId: string; windowType: WindowType }
   | { type: 'form_submitted'; formId: string; data: Record<string, string> }
+  | { type: 'volume_changed'; volume: number }
+  | { type: 'mute_toggled'; muted: boolean }
   | { type: 'recheck' };

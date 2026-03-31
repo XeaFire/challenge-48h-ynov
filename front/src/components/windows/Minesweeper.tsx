@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useAudio } from '../../hooks/useAudio';
 
 type CellState = 'hidden' | 'revealed' | 'flagged';
 type GameState = 'playing' | 'won' | 'lost';
@@ -23,6 +24,36 @@ const NUMBER_COLORS = [
   '#000000', // 7 black
   '#808080', // 8 gray
 ];
+
+// Audio helper function
+function createSound(audioCtx: AudioContext, masterGainNode: GainNode, type: OscillatorType, frequency: number, duration: number, options?: {
+  startFrequency?: number;
+  endFrequency?: number;
+  fadeOut?: boolean;
+}) {
+  const oscillator = audioCtx.createOscillator();
+  const gainNode = audioCtx.createGain();
+
+  oscillator.connect(gainNode);
+  gainNode.connect(masterGainNode);
+
+  oscillator.type = type;
+  oscillator.frequency.setValueAtTime(options?.startFrequency || frequency, audioCtx.currentTime);
+
+  if (options?.endFrequency) {
+    oscillator.frequency.exponentialRampToValueAtTime(options.endFrequency, audioCtx.currentTime + duration);
+  } else {
+    oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+  }
+
+  gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+  if (options?.fadeOut) {
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+  }
+
+  oscillator.start(audioCtx.currentTime);
+  oscillator.stop(audioCtx.currentTime + duration);
+}
 
 function createBoard(): Cell[][] {
   const board: Cell[][] = [];
@@ -113,6 +144,48 @@ export function Minesweeper() {
   const [flagCount, setFlagCount] = useState(0);
   const [time, setTime] = useState(0);
   const [firstClick, setFirstClick] = useState(true);
+  const { audioContext, masterGainNode, resumeAudioContext } = useAudio();
+
+  // Sound functions
+  const playRevealSafe = async () => {
+    if (!audioContext || !masterGainNode) return;
+    await resumeAudioContext();
+    createSound(audioContext, masterGainNode, 'sine', 440, 0.08, { fadeOut: true });
+  };
+
+  const playRevealEmpty = async () => {
+    if (!audioContext || !masterGainNode) return;
+    await resumeAudioContext();
+    createSound(audioContext, masterGainNode, 'sine', 220, 0.06);
+  };
+
+  const playFlag = async () => {
+    if (!audioContext || !masterGainNode) return;
+    await resumeAudioContext();
+    createSound(audioContext, masterGainNode, 'square', 600, 0.05);
+  };
+
+  const playExplosion = async () => {
+    if (!audioContext || !masterGainNode) return;
+    await resumeAudioContext();
+    createSound(audioContext, masterGainNode, 'sawtooth', 150, 0.4, { endFrequency: 30, fadeOut: true });
+  };
+
+  const playWin = async () => {
+    if (!audioContext || !masterGainNode) return;
+    await resumeAudioContext();
+    const notes = [
+      { freq: 523.25, delay: 0 }, // C5
+      { freq: 659.25, delay: 0.12 }, // E5
+      { freq: 783.99, delay: 0.24 }, // G5
+    ];
+
+    notes.forEach(note => {
+      setTimeout(() => {
+        createSound(audioContext, masterGainNode, 'sine', note.freq, 0.12);
+      }, note.delay * 1000);
+    });
+  };
 
   useEffect(() => {
     if (gameState === 'playing') {
@@ -155,14 +228,24 @@ export function Minesweeper() {
       );
       setBoard(revealedBoard);
       setGameState('lost');
+      playExplosion();
       return;
     }
 
     const revealedBoard = revealCell(newBoard, x, y);
     setBoard(revealedBoard);
 
+    // Play appropriate sound based on what was revealed
+    const revealedCell = revealedBoard[x][y];
+    if (revealedCell.neighborMines === 0) {
+      playRevealEmpty();
+    } else {
+      playRevealSafe();
+    }
+
     if (checkWin(revealedBoard)) {
       setGameState('won');
+      playWin();
     }
   }, [board, gameState, firstClick]);
 
@@ -174,9 +257,11 @@ export function Minesweeper() {
     if (newBoard[x][y].state === 'hidden') {
       newBoard[x][y].state = 'flagged';
       setFlagCount(c => c + 1);
+      playFlag();
     } else if (newBoard[x][y].state === 'flagged') {
       newBoard[x][y].state = 'hidden';
       setFlagCount(c => c - 1);
+      playFlag();
     }
     setBoard(newBoard);
   }, [board, gameState]);

@@ -1,4 +1,5 @@
 import { useState, useEffect, type ReactNode } from 'react';
+import { useAudio } from '../../hooks/useAudio';
 
 interface DesktopIconProps {
   x: number;
@@ -13,6 +14,36 @@ interface DesktopIconProps {
 export function DesktopIcon({ x, y, icon, label, shaking, bleeding, onDoubleClick }: DesktopIconProps) {
   const [fading, setFading] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const { getEffectiveVolume, audioContext, masterGainNode, resumeAudioContext } = useAudio();
+
+  // Function to play a simple beep sound
+  const playBeep = async () => {
+    if (!audioContext || !masterGainNode) return;
+
+    // Resume audio context if suspended
+    await resumeAudioContext();
+
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(masterGainNode);
+
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+    oscillator.type = 'square';
+
+    // Use a base volume that will be modulated by the master gain
+    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.1);
+  };
+
+  const handleDoubleClick = () => {
+    playBeep();
+    onDoubleClick();
+  };
 
   // Apres 30s de saignement, fade out sur 3s puis disparait
   useEffect(() => {
@@ -31,7 +62,7 @@ export function DesktopIcon({ x, y, icon, label, shaking, bleeding, onDoubleClic
     <div
       className={`desktop-icon${shaking ? ' desktop-icon-shaking' : ''}`}
       style={{ left: x, top: y }}
-      onDoubleClick={onDoubleClick}
+      onDoubleClick={handleDoubleClick}
     >
       {icon}
       <span className="icon-label">{label}</span>
