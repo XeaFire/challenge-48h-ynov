@@ -7,6 +7,8 @@ import { SpeechBubbleLayer } from './components/SpeechBubble';
 import { BootScreen } from './components/BootScreen';
 import { BSOD } from './components/BSOD';
 import bgMusic from './assets/interstellarmusic.wav';
+import { DEBUG_PRESETS, createDebugState } from './game/initialState';
+import type { GameState } from './game/types';
 import { Desktop } from './components/Desktop/Desktop';
 import { Taskbar } from './components/Taskbar/Taskbar';
 import { Window } from './components/Window/Window';
@@ -38,8 +40,77 @@ const WINDOW_CONFIG: Record<WindowType, { menu?: string[]; statusbar?: string; i
   minesweeper: { menu: ['Jeu', '?'], statusbar: 'Mines restantes: 10' },
 };
 
+const IS_DEBUG = window.location.pathname.startsWith('/debug');
+
+interface DebugConfig {
+  initialState?: GameState;
+  initialFiredTriggers?: string[];
+  skipBoot?: boolean;
+}
+
+function DebugPicker({ onSelect }: { onSelect: (config: DebugConfig) => void }) {
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, background: '#000',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      zIndex: 999999,
+    }}>
+      <div style={{
+        background: '#c0c0c0', border: '2px solid', borderColor: '#fff #808080 #808080 #fff',
+        padding: 20, minWidth: 350,
+      }}>
+        <div style={{
+          background: '#000080', color: '#fff', fontWeight: 'bold',
+          padding: '4px 8px', marginBottom: 12, fontSize: 13,
+        }}>
+          Debug — Choix de la story
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <button
+            onClick={() => onSelect({})}
+            style={{
+              padding: '6px 12px', background: '#c0c0c0', border: '2px solid',
+              borderColor: '#fff #808080 #808080 #fff', cursor: 'pointer',
+              fontFamily: 'inherit', fontSize: 12, textAlign: 'left',
+            }}
+          >
+            Debut — Lancer normalement
+          </button>
+          {Object.entries(DEBUG_PRESETS).map(([key, preset]) => (
+            <button
+              key={key}
+              onClick={() => onSelect({
+                initialState: createDebugState(preset),
+                initialFiredTriggers: preset.firedTriggers,
+                skipBoot: true,
+              })}
+              style={{
+                padding: '6px 12px', background: '#c0c0c0', border: '2px solid',
+                borderColor: '#fff #808080 #808080 #fff', cursor: 'pointer',
+                fontFamily: 'inherit', fontSize: 12, textAlign: 'left',
+              }}
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
-  const [booted, setBooted] = useState(false);
+  const [debugConfig, setDebugConfig] = useState<DebugConfig | null>(IS_DEBUG ? null : {});
+
+  if (debugConfig === null) {
+    return <DebugPicker onSelect={setDebugConfig} />;
+  }
+
+  return <Game debugConfig={debugConfig} />;
+}
+
+function Game({ debugConfig }: { debugConfig: DebugConfig }) {
+  const [booted, setBooted] = useState(debugConfig.skipBoot ?? false);
   const [bsodVisible, setBsodVisible] = useState(false);
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [shutdownScreen, setShutdownScreen] = useState(false);
@@ -93,6 +164,8 @@ function App() {
     agentManager: agents,
     onOpenWindow: openWindow,
     onCloseAllWindows: closeAllWindows,
+    initialState: debugConfig.initialState,
+    initialFiredTriggers: debugConfig.initialFiredTriggers,
   });
 
   // Opens a window AND dispatches the game event so triggers can react
@@ -105,6 +178,13 @@ function App() {
     setBooted(true);
     dispatch({ type: 'boot_complete' });
   }, [dispatch]);
+
+  // In debug mode with skipBoot, dispatch recheck so triggers evaluate immediately
+  useEffect(() => {
+    if (debugConfig.skipBoot) {
+      dispatch({ type: 'recheck' });
+    }
+  }, [debugConfig.skipBoot, dispatch]);
 
   const handleTaskbarItemClick = useCallback((id: string) => {
     const win = windows.find(w => w.id === id);
