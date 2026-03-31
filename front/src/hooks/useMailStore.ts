@@ -1,26 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import type { Mail, MailFolder } from '../types';
 
-// ---------------------------------------------------------------------------
-// Mail Store — simple global store accessible from anywhere
-//
-// Usage from any file:
-//   import { mailStore } from '../hooks/useMailStore';
-//
-//   mailStore.send({ from, to, subject, body })   → creates a mail in 'inbox'
-//   mailStore.addToFolder(folder, { ... })         → puts a mail in a specific folder
-//   mailStore.markAsRead(id)
-//   mailStore.moveTo(id, folder)
-//   mailStore.remove(id)
-//   mailStore.getAll()
-//   mailStore.getByFolder(folder)
-//   mailStore.getById(id)
-//
-// Usage as React hook (reactive):
-//   const mails = useMailStore()          → all mails, re-renders on change
-//   const inbox = useMailsByFolder('inbox')
-// ---------------------------------------------------------------------------
-
 let nextId = 1;
 function genId() { return `mail-${nextId++}`; }
 
