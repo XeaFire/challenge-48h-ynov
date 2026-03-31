@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 type Suit = 'hearts' | 'diamonds' | 'clubs' | 'spades';
 
@@ -22,6 +22,17 @@ interface G {
   score: number;
   moves: number;
   won: boolean;
+}
+
+interface DragState {
+  cards: Card[];
+  startX: number;
+  startY: number;
+  currentX: number;
+  currentY: number;
+  originX: number;
+  originY: number;
+  sel: Sel;
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -122,7 +133,6 @@ function tryMoveToTab(g: G, destCol: number): G | null {
   const cards = getSelCards(g);
   if (!cards.length) return null;
   if (!canTab(cards[0], g.tab[destCol])) return null;
-  // Don't move to same source column
   if (g.sel.from === 'tableau' && (g.sel as { from: 'tableau'; col: number; idx: number }).col === destCol) return null;
 
   const { waste, fnd, tab, bonus } = removeFromSrc(g, cards);
@@ -146,40 +156,9 @@ function tryMoveToFnd(g: G, fi: number): G | null {
   return { ...g, waste, fnd, tab, sel: null, score: g.score + 10 + bonus, moves: g.moves + 1, won };
 }
 
-function autoFoundation(g: G): G {
-  let s = { ...g };
-  let changed = true;
-  while (changed) {
-    changed = false;
-    outer: for (let fi = 0; fi < 4; fi++) {
-      for (let col = 0; col < 7; col++) {
-        const tc = s.tab[col];
-        if (!tc.length) continue;
-        const card = tc[tc.length - 1];
-        if (!card.faceUp || !canFnd(card, s.fnd[fi])) continue;
-        const fnd = s.fnd.map((f, i) => i === fi ? [...f, { ...card, faceUp: true }] : f);
-        const tab = s.tab.map((c, i) => i === col ? flipTop(c.slice(0, -1)) : c);
-        s = { ...s, fnd, tab, score: s.score + 10, moves: s.moves + 1, won: fnd.every(f => f.length === 13) };
-        changed = true;
-        break outer;
-      }
-      if (s.waste.length > 0) {
-        const card = s.waste[s.waste.length - 1];
-        if (canFnd(card, s.fnd[fi])) {
-          const fnd = s.fnd.map((f, i) => i === fi ? [...f, { ...card, faceUp: true }] : f);
-          s = { ...s, fnd, waste: s.waste.slice(0, -1), score: s.score + 10, moves: s.moves + 1 };
-          changed = true;
-          break outer;
-        }
-      }
-    }
-  }
-  return s;
-}
-
 // ─── Card visuals ─────────────────────────────────────────────────────────────
 
-function CardBack({ selected }: { selected?: boolean }) {
+function CardBack({ selected, dimmed }: { selected?: boolean; dimmed?: boolean }) {
   return (
     <div style={{
       width: CW, height: CH,
@@ -189,11 +168,75 @@ function CardBack({ selected }: { selected?: boolean }) {
       boxSizing: 'border-box',
       cursor: 'pointer',
       flexShrink: 0,
+      opacity: dimmed ? 0.4 : 1,
     }} />
   );
 }
 
-function CardFace({ card, selected }: { card: Card; selected?: boolean }) {
+// Pip positions for each card value (x: 0=left 1=center 2=right, y: 0-4 top to bottom, flip: upside down)
+const PIP_LAYOUTS: Record<number, { x: number; y: number; flip?: boolean }[]> = {
+  1:  [{ x: 1, y: 2 }],
+  2:  [{ x: 1, y: 0 }, { x: 1, y: 4, flip: true }],
+  3:  [{ x: 1, y: 0 }, { x: 1, y: 2 }, { x: 1, y: 4, flip: true }],
+  4:  [{ x: 0, y: 0 }, { x: 2, y: 0 }, { x: 0, y: 4, flip: true }, { x: 2, y: 4, flip: true }],
+  5:  [{ x: 0, y: 0 }, { x: 2, y: 0 }, { x: 1, y: 2 }, { x: 0, y: 4, flip: true }, { x: 2, y: 4, flip: true }],
+  6:  [{ x: 0, y: 0 }, { x: 2, y: 0 }, { x: 0, y: 2 }, { x: 2, y: 2 }, { x: 0, y: 4, flip: true }, { x: 2, y: 4, flip: true }],
+  7:  [{ x: 0, y: 0 }, { x: 2, y: 0 }, { x: 0, y: 2 }, { x: 2, y: 2 }, { x: 1, y: 1 }, { x: 0, y: 4, flip: true }, { x: 2, y: 4, flip: true }],
+  8:  [{ x: 0, y: 0 }, { x: 2, y: 0 }, { x: 0, y: 2 }, { x: 2, y: 2 }, { x: 1, y: 1 }, { x: 1, y: 3, flip: true }, { x: 0, y: 4, flip: true }, { x: 2, y: 4, flip: true }],
+  9:  [{ x: 0, y: 0 }, { x: 2, y: 0 }, { x: 0, y: 1.5 }, { x: 2, y: 1.5 }, { x: 1, y: 2 }, { x: 0, y: 2.5, flip: true }, { x: 2, y: 2.5, flip: true }, { x: 0, y: 4, flip: true }, { x: 2, y: 4, flip: true }],
+  10: [{ x: 0, y: 0 }, { x: 2, y: 0 }, { x: 1, y: 0.75 }, { x: 0, y: 1.5 }, { x: 2, y: 1.5 }, { x: 0, y: 2.5, flip: true }, { x: 2, y: 2.5, flip: true }, { x: 1, y: 3.25, flip: true }, { x: 0, y: 4, flip: true }, { x: 2, y: 4, flip: true }],
+};
+
+function Pips({ suit, value }: { suit: Suit; value: number }) {
+  const sym = SYM[suit];
+  const color = isRed(suit) ? '#cc0000' : '#111';
+  const layout = PIP_LAYOUTS[value];
+
+  if (!layout) {
+    // Face cards (J, Q, K)
+    const face = value === 11 ? 'J' : value === 12 ? 'Q' : 'K';
+    const faceColor = isRed(suit) ? '#cc0000' : '#222';
+    return (
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', pointerEvents: 'none' }}>
+        <div style={{ fontSize: 36, fontWeight: 'bold', color: faceColor, lineHeight: 1, fontFamily: 'Arial, Helvetica, sans-serif', textAlign: 'center', WebkitFontSmoothing: 'antialiased' }}>{face}</div>
+      </div>
+    );
+  }
+
+  // Ace: big center symbol
+  if (value === 1) {
+    return (
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', fontSize: 38, color, pointerEvents: 'none' }}>
+        {sym}
+      </div>
+    );
+  }
+
+  const xPos = [16, 31, 46]; // left, center, right (within card)
+  const yMin = 20, yMax = 74; // top/bottom pip area
+  const yRange = yMax - yMin;
+
+  return (
+    <>
+      {layout.map((p, i) => (
+        <div key={i} style={{
+          position: 'absolute',
+          left: xPos[p.x],
+          top: yMin + (p.y / 4) * yRange,
+          transform: `translate(-50%, -50%)${p.flip ? ' rotate(180deg)' : ''}`,
+          fontSize: 18,
+          color,
+          pointerEvents: 'none',
+          lineHeight: 1,
+        }}>
+          {sym}
+        </div>
+      ))}
+    </>
+  );
+}
+
+function CardFace({ card, selected, dimmed }: { card: Card; selected?: boolean; dimmed?: boolean }) {
   const color = isRed(card.suit) ? '#cc0000' : '#111';
   return (
     <div style={{
@@ -207,16 +250,15 @@ function CardFace({ card, selected }: { card: Card; selected?: boolean }) {
       userSelect: 'none',
       flexShrink: 0,
       outline: selected ? '1px solid #ff8800' : undefined,
+      opacity: dimmed ? 0.4 : 1,
     }}>
-      <div style={{ position: 'absolute', top: 2, left: 4, fontSize: 11, fontWeight: 'bold', color, lineHeight: 1.1 }}>
+      <div style={{ position: 'absolute', top: 2, left: 3, fontSize: 10, fontWeight: 'bold', color, lineHeight: 1.1, textAlign: 'center' }}>
         {vl(card.value)}<br />{SYM[card.suit]}
       </div>
-      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', fontSize: 28, color, pointerEvents: 'none' }}>
-        {SYM[card.suit]}
-      </div>
-      <div style={{ position: 'absolute', bottom: 2, right: 4, fontSize: 11, fontWeight: 'bold', color, lineHeight: 1.1, transform: 'rotate(180deg)' }}>
+      <div style={{ position: 'absolute', bottom: 2, right: 3, fontSize: 10, fontWeight: 'bold', color, lineHeight: 1.1, textAlign: 'center', transform: 'rotate(180deg)' }}>
         {vl(card.value)}<br />{SYM[card.suit]}
       </div>
+      <Pips suit={card.suit} value={card.value} />
     </div>
   );
 }
@@ -252,11 +294,124 @@ function colHeight(col: Card[]): number {
 
 export function Solitaire() {
   const [g, setG] = useState<G>(newGame);
+  const [history, setHistory] = useState<G[]>([]);
+  const [drag, setDrag] = useState<DragState | null>(null);
+  const boardRef = useRef<HTMLDivElement>(null);
 
-  const reset = () => setG(newGame());
+  const doMove = (fn: (prev: G) => G) => {
+    setG(prev => {
+      const next = fn(prev);
+      if (next !== prev) setHistory(h => [...h, prev]);
+      return next;
+    });
+  };
+
+  const undo = () => {
+    if (!history.length) return;
+    const prev = history[history.length - 1];
+    setG(s => ({ ...prev, moves: s.moves + 1 }));
+    setHistory(h => h.slice(0, -1));
+  };
+
+  const reset = () => { setG(newGame()); setHistory([]); setDrag(null); };
+
+  // ─── Drag handlers ────────────────────────────────────────────────────────
+
+  const startDrag = useCallback((e: React.MouseEvent, sel: Sel, cards: Card[], originEl: HTMLElement) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const rect = originEl.getBoundingClientRect();
+    setDrag({
+      cards,
+      startX: e.clientX,
+      startY: e.clientY,
+      currentX: e.clientX,
+      currentY: e.clientY,
+      originX: rect.left,
+      originY: rect.top,
+      sel,
+    });
+    setG(prev => ({ ...prev, sel }));
+  }, []);
+
+  const onMouseMove = useCallback((e: MouseEvent) => {
+    setDrag(prev => prev ? { ...prev, currentX: e.clientX, currentY: e.clientY } : null);
+  }, []);
+
+  const onMouseUp = useCallback(() => {
+    if (!drag || !boardRef.current) { setDrag(null); return; }
+
+    const dropX = drag.currentX;
+    const dropY = drag.currentY;
+
+    // Find drop target
+    const boardRect = boardRef.current.getBoundingClientRect();
+
+    // Check foundations (top row, after stock+waste+spacer)
+    const fndStartX = boardRect.left + (CW + 8) * 3; // stock + waste + spacer
+    const fndY = boardRect.top + 10; // padding
+    // Account for top bar height (~28px)
+    const topBarHeight = 28;
+    const rowY = fndY + topBarHeight;
+
+    for (let fi = 0; fi < 4; fi++) {
+      const fx = fndStartX + fi * (CW + 8);
+      if (dropX >= fx && dropX <= fx + CW && dropY >= rowY && dropY <= rowY + CH) {
+        doMove(prev => {
+          const moved = tryMoveToFnd(prev, fi);
+          return moved ?? { ...prev, sel: null };
+        });
+        setDrag(null);
+        return;
+      }
+    }
+
+    // Check tableau columns
+    const tabY = rowY + CH + 12;
+    for (let ci = 0; ci < 7; ci++) {
+      const cx = boardRect.left + 8 + ci * (CW + 8);
+      if (dropX >= cx && dropX <= cx + CW && dropY >= tabY) {
+        doMove(prev => {
+          const moved = tryMoveToTab(prev, ci);
+          return moved ?? { ...prev, sel: null };
+        });
+        setDrag(null);
+        return;
+      }
+    }
+
+    // No valid target, cancel
+    setG(prev => ({ ...prev, sel: null }));
+    setDrag(null);
+  }, [drag]);
+
+  useEffect(() => {
+    if (!drag) return;
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+  }, [drag, onMouseMove, onMouseUp]);
+
+  // Check if a card is being dragged (to dim it in place)
+  const isDragged = (from: string, col?: number, idx?: number, fi?: number) => {
+    if (!drag) return false;
+    if (drag.sel.from !== from) return false;
+    if (from === 'waste') return true;
+    if (from === 'foundation') return (drag.sel as { from: 'foundation'; fi: number }).fi === fi;
+    if (from === 'tableau') {
+      const s = drag.sel as { from: 'tableau'; col: number; idx: number };
+      return s.col === col && idx !== undefined && idx >= s.idx;
+    }
+    return false;
+  };
+
+  // ─── Click handlers (fallback for non-drag interactions) ──────────────────
 
   // Stock click: flip or recycle
-  const onStock = () => setG(prev => {
+  const onStock = () => doMove(prev => {
     if (prev.stock.length === 0) {
       return { ...prev, stock: [...prev.waste].reverse().map(c => ({ ...c, faceUp: false })), waste: [], sel: null, score: Math.max(0, prev.score - 100) };
     }
@@ -264,19 +419,18 @@ export function Solitaire() {
     return { ...prev, stock: prev.stock.slice(0, -1), waste: [...prev.waste, top], sel: null, moves: prev.moves + 1 };
   });
 
-  // Waste click: select or deselect
-  const onWaste = () => setG(prev => {
-    if (!prev.waste.length) return prev;
-    if (prev.sel?.from === 'waste') return { ...prev, sel: null };
-    return { ...prev, sel: { from: 'waste' } };
-  });
+  // Waste click: select or start drag
+  const onWasteDown = (e: React.MouseEvent) => {
+    if (!g.waste.length) return;
+    const card = g.waste[g.waste.length - 1];
+    startDrag(e, { from: 'waste' }, [card], e.currentTarget as HTMLElement);
+  };
 
-  // Foundation click: move-to or select
-  const onFnd = (fi: number) => setG(prev => {
+  // Foundation click
+  const onFnd = (fi: number) => doMove(prev => {
     if (prev.sel) {
       const moved = tryMoveToFnd(prev, fi);
       if (moved) return moved;
-      // Move failed: if foundation has cards, select it instead
       if (prev.fnd[fi].length > 0) return { ...prev, sel: { from: 'foundation', fi } };
       return { ...prev, sel: null };
     }
@@ -284,57 +438,41 @@ export function Solitaire() {
     return { ...prev, sel: { from: 'foundation', fi } };
   });
 
-  // Tableau card click: move-to, select, or flip
-  const onTabCard = (col: number, cardIdx: number) => (e: React.MouseEvent) => {
+  const onFndDown = (e: React.MouseEvent, fi: number) => {
+    if (!g.fnd[fi].length) return;
+    const card = g.fnd[fi][g.fnd[fi].length - 1];
+    startDrag(e, { from: 'foundation', fi }, [card], e.currentTarget as HTMLElement);
+  };
+
+  // Tableau card mousedown: start drag
+  const onTabCardDown = (col: number, cardIdx: number) => (e: React.MouseEvent) => {
     e.stopPropagation();
-    setG(prev => {
-      const colCards = prev.tab[col];
-      if (cardIdx >= colCards.length) return prev;
-      const card = colCards[cardIdx];
+    const colCards = g.tab[col];
+    if (cardIdx >= colCards.length) return;
+    const card = colCards[cardIdx];
 
-      if (prev.sel) {
-        // Try to move selected cards to this column
-        const moved = tryMoveToTab(prev, col);
-        if (moved) return moved;
-
-        // Move failed: try to select this card instead
-        if (card.faceUp) return { ...prev, sel: { from: 'tableau', col, idx: cardIdx } };
-        // Face-down top card: flip it
-        if (cardIdx === colCards.length - 1) {
+    if (!card.faceUp) {
+      // Flip face-down top card
+      if (cardIdx === colCards.length - 1) {
+        doMove(prev => {
           const tab = prev.tab.map(c => [...c]);
           tab[col][cardIdx] = { ...card, faceUp: true };
           return { ...prev, tab, score: prev.score + 5, moves: prev.moves + 1, sel: null };
-        }
-        return { ...prev, sel: null };
+        });
       }
+      return;
+    }
 
-      // Nothing selected
-      if (!card.faceUp) {
-        if (cardIdx === colCards.length - 1) {
-          const tab = prev.tab.map(c => [...c]);
-          tab[col][cardIdx] = { ...card, faceUp: true };
-          return { ...prev, tab, score: prev.score + 5, moves: prev.moves + 1 };
-        }
-        return prev;
-      }
-
-      // Toggle selection
-      if (prev.sel?.from === 'tableau') {
-        const s = prev.sel as { from: 'tableau'; col: number; idx: number };
-        if (s.col === col && s.idx === cardIdx) return { ...prev, sel: null };
-      }
-      return { ...prev, sel: { from: 'tableau', col, idx: cardIdx } };
-    });
+    const cards = colCards.slice(cardIdx);
+    startDrag(e, { from: 'tableau', col, idx: cardIdx }, cards, e.currentTarget as HTMLElement);
   };
 
-  // Empty area of column (no card): move King there
-  const onTabCol = (col: number) => setG(prev => {
+  // Empty area of column: move to it via click
+  const onTabCol = (col: number) => doMove(prev => {
     if (!prev.sel) return prev;
     const moved = tryMoveToTab(prev, col);
     return moved ?? { ...prev, sel: null };
   });
-
-  const onAutoFinish = () => setG(prev => autoFoundation(prev));
 
   // ─── Render ──────────────────────────────────────────────────────────────
 
@@ -346,9 +484,28 @@ export function Solitaire() {
 
   return (
     <div
+      ref={boardRef}
       style={{ background: '#1a5c1a', width: '100%', height: '100%', padding: '10px 8px', boxSizing: 'border-box', overflow: 'auto', fontFamily: '"MS Sans Serif", sans-serif', position: 'relative' }}
       onClick={() => setG(prev => prev.sel ? { ...prev, sel: null } : prev)}
     >
+      {/* Drag ghost */}
+      {drag && (
+        <div style={{
+          position: 'fixed',
+          left: drag.originX + (drag.currentX - drag.startX),
+          top: drag.originY + (drag.currentY - drag.startY),
+          zIndex: 1000,
+          pointerEvents: 'none',
+          opacity: 0.85,
+        }}>
+          {drag.cards.map((card, i) => (
+            <div key={i} style={{ marginTop: i === 0 ? 0 : -CH + FU_STEP }}>
+              <CardFace card={card} />
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Won overlay */}
       {g.won && (
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 99, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 16 }}>
@@ -364,11 +521,11 @@ export function Solitaire() {
       <div onClick={e => e.stopPropagation()} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8, color: '#fff', fontSize: 12 }}>
         <span>Score : <b>{g.score}</b></span>
         <span>Coups : <b>{g.moves}</b></span>
+        <button onClick={undo} disabled={!history.length} style={{ padding: '2px 10px', fontSize: 11, cursor: history.length ? 'pointer' : 'default', background: '#c0c0c0', border: '2px outset #fff', opacity: history.length ? 1 : 0.5 }}>
+          Annuler
+        </button>
         <button onClick={reset} style={{ marginLeft: 'auto', padding: '2px 10px', fontSize: 11, cursor: 'pointer', background: '#c0c0c0', border: '2px outset #fff' }}>
           Nouvelle partie
-        </button>
-        <button onClick={onAutoFinish} style={{ padding: '2px 10px', fontSize: 11, cursor: 'pointer', background: '#c0c0c0', border: '2px outset #fff' }}>
-          Auto-finish
         </button>
       </div>
 
@@ -383,10 +540,10 @@ export function Solitaire() {
         </div>
 
         {/* Waste */}
-        <div onClick={onWaste} style={{ cursor: 'pointer' }}>
+        <div onMouseDown={onWasteDown} style={{ cursor: 'pointer' }}>
           {g.waste.length === 0
             ? <EmptySlot />
-            : <CardFace card={g.waste[g.waste.length - 1]} selected={g.sel?.from === 'waste'} />
+            : <CardFace card={g.waste[g.waste.length - 1]} selected={g.sel?.from === 'waste' && !drag} dimmed={isDragged('waste')} />
           }
         </div>
 
@@ -395,10 +552,10 @@ export function Solitaire() {
 
         {/* Foundations */}
         {g.fnd.map((pile, fi) => (
-          <div key={fi} onClick={() => onFnd(fi)} style={{ cursor: 'pointer' }}>
+          <div key={fi} onClick={() => onFnd(fi)} onMouseDown={(e) => onFndDown(e, fi)} style={{ cursor: 'pointer' }}>
             {pile.length === 0
               ? <EmptySlot label={['A♥', 'A♦', 'A♣', 'A♠'][fi]} onClick={() => onFnd(fi)} />
-              : <CardFace card={pile[pile.length - 1]} selected={isFndSel(fi)} />
+              : <CardFace card={pile[pile.length - 1]} selected={isFndSel(fi) && !drag} dimmed={isDragged('foundation', undefined, undefined, fi)} />
             }
           </div>
         ))}
@@ -416,11 +573,11 @@ export function Solitaire() {
             {col.map((card, ri) => (
               <div
                 key={ri}
-                onClick={onTabCard(ci, ri)}
+                onMouseDown={onTabCardDown(ci, ri)}
                 style={{ position: 'absolute', top: colTop(col, ri), left: 0, zIndex: ri }}
               >
                 {card.faceUp
-                  ? <CardFace card={card} selected={isTabSel(ci, ri)} />
+                  ? <CardFace card={card} selected={isTabSel(ci, ri) && !drag} dimmed={isDragged('tableau', ci, ri)} />
                   : <CardBack selected={isTabSel(ci, ri)} />
                 }
               </div>
