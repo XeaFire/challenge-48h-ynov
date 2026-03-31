@@ -1,5 +1,6 @@
-import { useState, useCallback } from 'react';
-import { SmallFolderIcon, FileIcon } from '../../icons';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+import { SmallFolderIcon, SmallDarkFolderIcon, FileIcon } from '../../icons';
+import { useGame } from '../../game/GameContext';
 
 interface FsNode {
   name: string;
@@ -7,6 +8,10 @@ interface FsNode {
   size?: string;
   modified?: string;
   children?: FsNode[];
+  /** If set, opening this folder dispatches a found event for this character */
+  characterId?: string;
+  /** Dark-themed folder (black icon) */
+  dark?: boolean;
 }
 
 const FILE_SYSTEM: FsNode = {
@@ -98,8 +103,88 @@ const FILE_SYSTEM: FsNode = {
     { name: 'autoexec.bat', type: 'file', size: '1 Ko', modified: '11/05/1998' },
     { name: 'config.sys', type: 'file', size: '1 Ko', modified: '11/05/1998' },
     { name: 'command.com', type: 'file', size: '93 Ko', modified: '11/05/1998' },
+    { name: 'ne_pas_ouvrir.txt', type: 'file', size: '1 Ko', modified: (() => { const d = new Date(); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; })() },
   ],
 };
+
+// Character hiding spots: [parentPath, folderNode]
+const CHARACTER_FOLDERS: { parentPath: string[]; node: FsNode }[] = [
+  {
+    parentPath: ['Windows', 'Fonts'],
+    node: { name: 'chapeau_magique', type: 'folder', characterId: 'merlin', children: [] },
+  },
+  {
+    parentPath: ['Program Files'],
+    node: { name: 'lampe_magique', type: 'folder', characterId: 'genie', children: [] },
+  },
+  {
+    parentPath: ['Mes documents', 'Ma musique'],
+    node: { name: 'plumes_vertes', type: 'folder', characterId: 'peedy', children: [] },
+  },
+  {
+    parentPath: ['Windows', 'System'],
+    node: { name: 'singe_suspect', type: 'folder', characterId: 'bonzi', children: [] },
+  },
+  {
+    parentPath: ['Program Files', 'Pindows'],
+    node: { name: 'einstein_cache', type: 'folder', characterId: 'genius', children: [] },
+  },
+  {
+    parentPath: ['Mes documents', 'Mes images'],
+    node: { name: 'os_enterre', type: 'folder', characterId: 'rover', children: [] },
+  },
+  {
+    parentPath: ['Mes documents'],
+    node: {
+      name: 'rocky_le_chien', type: 'folder', characterId: 'rocky',
+      children: [
+        { name: 'cadavre_rocky', type: 'folder', dark: true, children: [] },
+      ],
+    },
+  },
+];
+
+/** Deep-clone an FsNode tree */
+function cloneFs(node: FsNode): FsNode {
+  return {
+    ...node,
+    children: node.children?.map(cloneFs),
+  };
+}
+
+/** Inject a child node into the tree at the given parent path */
+function injectNode(root: FsNode, parentPath: string[], child: FsNode): void {
+  let current = root;
+  for (const segment of parentPath) {
+    const next = current.children?.find(c => c.name === segment);
+    if (!next) return;
+    current = next;
+  }
+  if (!current.children) current.children = [];
+  // Avoid duplicates
+  if (!current.children.some(c => c.name === child.name)) {
+    current.children.push(child);
+  }
+}
+
+// ─── Easter egg helpers ───────────────────────────────────────────────────────
+
+const ZALGO = ['̷','̸','̡','̢','̛','̖','̗','̘','̙','̜','̝','̞','̟','̠','̤','̥','̦','̩','̪','̫','̬','̭','̮','̯','̰','̱','̲','̳','̹','̺','̻','̼','͇','͈','͉','͍','͎'];
+const GLITCH_FILES = new Set(['kernel32.dll', 'user32.dll', 'gdi32.dll']);
+
+function glitchify(name: string): string {
+  return name.split('').map(c => {
+    const n = Math.floor(Math.random() * 3) + 1;
+    const zalgos = Array.from({ length: n }, () => ZALGO[Math.floor(Math.random() * ZALGO.length)]).join('');
+    return c + zalgos;
+  }).join('');
+}
+
+function initGlitchNames(): Record<string, string> {
+  const result: Record<string, string> = {};
+  GLITCH_FILES.forEach(f => { result[f] = glitchify(f); });
+  return result;
+}
 
 function getNodeAtPath(root: FsNode, path: string[]): FsNode | null {
   let current = root;
@@ -111,18 +196,6 @@ function getNodeAtPath(root: FsNode, path: string[]): FsNode | null {
   return current;
 }
 
-function getAllFolders(node: FsNode, path: string[] = []): { path: string[]; name: string; depth: number }[] {
-  const result: { path: string[]; name: string; depth: number }[] = [];
-  if (node.type === 'folder') {
-    result.push({ path, name: node.name, depth: path.length });
-    for (const child of node.children ?? []) {
-      if (child.type === 'folder') {
-        result.push(...getAllFolders(child, [...path, child.name]));
-      }
-    }
-  }
-  return result;
-}
 
 interface TreeNodeProps {
   node: FsNode;
@@ -141,6 +214,7 @@ function TreeNode({ node, path, currentPath, expanded, onToggle, onNavigate, dep
   const isExpanded = expanded.has(pathKey);
   const isActive = currentPath.join('\\') === pathKey;
   const folders = node.children?.filter(c => c.type === 'folder') ?? [];
+  const FolderIc = node.dark ? SmallDarkFolderIcon : SmallFolderIcon;
 
   return (
     <>
@@ -155,8 +229,8 @@ function TreeNode({ node, path, currentPath, expanded, onToggle, onNavigate, dep
         <span className="explorer-tree-toggle">
           {folders.length > 0 ? (isExpanded ? '▾' : '▸') : '\u00A0'}
         </span>
-        <SmallFolderIcon size={16} />
-        <span className="explorer-tree-label">{node.name}</span>
+        <FolderIc size={16} />
+        <span className="explorer-tree-label" style={node.dark ? { color: '#660000' } : undefined}>{node.name}</span>
       </div>
       {isExpanded && folders.map(child => (
         <TreeNode
@@ -175,14 +249,45 @@ function TreeNode({ node, path, currentPath, expanded, onToggle, onNavigate, dep
 }
 
 export function Explorer() {
+  const { gameState, dispatch } = useGame();
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [expanded, setExpanded] = useState<Set<string>>(new Set(['']));
   const [history, setHistory] = useState<string[][]>([[]]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [easterEggPhase, setEasterEggPhase] = useState<'idle' | 'text' | 'flash1' | 'flash2' | 'flash3'>('idle');
+  const [fileHidden, setFileHidden] = useState(false);
+  const [glitchNames, setGlitchNames] = useState<Record<string, string>>(initGlitchNames);
 
-  const currentNode = getNodeAtPath(FILE_SYSTEM, currentPath) ?? FILE_SYSTEM;
-  const children = currentNode.children ?? [];
+  const isHiding = gameState.flags.story4_hiding;
+
+  // Build the file system with character folders injected when hide-and-seek is active
+  const fileSystem = useMemo(() => {
+    const fs = cloneFs(FILE_SYSTEM);
+    if (!isHiding) return fs;
+    for (const { parentPath, node } of CHARACTER_FOLDERS) {
+      // Don't inject folders for already-found characters
+      if (node.characterId && gameState.flags[`item_found_${node.characterId}`]) continue;
+      injectNode(fs, parentPath, node);
+    }
+    return fs;
+  }, [isHiding, gameState.flags]);
+
+  useEffect(() => {
+    let t: ReturnType<typeof setTimeout>;
+    if (easterEggPhase === 'text')   t = setTimeout(() => { setFileHidden(true); setEasterEggPhase('flash1'); }, 2200);
+    if (easterEggPhase === 'flash1') t = setTimeout(() => setEasterEggPhase('flash2'), 80);
+    if (easterEggPhase === 'flash2') t = setTimeout(() => setEasterEggPhase('flash3'), 60);
+    if (easterEggPhase === 'flash3') t = setTimeout(() => setEasterEggPhase('idle'),   120);
+    return () => clearTimeout(t);
+  }, [easterEggPhase]);
+
+  const reglitch = useCallback((name: string) => {
+    setGlitchNames(prev => ({ ...prev, [name]: glitchify(name) }));
+  }, []);
+
+  const currentNode = getNodeAtPath(fileSystem, currentPath) ?? fileSystem;
+  const children = (currentNode.children ?? []).filter(c => !(fileHidden && c.name === 'ne_pas_ouvrir.txt'));
 
   const navigateTo = useCallback((path: string[]) => {
     setCurrentPath(path);
@@ -239,17 +344,44 @@ export function Explorer() {
   }, []);
 
   const handleDoubleClick = useCallback((child: FsNode) => {
+    if (child.name === 'ne_pas_ouvrir.txt') {
+      setEasterEggPhase('text');
+      return;
+    }
     if (child.type === 'folder') {
+      // If this is a character folder, dispatch the found event
+      if (child.characterId) {
+        dispatch({ type: 'item_clicked', itemId: `found_${child.characterId}`, windowType: 'explorer' });
+      }
       navigateTo([...currentPath, child.name]);
     }
-  }, [currentPath, navigateTo]);
+  }, [currentPath, navigateTo, dispatch]);
 
   const addressPath = 'C:\\' + currentPath.join('\\');
   const folderCount = children.filter(c => c.type === 'folder').length;
   const fileCount = children.filter(c => c.type === 'file').length;
 
   return (
-    <div className="explorer">
+    <div className="explorer" style={{ position: 'relative' }}>
+      {easterEggPhase === 'text' && (
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 999,
+          background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <pre style={{
+            color: '#c0c0c0', fontFamily: '"Courier New", monospace', fontSize: 12,
+            textAlign: 'center', lineHeight: 1.8, margin: 0,
+          }}>{`Bloc-notes - ne_pas_ouvrir.txt\n\n\nje t'avais prévenu.`}</pre>
+        </div>
+      )}
+      {(easterEggPhase === 'flash1' || easterEggPhase === 'flash2' || easterEggPhase === 'flash3') && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 99999, pointerEvents: 'none',
+          background: easterEggPhase === 'flash1' ? '#ffffff'
+                    : easterEggPhase === 'flash2' ? '#ff2200'
+                    : '#ffffff',
+        }} />
+      )}
       {/* Toolbar */}
       <div className="explorer-toolbar">
         <button
@@ -290,7 +422,7 @@ export function Explorer() {
         {/* Tree panel */}
         <div className="explorer-tree">
           <TreeNode
-            node={FILE_SYSTEM}
+            node={fileSystem}
             path={[]}
             currentPath={currentPath}
             expanded={expanded}
@@ -315,24 +447,34 @@ export function Explorer() {
 
           {/* Items */}
           <div className="explorer-list-body">
-            {children.map(child => (
-              <div
-                key={child.name}
-                className={`explorer-list-item${selectedItem === child.name ? ' selected' : ''}`}
-                onClick={() => setSelectedItem(child.name)}
-                onDoubleClick={() => handleDoubleClick(child)}
-              >
-                <span className="explorer-col-name">
-                  {child.type === 'folder' ? <SmallFolderIcon size={16} /> : <FileIcon size={16} />}
-                  {child.name}
-                </span>
-                <span className="explorer-col-size">{child.size ?? ''}</span>
-                <span className="explorer-col-type">
-                  {child.type === 'folder' ? 'Dossier de fichiers' : getFileType(child.name)}
-                </span>
-                <span className="explorer-col-modified">{child.modified ?? ''}</span>
-              </div>
-            ))}
+            {children.map(child => {
+              const isGlitch = GLITCH_FILES.has(child.name);
+              const displayName = isGlitch ? glitchNames[child.name] : child.name;
+              const isDark = child.dark;
+              const FolderIc = isDark ? SmallDarkFolderIcon : SmallFolderIcon;
+              return (
+                <div
+                  key={child.name}
+                  className={`explorer-list-item${selectedItem === child.name ? ' selected' : ''}`}
+                  onClick={() => { setSelectedItem(child.name); if (isGlitch) reglitch(child.name); }}
+                  onDoubleClick={() => handleDoubleClick(child)}
+                  style={isDark ? { background: '#1a0000' } : undefined}
+                >
+                  <span
+                    className="explorer-col-name"
+                    style={isDark ? { color: '#cc0000', fontFamily: 'monospace', fontWeight: 'bold' } : isGlitch ? { color: '#660000', fontFamily: 'monospace' } : undefined}
+                  >
+                    {child.type === 'folder' ? <FolderIc size={16} /> : <FileIcon size={16} />}
+                    {displayName}
+                  </span>
+                  <span className="explorer-col-size">{child.size ?? ''}</span>
+                  <span className="explorer-col-type" style={isDark ? { color: '#cc0000' } : undefined}>
+                    {child.type === 'folder' ? (isDark ? '???' : 'Dossier de fichiers') : getFileType(child.name)}
+                  </span>
+                  <span className="explorer-col-modified">{child.modified ?? ''}</span>
+                </div>
+              );
+            })}
             {children.length === 0 && (
               <div className="explorer-empty">(Vide)</div>
             )}

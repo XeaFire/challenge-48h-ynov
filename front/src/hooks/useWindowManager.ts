@@ -10,10 +10,14 @@ const WINDOW_DEFAULTS: Record<WindowType, { title: string; width: number; height
   paint: { title: 'Sans titre - Paint', width: 640, height: 480 },
   explorer: { title: 'Explorateur Windows', width: 600, height: 420 },
   solitaire: { title: 'Solitaire', width: 540, height: 520 },
+  mail: { title: 'Pindows Mail', width: 650, height: 450 },
+  ie: { title: 'Internet Explorer', width: 700, height: 500 },
+  imageviewer: { title: 'Links_crush.png - Visionneuse', width: 420, height: 400 },
+  minesweeper: { title: 'Démineur', width: 500, height: 560 },
 };
 
 const CASCADE_OFFSET = 20;
-const CASCADE_ORIGIN = { x: 80, y: 40 };
+const CASCADE_ORIGIN = { x: 130, y: 30 };
 
 export function useWindowManager() {
   const [windows, setWindows] = useState<WindowState[]>([]);
@@ -67,11 +71,9 @@ export function useWindowManager() {
     setWindows(previous =>
       previous.map(window => {
         if (window.id !== id) return window;
-
         if (window.maximized) {
           return {
-            ...window,
-            maximized: false,
+            ...window, maximized: false,
             x: window.previousBounds?.x ?? window.x,
             y: window.previousBounds?.y ?? window.y,
             width: window.previousBounds?.width ?? window.width,
@@ -79,16 +81,9 @@ export function useWindowManager() {
             previousBounds: null,
           };
         }
-
         return {
-          ...window,
-          maximized: true,
-          previousBounds: {
-            x: window.x,
-            y: window.y,
-            width: window.width,
-            height: window.height,
-          },
+          ...window, maximized: true,
+          previousBounds: { x: window.x, y: window.y, width: window.width, height: window.height },
         };
       })
     );
@@ -96,25 +91,20 @@ export function useWindowManager() {
 
   const updateWindowPosition = useCallback((id: string, x: number, y: number) => {
     setWindows(previous =>
-      previous.map(window =>
-        window.id === id ? { ...window, x, y } : window
-      )
+      previous.map(window => window.id === id ? { ...window, x, y } : window)
     );
   }, []);
 
-  const activeWindowId = focusOrder.length > 0
-    ? focusOrder[focusOrder.length - 1]
-    : null;
+  const closeAllWindows = useCallback(() => {
+    setWindows([]);
+    setFocusOrder([]);
+  }, []);
+
+  const activeWindowId = focusOrder.length > 0 ? focusOrder[focusOrder.length - 1] : null;
 
   return {
-    windows,
-    focusOrder,
-    activeWindowId,
-    openWindow,
-    closeWindow,
-    focusWindow,
-    minimizeWindow,
-    maximizeWindow,
-    updateWindowPosition,
+    windows, focusOrder, activeWindowId,
+    openWindow, closeWindow, closeAllWindows, focusWindow,
+    minimizeWindow, maximizeWindow, updateWindowPosition,
   };
 }

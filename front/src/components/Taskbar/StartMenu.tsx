@@ -1,5 +1,7 @@
 import type { WindowType } from '../../types';
-import { ComputerIcon, NotepadIcon, CalculatorIcon, PaintIcon, ExplorerIcon, HelpIcon, ShutdownIcon } from '../../icons';
+import type { ReactNode } from 'react';
+import { useGame } from '../../game/GameContext';
+import { ComputerIcon, NotepadIcon, CalculatorIcon, PaintIcon, ExplorerIcon, MailIcon, HelpIcon, ShutdownIcon } from '../../icons';
 
 interface StartMenuProps {
   visible: boolean;
@@ -7,12 +9,28 @@ interface StartMenuProps {
   onShutDown: () => void;
 }
 
-/**
- * Menu Demarrer avec la barre laterale "Pindows 98"
- * et les raccourcis vers les applications.
- */
+interface MenuEntry {
+  app: string;
+  windowType: WindowType;
+  icon: ReactNode;
+  label: string;
+}
+
+const MENU_APPS: MenuEntry[] = [
+  { app: 'mycomputer', windowType: 'mycomputer', icon: <ComputerIcon size={16} />, label: 'Poste de travail' },
+  { app: 'notepad', windowType: 'notepad', icon: <NotepadIcon size={16} />, label: 'Bloc-notes' },
+  { app: 'calculator', windowType: 'calculator', icon: <CalculatorIcon size={16} />, label: 'Calculatrice' },
+  { app: 'paint', windowType: 'paint', icon: <PaintIcon size={16} />, label: 'Paint' },
+  { app: 'explorer', windowType: 'explorer', icon: <ExplorerIcon size={16} />, label: 'Explorateur' },
+  { app: 'mail', windowType: 'mail', icon: <MailIcon size={16} />, label: 'Pindows Mail' },
+];
+
 export function StartMenu({ visible, onOpenWindow, onShutDown }: StartMenuProps) {
+  const { gameState } = useGame();
+
   if (!visible) return null;
+
+  const unlockedEntries = MENU_APPS.filter(e => gameState.unlockedApps.includes(e.app));
 
   return (
     <div id="start-menu" className="visible">
@@ -20,27 +38,13 @@ export function StartMenu({ visible, onOpenWindow, onShutDown }: StartMenuProps)
         <span>Pindows 98</span>
       </div>
       <div id="start-menu-items">
-        <div className="start-menu-item" onClick={() => onOpenWindow('mycomputer')}>
-          <ComputerIcon size={16} />
-          Poste de travail
-        </div>
-        <div className="start-menu-item" onClick={() => onOpenWindow('notepad')}>
-          <NotepadIcon size={16} />
-          Bloc-notes
-        </div>
-        <div className="start-menu-item" onClick={() => onOpenWindow('calculator')}>
-          <CalculatorIcon size={16} />
-          Calculatrice
-        </div>
-        <div className="start-menu-item" onClick={() => onOpenWindow('paint')}>
-          <PaintIcon size={16} />
-          Paint
-        </div>
-        <div className="start-menu-item" onClick={() => onOpenWindow('explorer')}>
-          <ExplorerIcon size={16} />
-          Explorateur
-        </div>
-        <div className="start-menu-separator" />
+        {unlockedEntries.map(e => (
+          <div key={e.app} className="start-menu-item" onClick={() => onOpenWindow(e.windowType)}>
+            {e.icon}
+            {e.label}
+          </div>
+        ))}
+        {unlockedEntries.length > 0 && <div className="start-menu-separator" />}
         <div className="start-menu-item" onClick={() => onOpenWindow('about')}>
           <HelpIcon />
           A propos

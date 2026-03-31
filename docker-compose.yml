@@ -1,0 +1,23 @@
+services:
+  backend_chal48:
+    image: ghcr.io/xeafire/challenge-48h-ynov/backend:latest
+    ports:
+      - "3001:3000"
+    restart: unless-stopped
+
+  frontend_chal48:
+    image: ghcr.io/xeafire/challenge-48h-ynov/frontend:latest
+    ports:
+      - "8082:8086"
+    depends_on:
+      - backend_chal48
+    restart: unless-stopped
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_POLL_INTERVAL=30
+      - WATCHTOWER_CLEANUP=true
+    restart: unless-stopped

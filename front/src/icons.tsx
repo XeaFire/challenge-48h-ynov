@@ -108,6 +108,35 @@ export function FloppyDiskIcon() {
   );
 }
 
+export function MailIcon({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={PIXEL_STYLE}>
+      <rect x="3" y="7" width="26" height="18" rx="1" fill="#ffff80" stroke="#000" strokeWidth="1" />
+      <polyline points="3,7 16,17 29,7" fill="none" stroke="#000" strokeWidth="1" />
+      <line x1="3" y1="25" x2="12" y2="16" stroke="#808080" strokeWidth="0.5" />
+      <line x1="29" y1="25" x2="20" y2="16" stroke="#808080" strokeWidth="0.5" />
+    </svg>
+  );
+}
+
+export function MailReadIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" style={PIXEL_STYLE}>
+      <rect x="1" y="4" width="14" height="9" fill="#ffff80" stroke="#000" strokeWidth="0.5" />
+      <polyline points="1,4 8,9 15,4" fill="none" stroke="#000" strokeWidth="0.5" />
+    </svg>
+  );
+}
+
+export function MailUnreadIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" style={PIXEL_STYLE}>
+      <rect x="1" y="5" width="14" height="9" fill="#ffff80" stroke="#000" strokeWidth="0.5" />
+      <polygon points="1,5 8,1 15,5" fill="#ffff80" stroke="#000" strokeWidth="0.5" />
+    </svg>
+  );
+}
+
 export function ExplorerIcon({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" style={PIXEL_STYLE}>
@@ -141,6 +170,15 @@ export function SmallFolderIcon({ size = 16 }: { size?: number }) {
     <svg width={size} height={size} viewBox="0 0 16 16" style={PIXEL_STYLE}>
       <rect x="1" y="4" width="14" height="10" rx="0.5" fill="#ffcc00" stroke="#000" strokeWidth="0.5" />
       <rect x="1" y="2" width="7" height="3" rx="0.5" fill="#ffcc00" stroke="#000" strokeWidth="0.5" />
+    </svg>
+  );
+}
+
+export function SmallDarkFolderIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" style={PIXEL_STYLE}>
+      <rect x="1" y="4" width="14" height="10" rx="0.5" fill="#1a1a1a" stroke="#333" strokeWidth="0.5" />
+      <rect x="1" y="2" width="7" height="3" rx="0.5" fill="#1a1a1a" stroke="#333" strokeWidth="0.5" />
     </svg>
   );
 }
@@ -206,6 +244,16 @@ export function PindowsLogo() {
       <rect x="36" y="4" width="24" height="24" fill="#00aa00" />
       <rect x="4" y="36" width="24" height="24" fill="#0000ff" />
       <rect x="36" y="36" width="24" height="24" fill="#ffcc00" />
+    </svg>
+  );
+}
+
+export function MinesweeperIcon({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={PIXEL_STYLE}>
+      <rect x="4" y="4" width="24" height="24" fill="#c0c0c0" stroke="#000" strokeWidth="1" />
+      <rect x="6" y="6" width="20" height="20" fill="#fff" stroke="#808080" strokeWidth="0.5" />
+      <text x="50%" y="55%" textAnchor="middle" dominantBaseline="middle" fontSize="18" fontFamily="Arial">💣</text>
     </svg>
   );
 }

@@ -1,4 +1,17 @@
-export type WindowType = 'mycomputer' | 'notepad' | 'recyclebin' | 'about' | 'calculator' | 'paint' | 'explorer' | 'solitaire';
+export type WindowType = 'mycomputer' | 'notepad' | 'recyclebin' | 'about' | 'calculator' | 'paint' | 'explorer' | 'mail' | 'solitaire' | 'ie' | 'minesweeper' | 'imageviewer';
+
+export interface Mail {
+  id: string;
+  from: string;
+  to: string;
+  subject: string;
+  body: string;
+  date: string;
+  read: boolean;
+  folder: MailFolder;
+}
+
+export type MailFolder = 'inbox' | 'sent' | 'drafts' | 'trash';
 
 export interface WindowBounds {
   x: number;

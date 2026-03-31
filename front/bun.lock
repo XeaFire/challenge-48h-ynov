@@ -5,6 +5,7 @@
     "": {
       "name": "front",
       "dependencies": {
+        "clippyjs": "^0.1.0",
         "react": "^19.2.4",
         "react-dom": "^19.2.4",
       },
@@ -193,6 +194,8 @@
     "caniuse-lite": ["caniuse-lite@1.0.30001782", "", {}, "sha512-dZcaJLJeDMh4rELYFw1tvSn1bhZWYFOt468FcbHHxx/Z/dFidd1I6ciyFdi3iwfQCyOjqo9upF6lGQYtMiJWxw=="],
 
     "chalk": ["chalk@4.1.2", "", { "dependencies": { "ansi-styles": "^4.1.0", "supports-color": "^7.1.0" } }, "sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA=="],
+
+    "clippyjs": ["clippyjs@0.1.0", "", {}, "sha512-XnchzSR8H8X43TvwnAktK5xDewKGSyfGu8DagBZCbOUdx0dWAFrFdxdCWlaJkyfx4M3Amvvu13jbHQ/IYQOD+w=="],
 
     "color-convert": ["color-convert@2.0.1", "", { "dependencies": { "color-name": "~1.1.4" } }, "sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ=="],
 
