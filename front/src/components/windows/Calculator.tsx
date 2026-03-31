@@ -195,31 +195,31 @@ export function Calculator() {
 
         {/* Row 2: MR + 7 8 9 / sqrt */}
         <button className="calc-btn calc-btn-mem" onClick={memRecall}>MR</button>
-        <button className="calc-btn calc-btn-num" onClick={() => inputDigit('7')}>7</button>
-        <button className="calc-btn calc-btn-num" onClick={() => inputDigit('8')}>8</button>
-        <button className="calc-btn calc-btn-num" onClick={() => inputDigit('9')}>9</button>
+        <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '7')} onClick={() => inputDigit('7')}>7</button>
+        <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '8')} onClick={() => inputDigit('8')}>8</button>
+        <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '9')} onClick={() => inputDigit('9')}>9</button>
         <button className="calc-btn calc-btn-op" onClick={() => handleOperator('/')}>/</button>
         <button className="calc-btn calc-btn-fn" onClick={sqrt}>sqrt</button>
 
         {/* Row 3: MS + 4 5 6 * % */}
         <button className="calc-btn calc-btn-mem" onClick={memStore}>MS</button>
-        <button className="calc-btn calc-btn-num" onClick={() => inputDigit('4')}>4</button>
-        <button className="calc-btn calc-btn-num" onClick={() => inputDigit('5')}>5</button>
-        <button className="calc-btn calc-btn-num" onClick={() => inputDigit('6')}>6</button>
+        <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '4')} onClick={() => inputDigit('4')}>4</button>
+        <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '5')} onClick={() => inputDigit('5')}>5</button>
+        <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '6')} onClick={() => inputDigit('6')}>6</button>
         <button className="calc-btn calc-btn-op" onClick={() => handleOperator('*')}>*</button>
         <button className="calc-btn calc-btn-fn" onClick={percent}>%</button>
 
         {/* Row 4: M+ + 1 2 3 - 1/x */}
         <button className="calc-btn calc-btn-mem" onClick={memAdd}>M+</button>
-        <button className="calc-btn calc-btn-num" onClick={() => inputDigit('1')}>1</button>
-        <button className="calc-btn calc-btn-num" onClick={() => inputDigit('2')}>2</button>
-        <button className="calc-btn calc-btn-num" onClick={() => inputDigit('3')}>3</button>
+        <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '1')} onClick={() => inputDigit('1')}>1</button>
+        <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '2')} onClick={() => inputDigit('2')}>2</button>
+        <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '3')} onClick={() => inputDigit('3')}>3</button>
         <button className="calc-btn calc-btn-op" onClick={() => handleOperator('-')}>-</button>
         <button className="calc-btn calc-btn-fn" onClick={inverse}>1/x</button>
 
         {/* Row 5: (empty) + 0 +/- . + = */}
         <div className="calc-btn-spacer" />
-        <button className="calc-btn calc-btn-num" onClick={() => inputDigit('0')}>0</button>
+        <button className="calc-btn calc-btn-num" draggable onDragStart={e => e.dataTransfer.setData('text/plain', '0')} onClick={() => inputDigit('0')}>0</button>
         <button className="calc-btn calc-btn-num" onClick={toggleSign}>+/-</button>
         <button className="calc-btn calc-btn-num" onClick={inputDot}>,</button>
         <button className="calc-btn calc-btn-op" onClick={() => handleOperator('+')}>+</button>

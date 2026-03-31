@@ -15,7 +15,7 @@ export interface FormField {
   key: string;
   label: string;
   placeholder?: string;
-  type?: 'text' | 'color' | 'button';
+  type?: 'text' | 'color' | 'button' | 'choice';
 }
 
 export interface GameState {
@@ -31,6 +31,8 @@ export interface GameState {
   screenShake: boolean;
   subliminalText: string | null;
   windowsLocked: boolean;
+  /** Window types that cannot be closed right now */
+  lockedWindows: string[];
 }
 
 export interface StoryTrigger {
@@ -69,7 +71,9 @@ export type TriggerAction =
   | { type: 'screenShake'; enabled: boolean }
   | { type: 'showSubliminal'; text: string; ms: number }
   | { type: 'closeAllWindows' }
-  | { type: 'lockClose'; locked: boolean };
+  | { type: 'lockClose'; locked: boolean }
+  | { type: 'lockWindow'; windowType: string }
+  | { type: 'unlockWindow'; windowType: string };
 
 export type GameEvent =
   | { type: 'boot_complete' }

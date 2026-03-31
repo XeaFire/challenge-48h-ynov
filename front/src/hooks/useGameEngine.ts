@@ -56,6 +56,12 @@ function applyRuntimeAction(state: GameState, action: TriggerAction): GameState 
       return { ...state, screenShake: action.enabled };
     case 'lockClose':
       return { ...state, windowsLocked: action.locked };
+    case 'lockWindow':
+      return state.lockedWindows.includes(action.windowType)
+        ? state
+        : { ...state, lockedWindows: [...state.lockedWindows, action.windowType] };
+    case 'unlockWindow':
+      return { ...state, lockedWindows: state.lockedWindows.filter(w => w !== action.windowType) };
     case 'setFlag':
       return { ...state, flags: { ...state.flags, [action.flag]: action.value } };
     default:

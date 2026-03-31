@@ -41,6 +41,8 @@ function applyStateAction(state: GameState, action: TriggerAction): GameState {
     case 'showSubliminal':
     case 'closeAllWindows':
     case 'lockClose':
+    case 'lockWindow':
+    case 'unlockWindow':
       // Applied at RUNTIME only (in applyRuntimeAction)
       return state;
     default:
@@ -58,8 +60,14 @@ function applyEventFlags(state: GameState, event: GameEvent): GameState {
       return { ...state, flags: { ...state.flags, [`clicked_${event.characterId}`]: true } };
     case 'item_clicked':
       return { ...state, flags: { ...state.flags, [`item_${event.itemId}`]: true } };
-    case 'form_submitted':
-      return { ...state, flags: { ...state.flags, [`form_${event.formId}_submitted`]: true }, profile: { ...state.profile, ...event.data }, activeForm: null };
+    case 'form_submitted': {
+      const flags: Record<string, boolean> = { [`form_${event.formId}_submitted`]: true };
+      // For choice forms, set a flag like "story6_chose_peedy"
+      if (event.data.choice) {
+        flags[`${event.formId.replace('form_', '')}_chose_${event.data.choice}`] = true;
+      }
+      return { ...state, flags: { ...state.flags, ...flags }, profile: { ...state.profile, ...event.data }, activeForm: null };
+    }
     case 'url_visited':
       return { ...state, flags: { ...state.flags, [`visited_${event.url}`]: true } };
     case 'recheck':

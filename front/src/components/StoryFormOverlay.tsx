@@ -18,7 +18,8 @@ export function StoryFormOverlay({ formId, title, description, fields, submitLab
   }, []);
 
   const isAllButtons = fields.every(f => f.type === 'button');
-  const textFields = fields.filter(f => f.type !== 'button');
+  const isChoice = fields.some(f => f.type === 'choice');
+  const textFields = fields.filter(f => f.type !== 'button' && f.type !== 'choice');
   const buttonFields = fields.filter(f => f.type === 'button');
   const allTextFilled = textFields.every(f => data[f.key]?.trim());
   const allButtonsClicked = buttonFields.every(f => data[f.key]);
@@ -30,6 +31,10 @@ export function StoryFormOverlay({ formId, title, description, fields, submitLab
       return () => clearTimeout(t);
     }
   }, [isAllButtons, allButtonsClicked, formId, data, onSubmit]);
+
+  const handleChoice = useCallback((key: string, value: string) => {
+    onSubmit(formId, { choice: key, value });
+  }, [formId, onSubmit]);
 
   const handleSubmit = useCallback(() => {
     if (!allTextFilled) return;
@@ -46,7 +51,22 @@ export function StoryFormOverlay({ formId, title, description, fields, submitLab
         <div className="story-form-fields">
           {fields.map(field => (
             <div key={field.key} className="story-form-field">
-              {field.type === 'button' ? (
+              {field.type === 'choice' ? (
+                <button
+                  className="win98-button"
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    textAlign: 'center',
+                    fontSize: 12,
+                    cursor: 'pointer',
+                    background: '#c0c0c0',
+                  }}
+                  onClick={() => handleChoice(field.key, field.label)}
+                >
+                  {field.label}
+                </button>
+              ) : field.type === 'button' ? (
                 <button
                   className="win98-button"
                   style={{
@@ -89,7 +109,7 @@ export function StoryFormOverlay({ formId, title, description, fields, submitLab
           ))}
         </div>
         {/* Hide submit button for button-only forms */}
-        {!isAllButtons && (
+        {!isAllButtons && !isChoice && (
           <div className="story-form-actions">
             <button
               className="win98-button"

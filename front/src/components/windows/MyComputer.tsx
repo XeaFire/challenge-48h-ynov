@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FolderIcon, CDDriveIcon, FloppyDiskIcon } from '../../icons';
+import { useGame } from '../../game/GameContext';
 
 // --- Barres d'utilisation disque ---
 
@@ -189,53 +190,69 @@ function Shortcut({ emoji, label, onClick }: { emoji: string; label: string; onC
 
 // --- Mot de passe ---
 
+const ALL_PASSWORDS = [
+  { site: 'webmail.pindows.fr', user: 'Merlin', pass: 'm3rlin_98!' },
+  { site: 'webmail.pindows.fr', user: 'Links', pass: '[SUPPRIME]', disabled: true },
+  { site: 'jeux-singes-roses.fr', user: 'Bonzi', pass: '4751' },
+  { site: 'maison.bonzai.local', user: 'Bonzi', pass: '****', needsAdmin: true },
+  { site: 'webmail.pindows.fr', user: 'Clippy', pass: '[INACTIF]', disabled: true },
+  { site: 'devine-moi.fr', user: 'Genie', pass: 'g3ni3_lamp3' },
+  { site: 'avost.antivirus.com', user: 'Genius', pass: 'E=mc2_s3cur!ty' },
+  { site: 'devine-moi.fr', user: 'Peedy', pass: 'plum3s_v3rtes' },
+  { site: 'webmail.pindows.fr', user: 'Rocky', pass: '[SUPPRIME]', disabled: true },
+  { site: 'webmail.pindows.fr', user: 'Rover', pass: 'w00f_w00f' },
+];
+
 function PasswordApp() {
-  // chiikawa
-  const passwords = [
-    { site: 'pindows.com', user: 'admin', pass: 'chiikawa' },
-    { site: 'webmail.98', user: 'merlin', pass: 'chiikawa' },
-  ];
+  const { gameState } = useGame();
+  const isModerator = gameState.flags.story4_terminal_given;
 
   return (
     <div style={{ fontSize: 11 }}>
       <div style={{ fontWeight: 'bold', marginBottom: 4, fontSize: 12 }}>
         Gestionnaire de mots de passe
       </div>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr style={{ background: '#000080', color: '#fff' }}>
-            <th style={{ padding: '2px 4px', textAlign: 'left' }}>Site</th>
-            <th style={{ padding: '2px 4px', textAlign: 'left' }}>Utilisateur</th>
-            <th style={{ padding: '2px 4px', textAlign: 'left' }}>Mot de passe</th>
-            <th style={{ width: 40 }}></th>
-          </tr>
-        </thead>
-        <tbody>
-          {passwords.map((p, i) => (
-            <tr key={i} style={{ borderBottom: '1px solid #c0c0c0' }}>
-              <td style={{ padding: '2px 4px' }}>{p.site}</td>
-              <td style={{ padding: '2px 4px' }}>{p.user}</td>
-              <td style={{ padding: '2px 4px', fontFamily: 'monospace' }}>••••••••</td>
-              <td style={{ padding: '2px 4px', textAlign: 'center' }}>
-                <button
-                  className="win98-button"
-                  style={{
-                    padding: '0 4px', fontSize: 9,
-                    color: '#808080', cursor: 'not-allowed',
-                  }}
-                  disabled
-                  title="Acces refuse"
-                >
-                  👁
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div style={{ marginTop: 8, color: '#808080', fontSize: 10, fontStyle: 'italic' }}>
-        Acces administrateur requis pour afficher les mots de passe.
-      </div>
+      {!isModerator ? (
+        <div style={{ padding: 12, textAlign: 'center', color: '#808080' }}>
+          <div style={{ fontSize: 20, marginBottom: 8 }}>🔒</div>
+          <div>Acces MODERATEUR requis pour afficher les mots de passe.</div>
+          <div style={{ fontSize: 10, marginTop: 4 }}>Contactez un administrateur systeme.</div>
+        </div>
+      ) : (
+        <>
+          <div style={{ background: '#e8f5e9', border: '1px solid #4caf50', padding: '4px 8px', marginBottom: 6, fontSize: 10, borderRadius: 2 }}>
+            ✅ Acces MODERATEUR — Mots de passe visibles
+          </div>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ background: '#000080', color: '#fff' }}>
+                <th style={{ padding: '2px 4px', textAlign: 'left' }}>Site</th>
+                <th style={{ padding: '2px 4px', textAlign: 'left' }}>Utilisateur</th>
+                <th style={{ padding: '2px 4px', textAlign: 'left' }}>Mot de passe</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ALL_PASSWORDS.map((p, i) => (
+                <tr key={i} style={{
+                  borderBottom: '1px solid #c0c0c0',
+                  opacity: p.disabled ? 0.5 : 1,
+                }}>
+                  <td style={{ padding: '2px 4px' }}>{p.site}</td>
+                  <td style={{ padding: '2px 4px' }}>{p.user}</td>
+                  <td style={{ padding: '2px 4px', fontFamily: 'monospace', fontWeight: p.needsAdmin ? 'normal' : 'bold' }}>
+                    {p.needsAdmin ? (
+                      <span style={{ color: '#808080' }} title="Acces ADMIN requis">{p.pass}</span>
+                    ) : p.pass}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div style={{ marginTop: 8, color: '#808080', fontSize: 10, fontStyle: 'italic' }}>
+            Les mots de passe masques (****) necessitent un acces ADMIN.
+          </div>
+        </>
+      )}
     </div>
   );
 }

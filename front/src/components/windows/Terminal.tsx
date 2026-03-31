@@ -49,26 +49,44 @@ function getPermissionsForUser(name: string): string {
 }
 
 const DNS_RECORDS: Record<string, { ip: string; fqdn: string }> = {
+  // Characters
   merlin:   { ip: '10.98.0.1',  fqdn: 'merlin.pindows.local' },
   links:    { ip: '10.98.0.2',  fqdn: 'links.pindows.local' },
   bonzi:    { ip: '10.98.0.3',  fqdn: 'bonzi.pindows.local' },
   clippy:   { ip: '10.98.0.4',  fqdn: 'clippy.pindows.local' },
   genie:    { ip: '10.98.0.5',  fqdn: 'genie.pindows.local' },
-  genius:   { ip: '10.98.0.5',  fqdn: 'genie.pindows.local' },  // <-- same IP as genie
+  genius:   { ip: '10.98.0.5',  fqdn: 'genie.pindows.local' },
   einstein: { ip: '10.98.0.6',  fqdn: 'einstein.pindows.local' },
   peedy:    { ip: '10.98.0.7',  fqdn: 'peedy.pindows.local' },
   rocky:    { ip: '10.98.0.8',  fqdn: 'rocky.pindows.local' },
   rover:    { ip: '10.98.0.9',  fqdn: 'rover.pindows.local' },
-  // Domains
+  // Story domains (indices)
   'avost':                  { ip: '10.98.0.6',  fqdn: 'avost.antivirus.com' },
   'avost.antivirus.com':    { ip: '10.98.0.6',  fqdn: 'avost.antivirus.com' },
   'faurnite.battlepass.com':{ ip: '10.98.0.5',  fqdn: 'faurnite.battlepass.com' },
   'faurnite':               { ip: '10.98.0.5',  fqdn: 'faurnite.battlepass.com' },
+  'devine-moi.fr':          { ip: '10.98.0.5',  fqdn: 'devine-moi.fr' },
+  'maison.bonzai.local':    { ip: '10.98.0.3',  fqdn: 'maison.bonzai.local' },
+  'jeux-singes-roses.fr':   { ip: '10.98.0.3',  fqdn: 'jeux-singes-roses.fr' },
+  // Real-world domains (random IPs, no story relevance)
+  'google.com':             { ip: '8.8.8.8',    fqdn: 'google.com' },
+  'google':                 { ip: '8.8.8.8',    fqdn: 'google.com' },
+  'youtube.com':            { ip: '142.250.74.206', fqdn: 'youtube.com' },
+  'youtube':                { ip: '142.250.74.206', fqdn: 'youtube.com' },
+  'facebook.com':           { ip: '157.240.1.35', fqdn: 'facebook.com' },
+  'twitter.com':            { ip: '104.244.42.1', fqdn: 'twitter.com' },
+  'wikipedia.org':          { ip: '208.80.154.224', fqdn: 'wikipedia.org' },
+  'amazon.com':             { ip: '54.239.28.85', fqdn: 'amazon.com' },
+  'reddit.com':             { ip: '151.101.1.140', fqdn: 'reddit.com' },
+  'twitch.tv':              { ip: '52.26.14.11', fqdn: 'twitch.tv' },
+  'discord.com':            { ip: '162.159.128.233', fqdn: 'discord.com' },
+  'github.com':             { ip: '140.82.121.3', fqdn: 'github.com' },
+  'stackoverflow.com':      { ip: '151.101.1.69', fqdn: 'stackoverflow.com' },
+  // Internal
   'pindows':                { ip: '10.98.0.100',fqdn: 'pindows.local' },
+  'pindows.local':          { ip: '10.98.0.100',fqdn: 'pindows.local' },
   'localhost':              { ip: '127.0.0.1',  fqdn: 'localhost' },
 };
-
-// Clue: faurnite (10.98.0.5) = same IP as genie/genius → the virus came from Genie's machine
 
 function getNslookupOutput(host: string): string {
   const key = host.toLowerCase();
@@ -184,8 +202,8 @@ function handleCommand(cmd: string, profile: Record<string, string>): string {
           '',
           'Usage : nslookup <nom_hote>',
           '',
-          'Exemple : nslookup merlin',
-          '          nslookup bonzi',
+          'Exemple : nslookup google.com',
+          '          nslookup merlin',
           '',
         ].join('\n');
       }
