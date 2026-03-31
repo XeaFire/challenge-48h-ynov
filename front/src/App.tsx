@@ -19,6 +19,7 @@ import { AboutDialog } from './components/windows/AboutDialog';
 import { Calculator } from './components/windows/Calculator';
 import { Paint } from './components/windows/Paint';
 import { Explorer } from './components/windows/Explorer';
+import { Solitaire } from './components/windows/Solitaire';
 import { MailApp } from './components/windows/MailApp';
 import { InternetExplorer } from './components/windows/InternetExplorer';
 import { ImageViewer } from './components/windows/ImageViewer';
@@ -33,6 +34,7 @@ const WINDOW_CONFIG: Record<WindowType, { menu?: string[]; statusbar?: string; i
   calculator: { menu: ['Edition', 'Affichage', '?'], insetBody: false },
   paint: { menu: ['Fichier', 'Edition', 'Affichage', 'Image', 'Couleurs', '?'], statusbar: 'Pour obtenir de l\'aide, cliquez sur ? , Rubriques d\'aide.' },
   explorer: { menu: ['Fichier', 'Edition', 'Affichage', 'Outils', '?'] },
+  solitaire: { insetBody: false },
   mail: { menu: ['Fichier', 'Edition', 'Affichage', 'Message', 'Outils', '?'] },
   ie: { menu: ['Fichier', 'Edition', 'Affichage', 'Favoris', 'Outils', '?'], statusbar: 'Termine' },
   imageviewer: { menu: ['Fichier', 'Edition', '?'], statusbar: 'Links_crush.png — 332 Ko' },
@@ -144,6 +146,7 @@ function App() {
       case 'calculator': return <Calculator />;
       case 'paint': return <Paint />;
       case 'explorer': return <Explorer />;
+      case 'solitaire': return <Solitaire />;
       case 'mail': return <MailApp />;
       case 'ie': return <InternetExplorer />;
       case 'imageviewer': return <ImageViewer />;

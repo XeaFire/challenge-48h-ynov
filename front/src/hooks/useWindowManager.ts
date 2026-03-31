@@ -9,6 +9,7 @@ const WINDOW_DEFAULTS: Record<WindowType, { title: string; width: number; height
   calculator: { title: 'Calculatrice', width: 260, height: 305 },
   paint: { title: 'Sans titre - Paint', width: 640, height: 480 },
   explorer: { title: 'Explorateur Windows', width: 600, height: 420 },
+  solitaire: { title: 'Solitaire', width: 540, height: 520 },
   mail: { title: 'Pindows Mail', width: 650, height: 450 },
   ie: { title: 'Internet Explorer', width: 700, height: 500 },
   imageviewer: { title: 'Links_crush.png - Visionneuse', width: 420, height: 400 },

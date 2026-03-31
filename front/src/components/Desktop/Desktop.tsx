@@ -3,7 +3,7 @@ import type { WindowType } from '../../types';
 import { useGame } from '../../game/GameContext';
 import { useMailsByFolder } from '../../hooks/useMailStore';
 import { DesktopIcon } from './DesktopIcon';
-import { ComputerIcon, NotepadIcon, RecycleBinIcon, InternetExplorerIcon, CalculatorIcon, PaintIcon, ExplorerIcon, MailIcon, MinesweeperIcon } from '../../icons';
+import { ComputerIcon, NotepadIcon, RecycleBinIcon, InternetExplorerIcon, CalculatorIcon, PaintIcon, ExplorerIcon, MailIcon, MinesweeperIcon, SolitaireIcon } from '../../icons';
 
 interface DesktopProps {
   onOpenWindow: (type: WindowType) => void;
@@ -67,8 +67,16 @@ const DESKTOP_ICONS: DesktopIconConfig[] = [
     action: { type: 'openWindow', windowType: 'paint' },
   },
   {
-    id: 'minesweeper',
+    id: 'solitaire',
+    x: 10, y: 550,
+    icon: <SolitaireIcon />,
+    label: 'Solitaire',
+    action: { type: 'openWindow', windowType: 'solitaire' },
+  },
+  {
+    id: 'ie',
     x: 10, y: 640,
+    id: 'minesweeper',
     icon: <MinesweeperIcon />,
     label: 'Démineur',
     action: { type: 'openWindow', windowType: 'minesweeper' },
@@ -100,7 +108,6 @@ export function Desktop({ onOpenWindow, onTriggerBSOD, onCloseStartMenu, classNa
     return gameState.unlockedApps.includes(icon.action.windowType);
   });
 
-  // Recompute Y positions so there are no gaps
   const repositioned = visibleIcons.map((icon, i) => ({
     ...icon,
     y: 10 + i * 90,
