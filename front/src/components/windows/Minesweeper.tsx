@@ -107,13 +107,12 @@ function checkWin(board: Cell[][]): boolean {
   return true;
 }
 
-export function Minesweeper({ maximized }: { maximized: boolean }) {
+export function Minesweeper(_props: { maximized: boolean }) {
   const [board, setBoard] = useState<Cell[][]>(() => createBoard());
   const [gameState, setGameState] = useState<GameState>('playing');
   const [flagCount, setFlagCount] = useState(0);
   const [time, setTime] = useState(0);
   const [firstClick, setFirstClick] = useState(true);
-  const cellSize = 24; // cases fixes 24x24 px
 
   useEffect(() => {
     if (gameState === 'playing') {

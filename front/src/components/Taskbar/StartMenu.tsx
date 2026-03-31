@@ -1,7 +1,7 @@
 import type { WindowType } from '../../types';
 import type { ReactNode } from 'react';
 import { useGame } from '../../game/GameContext';
-import { ComputerIcon, NotepadIcon, CalculatorIcon, PaintIcon, ExplorerIcon, MailIcon, HelpIcon, ShutdownIcon, MinesweeperIcon } from '../../icons';
+import { ComputerIcon, NotepadIcon, CalculatorIcon, PaintIcon, ExplorerIcon, MailIcon, HelpIcon, ShutdownIcon } from '../../icons';
 
 interface StartMenuProps {
   visible: boolean;
