@@ -11,6 +11,8 @@ interface Options {
   agentManager: AgentManager;
   onOpenWindow?: (type: WindowType) => void;
   onCloseAllWindows?: () => void;
+  initialState?: GameState;
+  initialFiredTriggers?: string[];
 }
 
 /**
@@ -62,10 +64,10 @@ function applyRuntimeAction(state: GameState, action: TriggerAction): GameState 
   }
 }
 
-export function useGameEngine({ agentManager, onOpenWindow, onCloseAllWindows }: Options) {
-  const stateRef = useRef<GameState>(createInitialState());
+export function useGameEngine({ agentManager, onOpenWindow, onCloseAllWindows, initialState, initialFiredTriggers }: Options) {
+  const stateRef = useRef<GameState>(initialState ?? createInitialState());
   const [gameState, setGameState] = useState<GameState>(stateRef.current);
-  const firedTriggers = useRef(new Set<string>());
+  const firedTriggers = useRef(new Set<string>(initialFiredTriggers));
   const processingRef = useRef(false);
   const pendingEvents = useRef<GameEvent[]>([]);
 
