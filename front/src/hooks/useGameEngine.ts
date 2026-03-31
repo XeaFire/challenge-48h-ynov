@@ -37,6 +37,8 @@ function applyRuntimeAction(state: GameState, action: TriggerAction): GameState 
       return { ...state, screenShake: action.enabled };
     case 'lockClose':
       return { ...state, windowsLocked: action.locked };
+    case 'setFlag':
+      return { ...state, flags: { ...state.flags, [action.flag]: action.value } };
     default:
       return null; // not a runtime action
   }
@@ -83,7 +85,11 @@ export function useGameEngine({ agentManager, onOpenWindow, onCloseAllWindows }:
         agentManager.stopCurrent(action.character);
         break;
       case 'agentMoveTo':
-        await agentManager.moveTo(action.character, action.x, action.y, action.duration);
+        if (action.wait === false) {
+          agentManager.moveTo(action.character, action.x, action.y, action.duration);
+        } else {
+          await agentManager.moveTo(action.character, action.x, action.y, action.duration);
+        }
         break;
       case 'openWindow':
         onOpenWindow?.(action.windowType);
@@ -102,8 +108,6 @@ export function useGameEngine({ agentManager, onOpenWindow, onCloseAllWindows }:
         await new Promise<void>(r => setTimeout(r, action.ms));
         updateState({ ...stateRef.current, subliminalText: null });
         break;
-      // setFlag, setCharacterStatus, showForm → applied at evaluation time only
-      // shakeIcon, stopShakeIcon, screenShake, lockClose, unlockApp, lockApp → applied above via applyRuntimeAction
     }
   }, [agentManager, onOpenWindow, onCloseAllWindows, updateState]);
 

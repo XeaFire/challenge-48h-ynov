@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useWindowManager } from './hooks/useWindowManager';
 import { useAgentManager } from './hooks/useAgentManager';
 import { useGameEngine } from './hooks/useGameEngine';
@@ -6,6 +6,7 @@ import { GameContext } from './game/GameContext';
 import { SpeechBubbleLayer } from './components/SpeechBubble';
 import { BootScreen } from './components/BootScreen';
 import { BSOD } from './components/BSOD';
+import bgMusic from './assets/interstellarmusic.wav';
 import { Desktop } from './components/Desktop/Desktop';
 import { Taskbar } from './components/Taskbar/Taskbar';
 import { Window } from './components/Window/Window';
@@ -42,12 +43,44 @@ function App() {
   const [bsodVisible, setBsodVisible] = useState(false);
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [shutdownScreen, setShutdownScreen] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const handler = () => setBsodVisible(true);
     window.addEventListener('trigger-bsod', handler);
     return () => window.removeEventListener('trigger-bsod', handler);
   }, []);
+
+  // Background music — start on first user interaction after boot
+  useEffect(() => {
+    if (!booted) return;
+    const audio = new Audio(bgMusic);
+    audio.loop = true;
+    audio.volume = 0.3;
+    audioRef.current = audio;
+
+    // Try playing immediately (works if user already interacted)
+    audio.play().catch(() => {});
+
+    // Also listen for any interaction in capture phase (can't be blocked)
+    const play = () => {
+      audio.play().then(() => {
+        document.removeEventListener('click', play, true);
+        document.removeEventListener('keydown', play, true);
+        document.removeEventListener('mousedown', play, true);
+      }).catch(() => {});
+    };
+    document.addEventListener('click', play, true);
+    document.addEventListener('keydown', play, true);
+    document.addEventListener('mousedown', play, true);
+
+    return () => {
+      audio.pause();
+      document.removeEventListener('click', play, true);
+      document.removeEventListener('keydown', play, true);
+      document.removeEventListener('mousedown', play, true);
+    };
+  }, [booted]);
 
   const agents = useAgentManager();
   const {

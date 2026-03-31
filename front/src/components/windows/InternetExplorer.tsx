@@ -53,41 +53,69 @@ const SCAM_PAGE = `
       </td>
     </tr>
   </table>
-
   <div style="margin:10px;padding:8px;border:2px solid #00ffff;background:rgba(0,0,0,0.5)">
     <div style="color:#00ffff;font-weight:bold;font-size:13px;margin-bottom:4px">TEMOIGNAGES DE VRAIS JOUEURS :</div>
-    <div style="color:#fff;font-size:11px;margin:3px 0">
-      <span style="color:#00ff00">xX_DarkSasuke69_Xx :</span> "jai recu 1 million de fortbux cet 100% reel merci faurnite !!!!!"
-    </div>
-    <div style="color:#fff;font-size:11px;margin:3px 0">
-      <span style="color:#ff00ff">~*PrInCeSsE_GaMeR*~ :</span> "mon antivirus dit que cet un virus mdr mais ca marche quand meme lol"
-    </div>
-    <div style="color:#fff;font-size:11px;margin:3px 0">
-      <span style="color:#ffff00">BonziB0y2005 :</span> "jai telecharger et mantenant mon pc fait des bruits bizarres mais jai les skins"
-    </div>
+    <div style="color:#fff;font-size:11px;margin:3px 0"><span style="color:#00ff00">xX_DarkSasuke69_Xx :</span> "jai recu 1 million de fortbux cet 100% reel merci faurnite !!!!!"</div>
+    <div style="color:#fff;font-size:11px;margin:3px 0"><span style="color:#ff00ff">~*PrInCeSsE_GaMeR*~ :</span> "mon antivirus dit que cet un virus mdr mais ca marche quand meme lol"</div>
+    <div style="color:#fff;font-size:11px;margin:3px 0"><span style="color:#ffff00">BonziB0y2005 :</span> "jai telecharger et mantenant mon pc fait des bruits bizarres mais jai les skins"</div>
   </div>
-
-  <div style="text-align:center;margin:10px">
-    <img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="width:88px;height:31px;border:1px solid #fff;background:#333" />
-    <img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="width:88px;height:31px;border:1px solid #fff;background:#333;margin:0 4px" />
-    <div style="color:#808080;font-size:10px;margin-top:6px">
-      Visiteurs: <span style="background:#000;color:#00ff00;padding:1px 4px;font-family:monospace">000024891</span>
-    </div>
-    <div style="color:#808080;font-size:8px;margin-top:4px">
-      &copy; 1998 Faurnite Inc. Tous droits reserves. Ce site est approuve par Pindows 98.
-    </div>
-    <div style="color:#808080;font-size:7px">
-      Webmaster: xX_H4ck3r_M4st3r_Xx@caramail.fr | Optimise pour Netscope Navigator 3.0
-    </div>
-  </div>
-
   <marquee direction="up" scrollamount="2" style="position:fixed;right:6px;top:40px;width:120px;height:200px;background:rgba(0,0,0,0.8);border:2px solid #ff0000;padding:6px;font-size:10px;color:#ff0000;z-index:5">
-    ATTENTION VIRUS DETECTE !!!<br/><br/>
-    Votre ordinateur est infecte par 847 virus !!!<br/><br/>
-    Telechargez notre antivirus GRATUIT pour nettoyer votre PC :<br/><br/>
-    <span style="color:#00ff00;text-decoration:underline;cursor:pointer">AntiVirus_Total_2024_GRATUIT.exe</span><br/><br/>
-    NE FERMEZ PAS CETTE FENETRE !!!
+    ATTENTION VIRUS DETECTE !!!<br/><br/>Votre ordinateur est infecte par 847 virus !!!<br/><br/>
+    <span style="color:#00ff00;text-decoration:underline;cursor:pointer">AntiVirus_Total_2024_GRATUIT.exe</span><br/><br/>NE FERMEZ PAS CETTE FENETRE !!!
   </marquee>
+</div>
+`;
+
+const AVOST_PAGE = `
+<div style="background:#f5f7fa;min-height:100%;font-family:Segoe UI,Tahoma,sans-serif;color:#333">
+  <div style="background:linear-gradient(135deg,#1a237e,#0d47a1);padding:16px 20px;color:#fff">
+    <div style="font-size:20px;font-weight:bold;letter-spacing:1px">🛡️ AVOST Antivirus</div>
+    <div style="font-size:11px;opacity:0.8;margin-top:2px">Protection totale pour Pindows 98</div>
+  </div>
+  <div style="padding:16px 20px">
+    <div style="background:#e8f5e9;border-left:4px solid #4caf50;padding:12px;margin-bottom:16px;border-radius:2px">
+      <div style="font-size:14px;font-weight:bold;color:#2e7d32">✅ Votre systeme est protege</div>
+      <div style="font-size:11px;color:#555;margin-top:4px">Derniere analyse : il y a 2 minutes — 1 menace neutralisee</div>
+    </div>
+    <div style="font-size:15px;font-weight:bold;margin-bottom:10px;color:#1a237e">📋 Conseils de securite</div>
+    <div style="background:#fff;border:1px solid #ddd;border-radius:4px;padding:12px;margin-bottom:12px">
+      <div style="font-size:12px;line-height:1.8">
+        <div style="margin-bottom:6px">🔒 <b>Ne cliquez jamais</b> sur des liens promettant des cadeaux gratuits ou des offres "trop belles pour etre vraies".</div>
+        <div style="margin-bottom:6px">📧 <b>Mefiance avec les mails</b> provenant d'expediteurs inconnus ou avec des caracteres etranges.</div>
+        <div style="margin-bottom:6px">🐒 <b>Ne telechargez jamais</b> de logiciels proposes par des <span style="color:#7b1fa2;font-weight:bold">singes violets inconnus</span>. Ils contiennent souvent des malwares.</div>
+        <div style="margin-bottom:6px">💾 <b>Sauvegardez</b> regulierement vos fichiers importants sur une disquette externe.</div>
+        <div>🔄 <b>Mettez a jour</b> votre systeme et votre antivirus regulierement.</div>
+      </div>
+    </div>
+    <div style="font-size:15px;font-weight:bold;margin-bottom:10px;color:#1a237e">⚠️ Menaces recentes detectees</div>
+    <div style="background:#fff;border:1px solid #ddd;border-radius:4px;overflow:hidden">
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <tr style="background:#e3f2fd">
+          <th style="text-align:left;padding:6px 10px">Menace</th>
+          <th style="text-align:left;padding:6px 10px">Type</th>
+          <th style="text-align:left;padding:6px 10px">Statut</th>
+        </tr>
+        <tr style="border-top:1px solid #eee">
+          <td style="padding:6px 10px">faurnite_installer.exe</td>
+          <td style="padding:6px 10px;color:#d32f2f">Trojan.FortBux</td>
+          <td style="padding:6px 10px;color:#4caf50">Supprime ✓</td>
+        </tr>
+        <tr style="border-top:1px solid #eee">
+          <td style="padding:6px 10px">popup_generator.dll</td>
+          <td style="padding:6px 10px;color:#d32f2f">Adware.SpamWindow</td>
+          <td style="padding:6px 10px;color:#4caf50">Supprime ✓</td>
+        </tr>
+        <tr style="border-top:1px solid #eee;background:#fff3e0">
+          <td style="padding:6px 10px;font-weight:bold">B̶o̶n̶z̶i̶_̶b̶u̶d̶d̶y̶.̶e̶x̶e̶</td>
+          <td style="padding:6px 10px;color:#e65100">Spyware.Suspect</td>
+          <td style="padding:6px 10px;color:#ff9800;font-weight:bold">En surveillance... 👀</td>
+        </tr>
+      </table>
+    </div>
+    <div style="margin-top:16px;text-align:center;font-size:9px;color:#999">
+      &copy; 1998 AVOST Software — "On protege, vous surfez" — avost.antivirus.com
+    </div>
+  </div>
 </div>
 `;
 
@@ -96,11 +124,9 @@ const ERROR_PAGE = `
   <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:20px">
     <div style="font-size:32px">&#9888;</div>
     <div>
-      <div style="font-size:14px;font-weight:bold;margin-bottom:8px">
-        Impossible d'afficher cette page
-      </div>
+      <div style="font-size:14px;font-weight:bold;margin-bottom:8px">Impossible d'afficher cette page</div>
       <div style="font-size:12px;color:#333;line-height:1.6">
-        La page que vous recherchez est actuellement indisponible. Le site Web rencontre peut-etre des difficultes techniques ou vous devez ajuster les parametres de votre navigateur.
+        La page que vous recherchez est actuellement indisponible.
       </div>
     </div>
   </div>
@@ -133,6 +159,7 @@ const HOME_PAGE = `
 
 const KNOWN_SITES: Record<string, string> = {
   'faurnite.battlepass.com': SCAM_PAGE,
+  'avost.antivirus.com': AVOST_PAGE,
 };
 
 function resolveUrl(input: string): string {
@@ -147,28 +174,27 @@ export function InternetExplorer() {
   const [currentPage, setCurrentPage] = useState<string>(HOME_PAGE);
   const [loading, setLoading] = useState(false);
 
-  // When story3 spam flag is set, auto-load faurnite on mount
+  // Auto-load a page based on story flags
   useEffect(() => {
     if (gameState.flags.story3_faurnite_spam) {
       setAddress('faurnite.battlepass.com');
-      setCurrentPage(KNOWN_SITES['faurnite.battlepass.com']!);
+      setCurrentPage(SCAM_PAGE);
+    } else if (gameState.flags.story3_avost_page) {
+      setAddress('avost.antivirus.com');
+      setCurrentPage(AVOST_PAGE);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // only on mount
+  }, []);
 
   const navigate = useCallback((raw: string) => {
     const url = resolveUrl(raw);
     if (!url) { setCurrentPage(HOME_PAGE); return; }
-
     setLoading(true);
     setAddress(url);
-
-    // Fake loading delay
     setTimeout(() => {
       const page = KNOWN_SITES[url];
       setCurrentPage(page ?? ERROR_PAGE);
       setLoading(false);
-      // Dispatch event for story triggers
       dispatch({ type: 'url_visited', url });
     }, 800 + Math.random() * 1200);
   }, [dispatch]);

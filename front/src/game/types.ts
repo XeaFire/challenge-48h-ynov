@@ -28,11 +28,8 @@ export interface GameState {
   shakingIcon: string | null;
   /** Icon permanently bleeding (persists after shake stops) */
   bleedingIcon: string | null;
-  /** Screen shake effect active */
   screenShake: boolean;
-  /** Subliminal text flash (null = hidden) */
   subliminalText: string | null;
-  /** When true, windows cannot be closed */
   windowsLocked: boolean;
 }
 
@@ -54,7 +51,7 @@ export type TriggerAction =
   | { type: 'agentHide'; character: CharacterId; instant?: boolean }
   | { type: 'agentPlay'; character: CharacterId; animation: string }
   | { type: 'agentStopCurrent'; character: CharacterId }
-  | { type: 'agentMoveTo'; character: CharacterId; x: number; y: number; duration?: number }
+  | { type: 'agentMoveTo'; character: CharacterId; x: number; y: number; duration?: number; wait?: boolean }
   | { type: 'setCharacterStatus'; character: CharacterId; status: CharacterStatus }
   | { type: 'openWindow'; windowType: WindowType }
   | { type: 'showForm'; formId: string; title: string; description?: string; fields: FormField[]; submitLabel?: string }

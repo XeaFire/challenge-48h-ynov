@@ -41,7 +41,6 @@ function applyStateAction(state: GameState, action: TriggerAction): GameState {
     case 'showSubliminal':
     case 'closeAllWindows':
     case 'lockClose':
-      // Applied only at RUNTIME (in applyRuntimeAction / executeAction)
       return state;
     default:
       return state;
