@@ -259,7 +259,11 @@ function Game({ debugConfig }: { debugConfig: DebugConfig }) {
               menu={config.menu}
               statusbar={config.statusbar}
               insetBody={config.insetBody}
-              onClose={() => { if (!gameState.windowsLocked) closeWindow(window.id); }}
+              onClose={() => {
+                if (gameState.windowsLocked) return;
+                if (gameState.lockedWindows.includes(window.type)) return;
+                closeWindow(window.id);
+              }}
               onMinimize={() => minimizeWindow(window.id)}
               onMaximize={() => maximizeWindow(window.id)}
               onFocus={() => focusWindow(window.id)}
