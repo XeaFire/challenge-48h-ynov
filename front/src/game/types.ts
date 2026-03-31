@@ -28,6 +28,12 @@ export interface GameState {
   shakingIcon: string | null;
   /** Icon permanently bleeding (persists after shake stops) */
   bleedingIcon: string | null;
+  /** Screen shake effect active */
+  screenShake: boolean;
+  /** Subliminal text flash (null = hidden) */
+  subliminalText: string | null;
+  /** When true, windows cannot be closed */
+  windowsLocked: boolean;
 }
 
 export interface StoryTrigger {
@@ -58,7 +64,11 @@ export type TriggerAction =
   | { type: 'sendMail'; from: string; to: string; subject: string; body: string }
   | { type: 'shakeIcon'; iconId: string }
   | { type: 'stopShakeIcon' }
-  | { type: 'stopBleeding' };
+  | { type: 'stopBleeding' }
+  | { type: 'screenShake'; enabled: boolean }
+  | { type: 'showSubliminal'; text: string; ms: number }
+  | { type: 'closeAllWindows' }
+  | { type: 'lockClose'; locked: boolean };
 
 export type GameEvent =
   | { type: 'boot_complete' }
@@ -67,4 +77,5 @@ export type GameEvent =
   | { type: 'character_clicked'; characterId: CharacterId }
   | { type: 'item_clicked'; itemId: string; windowType: WindowType }
   | { type: 'form_submitted'; formId: string; data: Record<string, string> }
+  | { type: 'url_visited'; url: string }
   | { type: 'recheck' };

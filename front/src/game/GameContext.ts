@@ -1,11 +1,14 @@
 import { createContext, useContext } from 'react';
 import type { GameState, GameEvent } from './types';
 import type { AgentManager } from '../hooks/useAgentManager';
+import type { WindowType } from '../types';
 
 interface GameContextValue {
   gameState: GameState;
   dispatch: (event: GameEvent) => void;
   agents: AgentManager;
+  openWindow: (type: WindowType) => void;
+  closeAllWindows: () => void;
 }
 
 export const GameContext = createContext<GameContextValue>(null!);

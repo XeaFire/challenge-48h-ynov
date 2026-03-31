@@ -8,6 +8,7 @@ interface DesktopProps {
   onOpenWindow: (type: WindowType) => void;
   onTriggerBSOD: () => void;
   onCloseStartMenu: () => void;
+  className?: string;
   children: ReactNode;
 }
 
@@ -76,11 +77,11 @@ const DESKTOP_ICONS: DesktopIconConfig[] = [
     x: 10, y: 730,
     icon: <InternetExplorerIcon />,
     label: 'Internet Explorer',
-    action: { type: 'triggerBSOD' },
+    action: { type: 'openWindow', windowType: 'ie' },
   },
 ];
 
-export function Desktop({ onOpenWindow, onTriggerBSOD, onCloseStartMenu, children }: DesktopProps) {
+export function Desktop({ onOpenWindow, onTriggerBSOD, onCloseStartMenu, className, children }: DesktopProps) {
   const { gameState } = useGame();
 
   const handleIconAction = (action: IconAction) => {
@@ -103,7 +104,7 @@ export function Desktop({ onOpenWindow, onTriggerBSOD, onCloseStartMenu, childre
   }));
 
   return (
-    <div id="desktop" onClick={onCloseStartMenu}>
+    <div id="desktop" className={className} onClick={onCloseStartMenu}>
       {repositioned.map(({ id, x, y, icon, label, action }) => (
         <DesktopIcon
           key={id}
