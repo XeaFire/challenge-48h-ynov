@@ -44,7 +44,6 @@ function applyRuntimeAction(state: GameState, action: TriggerAction): GameState 
     case 'showForm':
       return { ...state, activeForm: { formId: action.formId, title: action.title, description: action.description, fields: action.fields, submitLabel: action.submitLabel } };
     case 'showNotification': {
-      // Remplacer {firstName} etc. par les valeurs du profil
       let text = action.text;
       for (const [key, val] of Object.entries(state.profile)) {
         text = text.replaceAll(`{${key}}`, String(val));

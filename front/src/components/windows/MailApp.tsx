@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useMailStore, mailStore } from '../../hooks/useMailStore';
 import { MailReadIcon, MailUnreadIcon } from '../../icons';
 import type { Mail, MailFolder } from '../../types';
+import { GlitchText } from './GlitchText';
 
 const FOLDERS: { key: MailFolder; label: string; icon: string }[] = [
   { key: 'inbox', label: 'Boîte de réception', icon: '📥' },
@@ -192,21 +193,6 @@ function MailList({ mails, selectedId, onSelect, folder }: {
         ))}
       </div>
     </div>
-  );
-}
-
-const GLITCH_CHARS = ['█', '▓', '▒', '░', '╫', '╬', '╪', '╩', '╦', '╠', '╣', '╝', '╚', '╗', '╔', '║', '═', '┼', '┤', '├', '┴', '┬', '│', '─'];
-
-function GlitchText({ hidden }: { hidden: string }) {
-  return (
-    <span className="glitch-text">
-      {hidden.split('').map((ch, i) => (
-        <span key={i} className="glitch-char">
-          <span className="glitch-fake">{GLITCH_CHARS[i % GLITCH_CHARS.length]}</span>
-          <span className="glitch-real">{ch}</span>
-        </span>
-      ))}
-    </span>
   );
 }
 
