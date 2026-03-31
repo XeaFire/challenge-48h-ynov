@@ -75,7 +75,7 @@ export const story2Triggers: StoryTrigger[] = [
         from: '???@̸̛̤̈́ṕ̵̰i̶̖̓n̷̰̈d̴̰̑o̷̟̊w̵̳̉s̸̗̈.̵̲̿f̸̖̀r̶̤̃',
         to: 'utilisateur@pindows.fr',
         subject: '💀 Il est mort.',
-        body: "Links ne reviendra pas.\n\nIl est parti pour toujours.\nSon sang coule encore sur l'icône des mails.\n\nNe cherche pas à comprendre.\nNe ferme pas les yeux.\n\n... ou tu seras le prochain.\n\n\n█̵̢̛̦̰̹ ̸̣̳̰̣ ̷̘̯̯̰ ̶̙̻̩̝ ̵̳̝̰ ̸̙̻̩ ̷̝̳",
+        body: "Links ne reviendra pas.\n\nIl est parti pour toujours.\nSon sang coule encore sur l'icône des mails.\n\nNe cherche pas à comprendre.\nNe ferme pas les yeux.\n\n... ou tu seras le prochain.\n\n\n{{GLITCH:faurnite.battlepass.com}}",
       },
       { type: 'setFlag', flag: 'story2_links_dead', value: true },
     ],

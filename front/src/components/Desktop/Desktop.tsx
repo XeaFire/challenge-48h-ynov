@@ -3,12 +3,13 @@ import type { WindowType } from '../../types';
 import { useGame } from '../../game/GameContext';
 import { useMailsByFolder } from '../../hooks/useMailStore';
 import { DesktopIcon } from './DesktopIcon';
-import { ComputerIcon, NotepadIcon, RecycleBinIcon, InternetExplorerIcon, CalculatorIcon, PaintIcon, ExplorerIcon, MailIcon } from '../../icons';
+import { ComputerIcon, NotepadIcon, RecycleBinIcon, InternetExplorerIcon, CalculatorIcon, PaintIcon, ExplorerIcon, MailIcon, MinesweeperIcon } from '../../icons';
 
 interface DesktopProps {
   onOpenWindow: (type: WindowType) => void;
   onTriggerBSOD: () => void;
   onCloseStartMenu: () => void;
+  className?: string;
   children: ReactNode;
 }
 
@@ -66,15 +67,22 @@ const DESKTOP_ICONS: DesktopIconConfig[] = [
     action: { type: 'openWindow', windowType: 'paint' },
   },
   {
-    id: 'ie',
+    id: 'minesweeper',
     x: 10, y: 640,
+    icon: <MinesweeperIcon />,
+    label: 'Démineur',
+    action: { type: 'openWindow', windowType: 'minesweeper' },
+  },
+  {
+    id: 'ie',
+    x: 10, y: 730,
     icon: <InternetExplorerIcon />,
     label: 'Internet Explorer',
-    action: { type: 'triggerBSOD' },
+    action: { type: 'openWindow', windowType: 'ie' },
   },
 ];
 
-export function Desktop({ onOpenWindow, onTriggerBSOD, onCloseStartMenu, children }: DesktopProps) {
+export function Desktop({ onOpenWindow, onTriggerBSOD, onCloseStartMenu, className, children }: DesktopProps) {
   const { gameState } = useGame();
   const inboxMails = useMailsByFolder('inbox');
   const unreadCount = inboxMails.filter(m => !m.read).length;
@@ -99,7 +107,7 @@ export function Desktop({ onOpenWindow, onTriggerBSOD, onCloseStartMenu, childre
   }));
 
   return (
-    <div id="desktop" onClick={onCloseStartMenu}>
+    <div id="desktop" className={className} onClick={onCloseStartMenu}>
       {repositioned.map(({ id, x, y, icon, label, action }) => (
         <DesktopIcon
           key={id}

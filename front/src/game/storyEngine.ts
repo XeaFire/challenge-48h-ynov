@@ -37,6 +37,10 @@ function applyStateAction(state: GameState, action: TriggerAction): GameState {
     case 'hideNotification':
     case 'disableApp':
     case 'enableApp':
+    case 'screenShake':
+    case 'showSubliminal':
+    case 'closeAllWindows':
+    case 'lockClose':
       // Applied at RUNTIME only (in applyRuntimeAction)
       return state;
     default:
@@ -56,6 +60,8 @@ function applyEventFlags(state: GameState, event: GameEvent): GameState {
       return { ...state, flags: { ...state.flags, [`item_${event.itemId}`]: true } };
     case 'form_submitted':
       return { ...state, flags: { ...state.flags, [`form_${event.formId}_submitted`]: true }, profile: { ...state.profile, ...event.data }, activeForm: null };
+    case 'url_visited':
+      return { ...state, flags: { ...state.flags, [`visited_${event.url}`]: true } };
     case 'recheck':
       return state;
     default:

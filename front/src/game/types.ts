@@ -24,12 +24,13 @@ export interface GameState {
   unlockedApps: string[];
   profile: Record<string, string>;
   activeForm: { formId: string; title: string; description?: string; fields: FormField[]; submitLabel?: string } | null;
-  /** Icon currently shaking (id from DESKTOP_ICONS), null if none */
   shakingIcon: string | null;
-  /** Icon permanently bleeding (persists after shake stops) */
   bleedingIcon: string | null;
   notification: string | null;
   lockedApps: string[];
+  screenShake: boolean;
+  subliminalText: string | null;
+  windowsLocked: boolean;
 }
 
 export interface StoryTrigger {
@@ -50,7 +51,7 @@ export type TriggerAction =
   | { type: 'agentHide'; character: CharacterId; instant?: boolean }
   | { type: 'agentPlay'; character: CharacterId; animation: string }
   | { type: 'agentStopCurrent'; character: CharacterId }
-  | { type: 'agentMoveTo'; character: CharacterId; x: number; y: number; duration?: number }
+  | { type: 'agentMoveTo'; character: CharacterId; x: number; y: number; duration?: number; wait?: boolean }
   | { type: 'setCharacterStatus'; character: CharacterId; status: CharacterStatus }
   | { type: 'openWindow'; windowType: WindowType }
   | { type: 'showForm'; formId: string; title: string; description?: string; fields: FormField[]; submitLabel?: string }
@@ -65,6 +66,10 @@ export type TriggerAction =
   | { type: 'hideNotification' }
   | { type: 'disableApp'; app: string }
   | { type: 'enableApp'; app: string };
+  | { type: 'screenShake'; enabled: boolean }
+  | { type: 'showSubliminal'; text: string; ms: number }
+  | { type: 'closeAllWindows' }
+  | { type: 'lockClose'; locked: boolean };
 
 export type GameEvent =
   | { type: 'boot_complete' }
@@ -73,4 +78,5 @@ export type GameEvent =
   | { type: 'character_clicked'; characterId: CharacterId }
   | { type: 'item_clicked'; itemId: string; windowType: WindowType }
   | { type: 'form_submitted'; formId: string; data: Record<string, string> }
+  | { type: 'url_visited'; url: string }
   | { type: 'recheck' };
