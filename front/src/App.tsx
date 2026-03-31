@@ -18,6 +18,7 @@ import { Calculator } from './components/windows/Calculator';
 import { Paint } from './components/windows/Paint';
 import { Explorer } from './components/windows/Explorer';
 import { MailApp } from './components/windows/MailApp';
+import { Minesweeper } from './components/windows/Minesweeper';
 import type { WindowType } from './types';
 
 const WINDOW_CONFIG: Record<WindowType, { menu?: string[]; statusbar?: string; insetBody?: boolean }> = {
@@ -29,6 +30,7 @@ const WINDOW_CONFIG: Record<WindowType, { menu?: string[]; statusbar?: string; i
   paint: { menu: ['Fichier', 'Edition', 'Affichage', 'Image', 'Couleurs', '?'], statusbar: 'Pour obtenir de l\'aide, cliquez sur ? , Rubriques d\'aide.' },
   explorer: { menu: ['Fichier', 'Edition', 'Affichage', 'Outils', '?'] },
   mail: { menu: ['Fichier', 'Edition', 'Affichage', 'Message', 'Outils', '?'] },
+  minesweeper: { menu: ['Jeu', '?'], statusbar: 'Mines restantes: 10' },
 };
 
 function App() {
@@ -99,6 +101,7 @@ function App() {
       case 'paint': return <Paint />;
       case 'explorer': return <Explorer />;
       case 'mail': return <MailApp />;
+      case 'minesweeper': return <Minesweeper />;
     }
   }
 
