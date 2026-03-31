@@ -30,41 +30,36 @@ export function Window({
   onFocus,
   onMove,
 }: WindowProps) {
-  const dragOrigin = useRef<{
-    mouseX: number;
-    mouseY: number;
-    windowX: number;
-    windowY: number;
-  } | null>(null);
+  const elRef = useRef<HTMLDivElement>(null);
+  const startRef = useRef<{ mx: number; my: number } | null>(null);
 
   const handleTitleBarMouseDown = useCallback((event: MouseEvent) => {
-    // Ignorer si on clique sur un bouton de la barre de titre
     if ((event.target as HTMLElement).closest('.window-btn')) return;
     onFocus();
     if (state.maximized) return;
 
-    dragOrigin.current = {
-      mouseX: event.clientX,
-      mouseY: event.clientY,
-      windowX: state.x,
-      windowY: state.y,
+    startRef.current = { mx: event.clientX, my: event.clientY };
+
+    const onMouseMove = (e: globalThis.MouseEvent) => {
+      if (!startRef.current || !elRef.current) return;
+      const dx = e.clientX - startRef.current.mx;
+      const dy = e.clientY - startRef.current.my;
+      elRef.current.style.transform = `translate(${dx}px,${dy}px)`;
     };
 
-    const handleMouseMove = (moveEvent: globalThis.MouseEvent) => {
-      if (!dragOrigin.current) return;
-      const deltaX = moveEvent.clientX - dragOrigin.current.mouseX;
-      const deltaY = moveEvent.clientY - dragOrigin.current.mouseY;
-      onMove(dragOrigin.current.windowX + deltaX, dragOrigin.current.windowY + deltaY);
+    const onMouseUp = (e: globalThis.MouseEvent) => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      if (!startRef.current) return;
+      const dx = e.clientX - startRef.current.mx;
+      const dy = e.clientY - startRef.current.my;
+      startRef.current = null;
+      if (elRef.current) elRef.current.style.transform = '';
+      onMove(state.x + dx, state.y + dy);
     };
 
-    const handleMouseUp = () => {
-      dragOrigin.current = null;
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
     event.preventDefault();
   }, [state.maximized, state.x, state.y, onFocus, onMove]);
 
@@ -86,7 +81,7 @@ export function Window({
   ].filter(Boolean).join(' ');
 
   return (
-    <div className={windowClasses} style={style} onMouseDown={onFocus}>
+    <div ref={elRef} className={windowClasses} style={style} onMouseDown={onFocus}>
       <div className="window-titlebar" onMouseDown={handleTitleBarMouseDown}>
         <span className="window-title">{state.title}</span>
         <div className="window-controls">

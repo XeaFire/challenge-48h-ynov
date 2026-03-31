@@ -62,15 +62,18 @@ function TypewriterText({ text }: { text: string }) {
 }
 
 function TrackedBubble({ bubble, getAgentEl }: { bubble: BubbleData; getAgentEl: (id: CharacterId) => HTMLElement | null }) {
-  const [pos, setPos] = useState({ x: 0, y: 0 });
-  const rafRef = useRef<number | undefined>(undefined);
+  const bubbleRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number>();
 
   useEffect(() => {
     const track = () => {
       const el = getAgentEl(bubble.characterId);
-      if (el) {
+      const div = bubbleRef.current;
+      if (el && div) {
         const rect = el.getBoundingClientRect();
-        setPos({ x: rect.left + rect.width / 2, y: rect.top });
+        // DOM direct — zero re-render React
+        div.style.left = Math.round(rect.left + rect.width / 2 - 30) + 'px';
+        div.style.top = Math.round(rect.top - 10) + 'px';
       }
       rafRef.current = requestAnimationFrame(track);
     };
@@ -79,7 +82,7 @@ function TrackedBubble({ bubble, getAgentEl }: { bubble: BubbleData; getAgentEl:
   }, [bubble.characterId, getAgentEl]);
 
   return (
-    <div className="speech-bubble" style={{ left: pos.x - 30, top: pos.y - 10, transform: 'translateY(-100%)' }}>
+    <div ref={bubbleRef} className="speech-bubble" style={{ transform: 'translateY(-100%)' }}>
       <div className="speech-bubble-name">{bubble.characterName}</div>
       <div className="speech-bubble-text">
         <TypewriterText text={bubble.text} />
