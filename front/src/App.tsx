@@ -91,7 +91,7 @@ function App() {
     );
   }
 
-  function renderWindowContent(windowId: string, type: WindowType, maximized: boolean) {
+  function renderWindowContent(windowId: string, type: WindowType) {
     switch (type) {
       case 'mycomputer': return <MyComputer />;
       case 'notepad': return <Notepad />;
@@ -132,7 +132,7 @@ function App() {
               onFocus={() => focusWindow(window.id)}
               onMove={(x, y) => updateWindowPosition(window.id, x, y)}
             >
-              {renderWindowContent(window.id, window.type, window.maximized)}
+              {renderWindowContent(window.id, window.type)}
             </Window>
           );
         })}
