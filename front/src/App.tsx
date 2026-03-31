@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useWindowManager } from './hooks/useWindowManager';
 import { useAgentManager } from './hooks/useAgentManager';
 import { useGameEngine } from './hooks/useGameEngine';
@@ -6,6 +6,7 @@ import { GameContext } from './game/GameContext';
 import { SpeechBubbleLayer } from './components/SpeechBubble';
 import { BootScreen } from './components/BootScreen';
 import { BSOD } from './components/BSOD';
+import bgMusic from './assets/interstellarmusic.wav';
 import { Desktop } from './components/Desktop/Desktop';
 import { Taskbar } from './components/Taskbar/Taskbar';
 import { Window } from './components/Window/Window';
@@ -18,6 +19,7 @@ import { Calculator } from './components/windows/Calculator';
 import { Paint } from './components/windows/Paint';
 import { Explorer } from './components/windows/Explorer';
 import { MailApp } from './components/windows/MailApp';
+import { InternetExplorer } from './components/windows/InternetExplorer';
 import type { WindowType } from './types';
 
 const WINDOW_CONFIG: Record<WindowType, { menu?: string[]; statusbar?: string; insetBody?: boolean }> = {
@@ -29,6 +31,7 @@ const WINDOW_CONFIG: Record<WindowType, { menu?: string[]; statusbar?: string; i
   paint: { menu: ['Fichier', 'Edition', 'Affichage', 'Image', 'Couleurs', '?'], statusbar: 'Pour obtenir de l\'aide, cliquez sur ? , Rubriques d\'aide.' },
   explorer: { menu: ['Fichier', 'Edition', 'Affichage', 'Outils', '?'] },
   mail: { menu: ['Fichier', 'Edition', 'Affichage', 'Message', 'Outils', '?'] },
+  ie: { menu: ['Fichier', 'Edition', 'Affichage', 'Favoris', 'Outils', '?'], statusbar: 'Termine' },
 };
 
 function App() {
@@ -36,6 +39,7 @@ function App() {
   const [bsodVisible, setBsodVisible] = useState(false);
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [shutdownScreen, setShutdownScreen] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const handler = () => setBsodVisible(true);
@@ -43,16 +47,48 @@ function App() {
     return () => window.removeEventListener('trigger-bsod', handler);
   }, []);
 
+  // Background music — start on first user interaction after boot
+  useEffect(() => {
+    if (!booted) return;
+    const audio = new Audio(bgMusic);
+    audio.loop = true;
+    audio.volume = 0.3;
+    audioRef.current = audio;
+
+    // Try playing immediately (works if user already interacted)
+    audio.play().catch(() => {});
+
+    // Also listen for any interaction in capture phase (can't be blocked)
+    const play = () => {
+      audio.play().then(() => {
+        document.removeEventListener('click', play, true);
+        document.removeEventListener('keydown', play, true);
+        document.removeEventListener('mousedown', play, true);
+      }).catch(() => {});
+    };
+    document.addEventListener('click', play, true);
+    document.addEventListener('keydown', play, true);
+    document.addEventListener('mousedown', play, true);
+
+    return () => {
+      audio.pause();
+      document.removeEventListener('click', play, true);
+      document.removeEventListener('keydown', play, true);
+      document.removeEventListener('mousedown', play, true);
+    };
+  }, [booted]);
+
   const agents = useAgentManager();
   const {
     windows, focusOrder, activeWindowId,
-    openWindow, closeWindow, focusWindow,
+    openWindow, closeWindow, closeAllWindows, focusWindow,
     minimizeWindow, maximizeWindow, updateWindowPosition,
   } = useWindowManager();
 
   const { gameState, dispatch } = useGameEngine({
     agentManager: agents,
     onOpenWindow: openWindow,
+    onCloseAllWindows: closeAllWindows,
   });
 
   // Opens a window AND dispatches the game event so triggers can react
@@ -99,11 +135,12 @@ function App() {
       case 'paint': return <Paint />;
       case 'explorer': return <Explorer />;
       case 'mail': return <MailApp />;
+      case 'ie': return <InternetExplorer />;
     }
   }
 
   return (
-    <GameContext.Provider value={{ gameState, dispatch, agents }}>
+    <GameContext.Provider value={{ gameState, dispatch, agents, closeAllWindows }}>
       {!booted && <BootScreen onComplete={handleBootComplete} />}
       <BSOD visible={bsodVisible} onDismiss={() => setBsodVisible(false)} />
 
@@ -111,6 +148,7 @@ function App() {
         onOpenWindow={handleOpenWindow}
         onTriggerBSOD={() => setBsodVisible(true)}
         onCloseStartMenu={() => startMenuOpen && setStartMenuOpen(false)}
+        className={gameState.screenShake ? 'screen-shake' : ''}
       >
         {windows.map(window => {
           const config = WINDOW_CONFIG[window.type];
@@ -123,7 +161,7 @@ function App() {
               menu={config.menu}
               statusbar={config.statusbar}
               insetBody={config.insetBody}
-              onClose={() => closeWindow(window.id)}
+              onClose={() => { if (!gameState.windowsLocked) closeWindow(window.id); }}
               onMinimize={() => minimizeWindow(window.id)}
               onMaximize={() => maximizeWindow(window.id)}
               onFocus={() => focusWindow(window.id)}
@@ -147,6 +185,12 @@ function App() {
       />
 
       <SpeechBubbleLayer bubbles={agents.bubbles} getAgentEl={agents.getAgentEl} onBubbleClick={agents.skipCurrentSpeech} />
+
+      {gameState.subliminalText && (
+        <div className="subliminal-overlay">
+          <div className="subliminal-text">{gameState.subliminalText}</div>
+        </div>
+      )}
 
       {/* Story form overlay */}
       {gameState.activeForm && (

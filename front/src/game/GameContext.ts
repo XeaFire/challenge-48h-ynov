@@ -6,6 +6,7 @@ interface GameContextValue {
   gameState: GameState;
   dispatch: (event: GameEvent) => void;
   agents: AgentManager;
+  closeAllWindows: () => void;
 }
 
 export const GameContext = createContext<GameContextValue>(null!);
