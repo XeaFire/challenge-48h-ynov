@@ -101,7 +101,7 @@ function App() {
       case 'paint': return <Paint />;
       case 'explorer': return <Explorer />;
       case 'mail': return <MailApp />;
-      case 'minesweeper': return <Minesweeper maximized={maximized} />;
+      case 'minesweeper': return <Minesweeper />;
     }
   }
 
