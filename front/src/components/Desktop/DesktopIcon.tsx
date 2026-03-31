@@ -16,10 +16,15 @@ export function DesktopIcon({ x, y, icon, label, shaking, bleeding, onDoubleClic
 
   // Apres 30s de saignement, fade out sur 3s puis disparait
   useEffect(() => {
-    if (!bleeding) { setFading(false); setHidden(false); return; }
+    if (!bleeding) return;
     const fadeTimer = setTimeout(() => setFading(true), 30000);
     const hideTimer = setTimeout(() => setHidden(true), 33000);
-    return () => { clearTimeout(fadeTimer); clearTimeout(hideTimer); };
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(hideTimer);
+      setFading(false);
+      setHidden(false);
+    };
   }, [bleeding]);
 
   return (

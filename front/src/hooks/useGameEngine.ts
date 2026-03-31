@@ -95,24 +95,24 @@ export function useGameEngine({ agentManager, onOpenWindow }: Options) {
   }, [agentManager, onOpenWindow, updateState]);
 
   const processActions = useCallback(async (actions: TriggerAction[]) => {
-    for (const action of actions) {
-      try {
-        await executeAction(action);
-      } catch (e) {
-        console.warn('[GameEngine] action failed:', action.type, e);
+    let currentActions = actions;
+    while (currentActions.length > 0) {
+      for (const action of currentActions) {
+        try {
+          await executeAction(action);
+        } catch (e) {
+          console.warn('[GameEngine] action failed:', action.type, e);
+        }
       }
-    }
 
-    // Re-evaluate: flags set during evaluation may enable new triggers
-    const { newState, actions: newActions, newlyFiredIds } = evaluateTriggers(
-      stateRef.current, STORY_TRIGGERS, { type: 'recheck' }, firedTriggers.current,
-    );
+      // Re-evaluate: flags set during evaluation may enable new triggers
+      const { newState, actions: newActions, newlyFiredIds } = evaluateTriggers(
+        stateRef.current, STORY_TRIGGERS, { type: 'recheck' }, firedTriggers.current,
+      );
 
-    for (const id of newlyFiredIds) firedTriggers.current.add(id);
-    updateState(newState);
-
-    if (newActions.length > 0) {
-      await processActions(newActions);
+      for (const id of newlyFiredIds) firedTriggers.current.add(id);
+      updateState(newState);
+      currentActions = newActions;
     }
   }, [executeAction, updateState]);
 
