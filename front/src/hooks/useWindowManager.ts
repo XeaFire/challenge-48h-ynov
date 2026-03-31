@@ -10,7 +10,7 @@ const WINDOW_DEFAULTS: Record<WindowType, { title: string; width: number; height
   paint: { title: 'Sans titre - Paint', width: 640, height: 480 },
   explorer: { title: 'Explorateur Windows', width: 600, height: 420 },
   mail: { title: 'Pindows Mail', width: 650, height: 450 },
-  minesweeper: { title: 'Démineur', width: 260, height: 320 },
+  minesweeper: { title: 'Démineur', width: 340, height: 420 },
 };
 
 const CASCADE_OFFSET = 20;

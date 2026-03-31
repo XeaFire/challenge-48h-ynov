@@ -212,7 +212,7 @@ export function Minesweeper() {
         alignItems: 'center',
         marginBottom: '6px',
         background: '#c0c0c0',
-        width: '170px',
+        width: '230px',
       }}>
         <div style={{
           background: '#000',
@@ -270,8 +270,8 @@ export function Minesweeper() {
       }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(9, 16px)',
-          gridTemplateRows: 'repeat(9, 16px)',
+          gridTemplateColumns: 'repeat(9, 24px)',
+          gridTemplateRows: 'repeat(9, 24px)',
           gap: '0px',
         }}>
           {board.map((row, x) =>
@@ -281,8 +281,8 @@ export function Minesweeper() {
                 onClick={() => handleCellClick(x, y)}
                 onContextMenu={(e) => handleCellRightClick(e, x, y)}
                 style={cell.state === 'revealed' ? {
-                  width: '16px',
-                  height: '16px',
+                  width: '24px',
+                  height: '24px',
                   border: '1px solid #808080',
                   background: '#c0c0c0',
                   padding: 0,
@@ -297,8 +297,8 @@ export function Minesweeper() {
                   userSelect: 'none',
                   boxSizing: 'border-box',
                 } : {
-                  width: '16px',
-                  height: '16px',
+                  width: '24px',
+                  height: '24px',
                   border: '2px solid',
                   borderColor: '#ffffff #808080 #808080 #ffffff',
                   background: '#c0c0c0',
@@ -315,8 +315,23 @@ export function Minesweeper() {
                   boxSizing: 'border-box',
                 }}
               >
-                {cell.state === 'flagged' && '🚩'}
-                {cell.state === 'revealed' && cell.isMine && '💣'}
+                {cell.state === 'flagged' && (
+                  <svg width="12" height="14" viewBox="0 0 12 14">
+                    <rect x="6" y="1" width="2" height="10" fill="#000" />
+                    <polygon points="1,1 8,4 8,1" fill="#ff0000" />
+                    <rect x="3" y="11" width="8" height="2" fill="#000" />
+                  </svg>
+                )}
+                {cell.state === 'revealed' && cell.isMine && (
+                  <svg width="14" height="14" viewBox="0 0 14 14">
+                    <circle cx="7" cy="7" r="4" fill="#000" />
+                    <line x1="7" y1="1" x2="7" y2="13" stroke="#000" strokeWidth="1.5" />
+                    <line x1="1" y1="7" x2="13" y2="7" stroke="#000" strokeWidth="1.5" />
+                    <line x1="3" y1="3" x2="11" y2="11" stroke="#000" strokeWidth="1.5" />
+                    <line x1="11" y1="3" x2="3" y2="11" stroke="#000" strokeWidth="1.5" />
+                    <rect x="5" y="4" width="2" height="2" fill="#fff" />
+                  </svg>
+                )}
                 {cell.state === 'revealed' && !cell.isMine && cell.neighborMines > 0 && cell.neighborMines}
               </button>
             ))
