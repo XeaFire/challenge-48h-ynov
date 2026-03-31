@@ -1,6 +1,9 @@
 # Pindows 98
 
-> Tristan DIARD - Nicolas Michaux — Maël SOURISSEAU — Kevin GUARATO — Martin JAUDINOT
+> Tristan DIARD - Nicolas MICHAUX — Maël SOURISSEAU — Kevin GUARATO — Martin JAUDINOT
+
+
+## Lien: https://chal48.lsblk2exa.beauty
 
 **Jeu narratif d'enquête style Kinito Pet dans un faux Windows 98.** Les personnages sont les assistants clippy de Microsoft. Quelqu'un a tué Links. Trouvez le meurtrier.
 
@@ -79,3 +82,23 @@ Le frontend est accessible sur le port `8082`, le backend sur `3001`.
 - **Agents** : [clippyjs](https://github.com/pithings/clippy)
 - **Deploy** : [Docker](https://www.docker.com/) / [Watchtower](https://github.com/containrrr/watchtower) / [Caddy](https://caddyserver.com/)
 - **CI/CD** : [GitHub Actions](https://github.com/features/actions)
+
+---
+
+> [!CAUTION]
+> ## Spoilers — Guide pour finir le jeu
+>
+> <details>
+> <summary>Cliquez pour révéler la solution (SPOILERS)</summary>
+>
+> 1. Remplir le formulaire d'intro → Paint se débloque
+> 2. Ouvrir Paint → Links meurt → ouvrir les mails pour lire le mail glitché et trouver l'url
+> 3. Ouvrir Internet Explorer → faurnite.battlepass.com → Genius nettoie
+> 4. Cache-cache dans l'Explorateur → trouver les 6 persos → `cadavre_rocky` apparaît → interroger Peedy → Peedy nous apprend que Bonzi est suspect et qu'il fait des jeux de mots.
+> 5. Terminal : `permissions bonzi` → Genie arrive → ouvrir la Calculatrice → drag les chiffres **4 7 5 1** (mot de passe disponible sur le poste de travail) sur la page de Bonzi, ou on apprend que son rêve est d'être comédien.
+> 6. Choisir **Peedy** comme meurtrier
+>
+> **Comment savoir que c'est Peedy ?**
+> - Peedy est le seul à savoir que Bonzi aime les jeux de mots et veut être comédien (infos qu'il donne pendant l'interrogatoire alors que personne ne le sait)
+> - `nslookup faurnite.battlepass.com` dans le Terminal → révèle que Genie est l'auteur du site ne connaissant pas l'informatique, Peedy qui gérait le site devinez-moi de Génie a remplacé le site par un virus.
+</details>
