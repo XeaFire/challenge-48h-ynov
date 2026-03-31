@@ -10,7 +10,7 @@ export function createInitialState(): GameState {
   for (const id of ALL_CHARACTERS) {
     characters[id] = { id, status: 'hidden' };
   }
-  const unlockedApps: string[] = ['mycomputer', 'notepad', 'recyclebin', 'calculator', 'explorer', 'mail',  'minesweeper'];
+  const unlockedApps: string[] = ['mycomputer', 'notepad', 'recyclebin', 'calculator', 'explorer', 'mail', 'minesweeper', 'solitaire'];
   return { characters, flags: {}, unlockedApps, profile: {}, activeForm: null, shakingIcon: null, bleedingIcon: null, notification: null, lockedApps: [], screenShake: false, subliminalText: null, windowsLocked: false };
 }
 
@@ -23,7 +23,7 @@ export interface DebugPreset {
   deadCharacters?: CharacterId[];
 }
 
-const ALL_APPS = ['mycomputer', 'notepad', 'recyclebin', 'calculator', 'explorer', 'mail', 'paint', 'ie', 'minesweeper'];
+const ALL_APPS = ['mycomputer', 'notepad', 'recyclebin', 'calculator', 'explorer', 'mail', 'paint', 'ie', 'minesweeper', 'solitaire'];
 
 export const DEBUG_PRESETS: Record<string, DebugPreset> = {
   story1: {
