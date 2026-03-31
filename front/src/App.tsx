@@ -26,6 +26,7 @@ import { MailApp } from './components/windows/MailApp';
 import { InternetExplorer } from './components/windows/InternetExplorer';
 import { ImageViewer } from './components/windows/ImageViewer';
 import { Minesweeper } from './components/windows/Minesweeper';
+import { Terminal } from './components/windows/Terminal';
 import type { WindowType } from './types';
 
 const WINDOW_CONFIG: Record<WindowType, { menu?: string[]; statusbar?: string; insetBody?: boolean }> = {
@@ -41,6 +42,7 @@ const WINDOW_CONFIG: Record<WindowType, { menu?: string[]; statusbar?: string; i
   ie: { menu: ['Fichier', 'Edition', 'Affichage', 'Favoris', 'Outils', '?'], statusbar: 'Termine' },
   imageviewer: { menu: ['Fichier', 'Edition', '?'], statusbar: 'Links_crush.png — 332 Ko' },
   minesweeper: { menu: ['Jeu', '?'], statusbar: 'Mines restantes: 10' },
+  terminal: { insetBody: false },
 };
 
 const IS_DEBUG = window.location.pathname.startsWith('/debug');
@@ -231,6 +233,7 @@ function Game({ debugConfig }: { debugConfig: DebugConfig }) {
       case 'ie': return <InternetExplorer />;
       case 'imageviewer': return <ImageViewer />;
       case 'minesweeper': return <Minesweeper />;
+      case 'terminal': return <Terminal />;
     }
   }
 

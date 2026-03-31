@@ -217,6 +217,16 @@ export function CalculatorIcon({ size = 32 }: { size?: number }) {
   );
 }
 
+export function TerminalIcon({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" style={PIXEL_STYLE}>
+      <rect x="2" y="4" width="28" height="24" rx="1" fill="#000" stroke="#808080" strokeWidth="1" />
+      <rect x="4" y="6" width="24" height="20" fill="#000" />
+      <text x="6" y="16" fill="#c0c0c0" fontSize="9" fontFamily="monospace">C:\&gt;_</text>
+    </svg>
+  );
+}
+
 export function SolitaireIcon({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" style={{ imageRendering: 'pixelated' }}>

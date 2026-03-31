@@ -46,8 +46,8 @@ function applyRuntimeAction(state: GameState, action: TriggerAction): GameState 
     case 'showNotification': {
       // Remplacer {firstName} etc. par les valeurs du profil
       let text = action.text;
-      for (const [key, val] of Object.entries(stateRef.current.profile)) {
-        text = text.replaceAll(`{${key}}`, val);
+      for (const [key, val] of Object.entries(state.profile)) {
+        text = text.replaceAll(`{${key}}`, String(val));
       }
       return { ...state, notification: text };
     }

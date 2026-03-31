@@ -3,7 +3,7 @@ import type { WindowType } from '../../types';
 import { useGame } from '../../game/GameContext';
 import { useMailsByFolder } from '../../hooks/useMailStore';
 import { DesktopIcon } from './DesktopIcon';
-import { ComputerIcon, NotepadIcon, RecycleBinIcon, InternetExplorerIcon, CalculatorIcon, PaintIcon, ExplorerIcon, MailIcon, MinesweeperIcon, SolitaireIcon } from '../../icons';
+import { ComputerIcon, NotepadIcon, RecycleBinIcon, InternetExplorerIcon, CalculatorIcon, PaintIcon, ExplorerIcon, MailIcon, MinesweeperIcon, SolitaireIcon, TerminalIcon } from '../../icons';
 
 interface DesktopProps {
   onOpenWindow: (type: WindowType) => void;
@@ -74,9 +74,8 @@ const DESKTOP_ICONS: DesktopIconConfig[] = [
     action: { type: 'openWindow', windowType: 'solitaire' },
   },
   {
-    id: 'ie',
-    x: 10, y: 640,
     id: 'minesweeper',
+    x: 10, y: 640,
     icon: <MinesweeperIcon />,
     label: 'Démineur',
     action: { type: 'openWindow', windowType: 'minesweeper' },
@@ -87,6 +86,13 @@ const DESKTOP_ICONS: DesktopIconConfig[] = [
     icon: <InternetExplorerIcon />,
     label: 'Internet Explorer',
     action: { type: 'openWindow', windowType: 'ie' },
+  },
+  {
+    id: 'terminal',
+    x: 10, y: 820,
+    icon: <TerminalIcon />,
+    label: 'Invite de commandes',
+    action: { type: 'openWindow', windowType: 'terminal' },
   },
 ];
 

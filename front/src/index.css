@@ -1761,6 +1761,55 @@ body {
   50% { opacity: 0.3; }
 }
 
+/* ===== TERMINAL ===== */
+.terminal {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #000;
+  font-family: "Fixedsys", "Courier New", "Lucida Console", monospace;
+  font-size: 13px;
+  color: #c0c0c0;
+  cursor: text;
+}
+
+.terminal-output {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 8px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.terminal-line {
+  line-height: 1.4;
+  min-height: 1em;
+}
+
+.terminal-prompt {
+  display: flex;
+  align-items: center;
+  line-height: 1.4;
+}
+
+.terminal-prompt-text {
+  color: #c0c0c0;
+  flex-shrink: 0;
+}
+
+.terminal-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #c0c0c0;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  margin: 0;
+  caret-color: #c0c0c0;
+}
+
 /* ===== ANIMATIONS ===== */
 @keyframes blink {
   50% { opacity: 0; }
