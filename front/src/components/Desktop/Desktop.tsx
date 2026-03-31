@@ -114,9 +114,15 @@ export function Desktop({ onOpenWindow, onTriggerBSOD, onCloseStartMenu, classNa
     return gameState.unlockedApps.includes(icon.action.windowType);
   });
 
+  const iconHeight = 90;
+  const padding = 10;
+  const desktopHeight = window.innerHeight - 28;
+  const maxPerCol = Math.max(1, Math.floor((desktopHeight - padding) / iconHeight));
+
   const repositioned = visibleIcons.map((icon, i) => ({
     ...icon,
-    y: 10 + i * 90,
+    x: padding + Math.floor(i / maxPerCol) * 85,
+    y: padding + (i % maxPerCol) * iconHeight,
   }));
 
   return (
