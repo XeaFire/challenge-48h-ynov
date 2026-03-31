@@ -107,7 +107,7 @@ function checkWin(board: Cell[][]): boolean {
   return true;
 }
 
-export function Minesweeper(_props: { maximized: boolean }) {
+export function Minesweeper({ maximized: _maximized }: { maximized: boolean }) {
   const [board, setBoard] = useState<Cell[][]>(() => createBoard());
   const [gameState, setGameState] = useState<GameState>('playing');
   const [flagCount, setFlagCount] = useState(0);
