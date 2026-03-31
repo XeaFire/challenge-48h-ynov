@@ -7,7 +7,7 @@ interface AboutDialogProps {
 export function AboutDialog({ onClose }: AboutDialogProps) {
   const [creepy, setCreepy] = useState(false);
   const clickCount = useRef(0);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const handleRedClick = () => {
     clickCount.current++;
