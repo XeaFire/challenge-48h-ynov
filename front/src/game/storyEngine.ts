@@ -37,9 +37,10 @@ function applyStateAction(state: GameState, action: TriggerAction): GameState {
       return { ...state, activeForm: { formId: action.formId, title: action.title, description: action.description, fields: action.fields, submitLabel: action.submitLabel } };
     case 'shakeIcon':
     case 'stopShakeIcon':
-      // Applied only at RUNTIME (in applyRuntimeAction) so the effect
-      // is visible at the correct moment during sequential execution,
-      // not at evaluation time before any actions have run.
+    case 'screenShake':
+    case 'showSubliminal':
+    case 'closeAllWindows':
+    case 'lockClose':
       return state;
     default:
       return state;
@@ -58,6 +59,8 @@ function applyEventFlags(state: GameState, event: GameEvent): GameState {
       return { ...state, flags: { ...state.flags, [`item_${event.itemId}`]: true } };
     case 'form_submitted':
       return { ...state, flags: { ...state.flags, [`form_${event.formId}_submitted`]: true }, profile: { ...state.profile, ...event.data }, activeForm: null };
+    case 'url_visited':
+      return { ...state, flags: { ...state.flags, [`visited_${event.url}`]: true } };
     case 'recheck':
       return state;
     default:

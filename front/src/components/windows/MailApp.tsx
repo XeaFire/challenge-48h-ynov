@@ -195,6 +195,36 @@ function MailList({ mails, selectedId, onSelect, folder }: {
   );
 }
 
+const GLITCH_CHARS = ['█', '▓', '▒', '░', '╫', '╬', '╪', '╩', '╦', '╠', '╣', '╝', '╚', '╗', '╔', '║', '═', '┼', '┤', '├', '┴', '┬', '│', '─'];
+
+function GlitchText({ hidden }: { hidden: string }) {
+  return (
+    <span className="glitch-text">
+      {hidden.split('').map((ch, i) => (
+        <span key={i} className="glitch-char">
+          <span className="glitch-fake">{GLITCH_CHARS[i % GLITCH_CHARS.length]}</span>
+          <span className="glitch-real">{ch}</span>
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function renderMailBody(body: string) {
+  const glitchMatch = body.match(/\{\{GLITCH:(.+?)\}\}/);
+  if (!glitchMatch) return body;
+
+  const before = body.slice(0, glitchMatch.index);
+  const hiddenText = glitchMatch[1];
+
+  return (
+    <>
+      {before}
+      <GlitchText hidden={hiddenText} />
+    </>
+  );
+}
+
 function MailReader({ mail }: { mail: Mail }) {
   return (
     <div className="mail-reader">
@@ -216,7 +246,7 @@ function MailReader({ mail }: { mail: Mail }) {
           <span className="mail-reader-subject">{mail.subject}</span>
         </div>
       </div>
-      <div className="mail-reader-body">{mail.body}</div>
+      <div className="mail-reader-body">{renderMailBody(mail.body)}</div>
     </div>
   );
 }

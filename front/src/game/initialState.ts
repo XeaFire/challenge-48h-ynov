@@ -10,6 +10,6 @@ export function createInitialState(): GameState {
   for (const id of ALL_CHARACTERS) {
     characters[id] = { id, status: 'hidden' };
   }
-  const unlockedApps: string[] = ['mycomputer', 'notepad', 'recyclebin', 'calculator', 'explorer', 'mail', 'minesweeper'];
-  return { characters, flags: {}, unlockedApps, profile: {}, activeForm: null, shakingIcon: null, bleedingIcon: null };
+  const unlockedApps: string[] = ['mycomputer', 'notepad', 'recyclebin', 'calculator', 'explorer', 'mail',  'minesweeper'];
+  return { characters, flags: {}, unlockedApps, profile: {}, activeForm: null, shakingIcon: null, bleedingIcon: null, screenShake: false, subliminalText: null, windowsLocked: false };
 }
