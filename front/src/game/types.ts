@@ -65,7 +65,7 @@ export type TriggerAction =
   | { type: 'showNotification'; text: string }
   | { type: 'hideNotification' }
   | { type: 'disableApp'; app: string }
-  | { type: 'enableApp'; app: string };
+  | { type: 'enableApp'; app: string }
   | { type: 'screenShake'; enabled: boolean }
   | { type: 'showSubliminal'; text: string; ms: number }
   | { type: 'closeAllWindows' }

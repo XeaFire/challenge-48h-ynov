@@ -137,7 +137,7 @@ export function useGameEngine({ agentManager, onOpenWindow, onCloseAllWindows }:
         updateState({ ...stateRef.current, subliminalText: null });
         break;
     }
-  }, [agentManager, onOpenWindow, onCloseAllWindows, updateState]);
+  }, [agentManager, onOpenWindow, onCloseAllWindows, updateState, fillTemplate]);
 
   const processActions = useCallback(async (actions: TriggerAction[]) => {
     let currentActions = actions;
